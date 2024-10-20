@@ -34,6 +34,7 @@
 #include "incidencematrix.h"
 #include "registry.h"
 #include "annotation.h"
+#include "annotationdatabase.h"
 
 extern "C"{
 #include <ascend/compiler/importhandler.h>
@@ -560,7 +561,8 @@ void shutdown(){
 
 %include "extmethod.h"
 
-%include "annotation.h"
+//%include "annotation.h"
+%include "annotationdatabase.h"
 
 %newobject AnnotationDatabase::getTypeRefinedNotesLang "0";
 

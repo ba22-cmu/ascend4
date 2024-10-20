@@ -1,30 +1,35 @@
 interface Annotation{
 	Annotation();
-	Annotation(struct Note *);
-	const char *getId() ;
-	const char *getMethod() ;
-	const SymChar getType() ;
-	const SymChar getLanguage() ;
-	const char *getFilename() ;
-	const int getLineNumber() ;
-	const char *getText() ;
-	const int getDataType() ;
+	Annotation(Note note);
+	// Annotation(struct Note *note);
+	[Const] DOMString getId() ;
+	[Const] DOMString getMethod() ;
+	[Const] SymChar getType() ;
+	[Const] SymChar getLanguage() ;
+	[Const] DOMString getFilename() ;
+	[Const] int getLineNumber() ;
+	[Const] DOMString getText() ;
+	[Const] int getDataType() ;
 	//const void *getUserData(const int &datatype) ;
 };
 
 interface AnnotationDatabase{
-	AnnotationDatabase(const SymChar &dbid);
-	std::vector<Annotation> getNotes(const Type &type, const SymChar *lang=NULL
-		, const SymChar *id=NULL, const SymChar *method=NULL, const int flag=0
+	AnnotationDatabase([Const, Ref] SymChar dbid);
+	// AnnotationDatabase(const SymChar &dbid);
+	std::vector<Annotation> getNotes([Const, Ref] Type &type,
+					[Const] SymChar lang /* =NULL */,
+					[Const] SymChar id /*=NULL*/,
+					[Const] SymChar method /*=NULL*/,
+					[Const] int flag=0
 	);
 
-	std::vector<Annotation> getTypeRefinedNotesLang(const Type &type
-		, const SymChar *lang
+	std::vector<Annotation> getTypeRefinedNotesLang([Const] Type type,
+							[Const] SymChar lang
 	);
 
-	const char *getNoteForVariable(const Type &type
-		, const SymChar *varname
-		, const SymChar *lang=NULL /* assume 'inline' if not specified */
+	[Const] DOMString getNoteForVariable([Const, Ref] Type type,
+					[Const] SymChar varname,
+					[Const] SymChar lang /*=NULL, assume 'inline' if not specified */
 	);
 };
 

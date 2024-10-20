@@ -1,4 +1,4 @@
-#include "emscripten.h"
+#include "optemcc.h"
 #include <stdio.h>
 #include "lib-1.h"
 

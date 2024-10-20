@@ -1,4 +1,4 @@
-#include "emscripten.h"
+#include "optemcc.h"
 #include "lib-1.h"
 #include <stddef.h> // definition for NULL
 #include <stdlib.h>

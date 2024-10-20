@@ -776,7 +776,7 @@ void TestingRoutine(struct Instance *model)
 
 	/* test getLinkTypes */
 	struct gl_list_t *linkTypes;
-	symchar *keyc1;
+	symchar *keyc1 = NULL;
 	linkTypes = getLinkTypes(model,0);
 	len1 = gl_length(linkTypes);
 	CONSOLE_DEBUG("\n number of unique link types: %d \n",len1);
@@ -788,12 +788,16 @@ void TestingRoutine(struct Instance *model)
 	CONSOLE_DEBUG("\n");
 
 	/* test getLinks */
-	struct gl_list_t *links;
 	struct link_entry_t *lnk;
 	struct Instance *i1;
-	links = getLinks(model,keyc1,0);
-	len2 = gl_length(links);
-	CONSOLE_DEBUG("\n number of links with key %s is: %d \n",SCP(keyc1),len2);
+	if (keyc1 != NULL) {
+		struct gl_list_t *links;
+		links = getLinks(model,keyc1,0);
+		len2 = gl_length(links);
+		CONSOLE_DEBUG("\n number of links with key %s is: %d \n",SCP(keyc1),len2);
+	} else {
+		CONSOLE_DEBUG("\n no links? \n");
+	}
 
 	/* just a test for comparing two instances pointer-wise */
 	/*
