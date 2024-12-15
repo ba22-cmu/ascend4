@@ -1,0 +1,6 @@
+interface StringList {
+	
+	void add(DOMString[] s);
+	DOMString get(unsigned long i);
+	unsigned long size();
+};

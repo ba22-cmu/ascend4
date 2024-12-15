@@ -1,0 +1,14 @@
+interface Dumper {
+	DOMString getFile(DOMString fname);
+	void printFile(DOMString fname);
+	long makeFile(DOMString path, DOMString content);
+	void penv();
+	long addNames(DOMString[] n);
+	StringList getNames();
+	StringList getLies();
+	// none of the following currently do what we want: return some equivalent of vector<string>
+	// DOMString getLies();
+	// DOMString[] getLies();
+	// sequence<DOMString> getLies();
+	// all three bind to a wrapper char *getLies().
+};
