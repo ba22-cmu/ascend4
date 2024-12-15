@@ -20,10 +20,10 @@ one: all.idl
 	: echo python3 -m http.server
 
 lib: main.cpp web_glue.cpp $(LKCC) *.h web_glue.js 
-	$(EM) $(LKCC) --post-js web_glue.js -o output.js -sMODULARIZE -sLINKABLE -s 'EXPORT_NAME="createMyModule"'
+	$(EM) $(LKCC) --post-js web_glue.js -o output.js -sMODULARIZE -sLINKABLE -s 'EXPORT_NAME="createMyModule"' --embed-file $(MODELS)@/models
 
 small: main.cpp small_glue.cpp $(SMCC) *.h small_glue.js 
-	$(EM) $(SMCC) --post-js small_glue.js -o small_output.js -sMODULARIZE -s 'EXPORT_NAME="createMyModule"'
+	$(EM) $(SMCC) --post-js small_glue.js -o small_output.js -sMODULARIZE -s 'EXPORT_NAME="createMyModule"'  --embed-file $(MODELS)@/models
 
 small_glue.cpp small_glue.js: all.idl
 	$(WB) all.idl small_glue
