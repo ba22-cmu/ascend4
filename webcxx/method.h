@@ -1,5 +1,5 @@
-#ifndef ASCXX_METHOD_H
-#define ASCXX_METHOD_H
+#ifndef WEBCXX_METHOD_H
+#define WEBCXX_METHOD_H
 
 #include <string>
 

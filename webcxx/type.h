@@ -1,5 +1,5 @@
-#ifndef ASCXX_TYPE_H
-#define ASCXX_TYPE_H
+#ifndef WEBCXX_TYPE_H
+#define WEBCXX_TYPE_H
 
 #include "config.h"
 
@@ -26,6 +26,7 @@ class Module;
 class Type{
 private:
 	const TypeDescription *t;
+	std::vector<Method> getMethods() const; ///< FIXME this does not report 'built in' methods like reset, ClearAll
 public:
 	Type();
 	Type(const TypeDescription *t);
@@ -36,7 +37,6 @@ public:
 	Simulation getSimulation(const SymChar &name, const bool rundefaultmethod);
 	//Simulation getSimulation(const SymChar &name="sim", const bool &rundefaultmethod=true);
 	const Dimensions getDimensions() const;
-	std::vector<Method> getMethods() const; ///< FIXME this does not report 'built in' methods like reset, ClearAll
 	Method getMethod(const SymChar &name) const; ///< exception if not found
 	const bool isRefinedSolverVar() const; ///< is this type a refinement of solver_var?
 	const bool isRefinedAtom() const;
@@ -51,7 +51,7 @@ public:
 
 	bool operator<(const Type &other) const;
 #ifdef __EMSCRIPTEN__
-	list_Method getMethods_list() const;
+	Method_list getMethods_list() const;
 #endif
 };
 

@@ -9,13 +9,13 @@
 
 	(@TODO rename this interface to Method or similar)
 */
-interface Method{
-	Method(struct InitProcedure *initproc);
-	Method();
-	Method(const Method &);
-	~Method();
-	struct InitProcedure *getInternalType();
-	const char *getName();
+ partial interface Method{
+	// void Method(InitProcedure initproc);
+	void Method();
+	//void Method([Const, Ref] Method m);
+	//~Method();
+	// InitProcedure getInternalType();
+	[Const] DOMString getName();
 	SymChar getSym();
 };
 

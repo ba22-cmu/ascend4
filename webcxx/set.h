@@ -1,5 +1,5 @@
-#ifndef ASCXX_SET_H
-#define ASCXX_SET_H
+#ifndef WEBCXX_SET_H
+#define WEBCXX_SET_H
 
 #include <iostream>
 #include <stdexcept>
@@ -14,7 +14,7 @@ extern "C"{
 }
 
 /**
-	This C++ template defines ASCXX_Set<long> and ASCXX_Set<SymChar>
+	This C++ template defines WEBCXX_Set<long> and ASCXX_Set<SymChar>
 	which can hold instance-variable sets (struct set_t) (as opposed
 	to 'struct Set' which is different!).
 
@@ -26,20 +26,20 @@ extern "C"{
 */
 
 class Empty{
-	// empty class for use in ASCXX_Set<Empty>
+	// empty class for use in WEBCXX_Set<Empty>
 };
 
 template<class T>
-class ASCXX_Set{
+class WEBCXX_Set{
 private:
 	const struct set_t *s;
 public:
 
-	ASCXX_Set(){
-		throw std::runtime_error("Can't create new ASCXX_Set objects");
+	WEBCXX_Set(){
+		throw std::runtime_error("Can't create new WEBCXX_Set objects");
 	}
 
-	ASCXX_Set(const struct set_t *s) : s(s){
+	WEBCXX_Set(const struct set_t *s) : s(s){
 		if(!isCorrectType()){
 			throw std::runtime_error("Invalid set creation");
 		}
@@ -58,16 +58,16 @@ public:
 };
 
 template<>
-const bool ASCXX_Set<long>::isCorrectType() const;
+const bool WEBCXX_Set<long>::isCorrectType() const;
 
 template<>
-const bool ASCXX_Set<SymChar>::isCorrectType() const;
+const bool WEBCXX_Set<SymChar>::isCorrectType() const;
 
 template<>
-const bool ASCXX_Set<void>::isCorrectType() const;
+const bool WEBCXX_Set<void>::isCorrectType() const;
 
 template<class T>
-std::ostream& operator<< (std::ostream& os, const ASCXX_Set<T>& s){
+std::ostream& operator<< (std::ostream& os, const WEBCXX_Set<T>& s){
 	os << "[ ";
 	bool first=true;
 	for(int i=1; i<= s.length(); ++i){
@@ -80,12 +80,12 @@ std::ostream& operator<< (std::ostream& os, const ASCXX_Set<T>& s){
 }
 
 template<>
-const long ASCXX_Set<long>::operator[](const unsigned long &i) const;
+const long WEBCXX_Set<long>::operator[](const unsigned long &i) const;
 
 template<>
-const SymChar ASCXX_Set<SymChar>::operator[](const unsigned long &i) const;
+const SymChar WEBCXX_Set<SymChar>::operator[](const unsigned long &i) const;
 
 template<>
-const Empty ASCXX_Set<Empty>::operator[](const unsigned long &i) const;
+const Empty WEBCXX_Set<Empty>::operator[](const unsigned long &i) const;
 
 #endif

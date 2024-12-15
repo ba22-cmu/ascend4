@@ -2,35 +2,35 @@
 	Class to wrap slv_status_t and provide
 	and query interface to access various data from it
 */
-interface SolverStatus{
-	SolverStatus();
-	SolverStatus(const SolverStatus &old);
-	void getSimulationStatus(Simulation &);
+ partial interface SolverStatus{
+	void SolverStatus();
+	void SolverStatus([Const, Ref] SolverStatus old);
+	void getSimulationStatus([Ref] Simulation s);
 
-	const bool isOK() ;
-	const bool isOverDefined() ;
-	const bool isUnderDefined() ;
-	const bool isStructurallySingular() ;
-	const bool isInconsistent() ;
-	const bool isReadyToSolve() ;
-	const bool isConverged() ;
-	const bool isDiverged() ;
-	const bool hasExceededIterationLimit() ;
-	const bool hasExceededTimeLimit() ;
-	const bool hasResidualCalculationErrors() ;
-	const bool isInterrupted() ;
-	const int getIterationNum() ;
+	boolean isOK() ;
+	boolean isOverDefined() ;
+	boolean isUnderDefined() ;
+	boolean isStructurallySingular() ;
+	boolean isInconsistent() ;
+	boolean isReadyToSolve() ;
+	boolean isConverged() ;
+	boolean isDiverged() ;
+	boolean hasExceededIterationLimit() ;
+	boolean hasExceededTimeLimit() ;
+	boolean hasResidualCalculationErrors() ;
+	boolean isInterrupted() ;
+	long getIterationNum() ;
 
 	// block structure stuff...
 
-	const int getNumBlocks() ;
-	const int getCurrentBlockNum() ;
-	const int getCurrentBlockSize() ;
-	const int getCurrentBlockIteration() ;
-	const int getNumConverged() ; /* previous total size */
-	const int getNumJacobianEvals() ;
-	const int getNumResidualEvals() ;
-	const double getBlockResidualRMS() ;
+	long getNumBlocks() ;
+	long getCurrentBlockNum() ;
+	long getCurrentBlockSize() ;
+	long getCurrentBlockIteration() ;
+	long getNumConverged() ; /* previous total size */
+	long getNumJacobianEvals() ;
+	long getNumResidualEvals() ;
+	double getBlockResidualRMS() ;
 };
 
 

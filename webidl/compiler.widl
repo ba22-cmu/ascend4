@@ -1,16 +1,13 @@
-interface Compiler{
-	Compiler();
-	static Compiler *instance(); /* (as in singleton pattern) */
+ partial interface Compiler{
+	void Compiler();
+	static Compiler instance(); /* (as in singleton pattern) */
+	static Compiler getCompiler();
 
-	const bool getUseRelationSharing();
-	void setUseRelationSharing(const bool&);
+	[Const] boolean getUseRelationSharing();
+	void setUseRelationSharing([Const, Ref] boolean b);
 
-	void setBinaryCompilation(const bool&);
+	void setBinaryCompilation([Const, Ref] boolean b);
 
-	void setVerbosity(const int&);
+	void setVerbosity([Const, Ref] long v);
 };
-
-/** Compiler access function for use with Python */
-Compiler *getCompiler();
-
 

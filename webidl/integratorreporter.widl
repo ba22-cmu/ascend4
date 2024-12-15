@@ -7,9 +7,9 @@
 	any later version.
 
 	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	but WITHOUT ANY WARRANTY; witheut even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+	GNU Goneral Public License for more details.
 
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
@@ -21,7 +21,6 @@
 */
 
 
-interface Integrator;
 
 /**
 	Observer API to allow ASCEND to add rows/columns to the observer panel
@@ -30,51 +29,51 @@ interface Integrator;
 	Should also be generalisable so that we can output observations to files
 	etc.
 */
-interface IntegratorReporterCxx{
-	IntegratorReporterCxx(Integrator *);
-	~IntegratorReporterCxx();
+ partial interface IntegratorReporterCxx{
+	void IntegratorReporterCxx(Integrator i);
+	// ~IntegratorReporterCxx();
 
 	//void addObservedVariable(Variable v);
-	int initOutput();
-	int closeOutput();
-	int updateStatus();
-	int recordObservedValues();
+	long initOutput();
+	long closeOutput();
+	long updateStatus();
+	long recordObservedValues();
 
-	Integrator *getIntegrator();
+	Integrator getIntegrator();
 
 };
 
 /**
 	NULL integrator reporter. This reporter won't output ANYTHING at all.
 */
-interface IntegratorReporterNull : public IntegratorReporterCxx{
-	IntegratorReporterNull(Integrator *);
-	~IntegratorReporterNull();
+ partial interface IntegratorReporterNull /*: IntegratorReporterCxx */ {
+	void IntegratorReporterNull(Integrator i);
+	// ~IntegratorReporterNull();
 
-	int initOutput();
-	int closeOutput();
-	int updateStatus();
-	int recordObservedValues();
+	long initOutput();
+	long closeOutput();
+	long updateStatus();
+	long recordObservedValues();
 };
 
 /**
 	Simple console based integrator reporter. Output the observed variables
 	to the console at each sample point.
 */
-interface IntegratorReporterConsole : public IntegratorReporterCxx{
-	IntegratorReporterConsole(Integrator *);
-	~IntegratorReporterConsole();
+ partial interface IntegratorReporterConsole /* : IntegratorReporterCxx */ {
+	void IntegratorReporterConsole(Integrator i);
+	// ~IntegratorReporterConsole();
 
-	int initOutput();
-	int closeOutput();
-	int updateStatus();
-	int recordObservedValues();
+	long initOutput();
+	long closeOutput();
+	long updateStatus();
+	long recordObservedValues();
 };
 
-
-int ascxx_integratorreporter_init(IntegratorSystem *blsys);
-int ascxx_integratorreporter_write(IntegratorSystem *blsys);
-int ascxx_integratorreporter_write_obs(IntegratorSystem *blsys);
-int ascxx_integratorreporter_close(IntegratorSystem *blsys);
-
+ partial interface IReporter { // was ascxx_integratorreporter
+	static long init(VoidPtr IntegratorSystem_blsys);
+	static long write(VoidPtr IntegratorSystem_blsys);
+	static long write_obs(VoidPtr IntegratorSystem_blsys);
+	static long close(VoidPtr IntegratorSystem_blsys);
+};
 

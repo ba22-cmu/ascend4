@@ -1,15 +1,15 @@
-interface SingularityInfo{
-	bool isSingular() ;
-	std::vector<Relation> rels; /**< relations involved in the singularity */
-	std::vector<Variable> vars; /**< variables involved in the singularity */
-	std::vector<Variable> freeablevars; /**< vars that should be freed */
+ partial interface SingularityInfo{
+	boolean isSingular() ;
+	attribute Relation_list rels; /**< relations involved in the singularity */
+	attribute Variable_list vars; /**< variables involved in the singularity */
+	attribute Variable_list freeablevars; /**< vars that should be freed */
 };
 
 enum StructuralStatus{
-	ASCXX_DOF_UNDERSPECIFIED=1,
-	ASCXX_DOF_SQUARE=2, /* = everything's ok */
-	ASCXX_DOF_OVERSPECIFIED=4,
-	ASCXX_DOF_STRUCT_SINGULAR=3
+	"is-dof-underspecified", // 1
+	"SS-dof-square", /* = EVERYTHING's ok */
+	"SS-dof-overspecified", // =4,
+	"SS-dof-struct-singular" //=3
 };
 
 /**
@@ -30,20 +30,20 @@ enum StructuralStatus{
 	delimitation of solver and integrator, and keeping better track of the 
 	state of the Simulation (has it been 'built', etc).
 */
-interface Simulation : public Instanc{
-	explicit Simulation(Instance *i, const SymChar &name);
-	Simulation(const Simulation &);
-	~Simulation();
+ partial interface Simulation /* : aw_Instance */ {
+	void Simulation(aw_Instance i, [Const, Ref] SymChar name);
+	void Simulation([Const, Ref] Simulation s);
+	//~Simulation();
 
-	Instanc &getModel();
+	[Ref] aw_Instance getModel();
 
 	void runDefaultMethod();
-	void run(const Method &method);
-	void run(const Method &method, Instanc &model);
+	void run([Const, Ref] Method method);
+	void run([Const, Ref] Method method, [Ref] aw_Instance model);
 
 
 	// checks on the instance tree
-	void checkInstance(const int &level=5);
+	void checkInstance([Const, Ref] long level);
 	void checkTokens();
 	void checkStructure();
 	void checkStatistics();
@@ -52,44 +52,44 @@ interface Simulation : public Instanc{
 	void build();
 
 	// checks of solver lists/structure
-	enum StructuralStatus checkDoF() ;
-	bool checkStructuralSingularity();
-	const SingularityInfo &getSingularityInfo() ;
+	StructuralStatus checkDoF() ;
+	boolean checkStructuralSingularity();
+	[Const, Ref] SingularityInfo getSingularityInfo() ;
 
-	void solve(Solver s, SolverReporter &reporter);
+	void solve(Solver s, [Ref] SolverReporter reporter);
 	void presolve(Solver s);
-	const int iterate();
+	[Const] long iterate();
 	void postsolve(SolverStatus status);
 	SolverStatus getStatus();
 
-	std::vector<Variable> getFixableVariables();
-	std::vector<Variable> getVariablesNearBounds(const double &epsilon=1e-4);
-	std::vector<Variable> getVariablesFarFromNominals(const double &bignum);
-	std::vector<Variable> getFixedVariables();
-	std::vector<Variable> getallVariables();
+	Variable_list getFixableVariables();
+	Variable_list getVariablesNearBounds([Const, Ref] double epsilon);
+	Variable_list getVariablesFarFromNominals([Const, Ref] double bignum);
+	Variable_list getFixedVariables();
+	Variable_list getallVariables();
 	Matrix getMatrix();
 
-	void write(const char *fname,const char *type=NULL) ;
+	void write([Const] DOMString fname, [Const] DOMString type) ;
 
-	void setSolver(Solver &s);
-	const Solver getSolver() ;
+	void setSolver([Ref] Solver s);
+	[Const] Solver getSolver() ;
 
 	SolverParameters getParameters() ;
-	void setParameters(SolverParameters &);
+	void setParameters([Ref] SolverParameters sp);
 
 	IncidenceMatrix getIncidenceMatrix();
 
-	const std::string getInstanceName(const Instanc &) ;
+	[Const] DOMString getInstanceName([Const] aw_Instance i) ;
 
 	void processVarStatus();
-	const int getNumVars();
+	[Const] long getNumVars();
 
-	const int getActiveBlock() ;
+	[Const] long getActiveBlock() ;
 
-	std::vector<Variable> getFreeableVariables();
+	Variable_list getFreeableVariables();
 	
-	void setSolverHooks(SolverHooks *H);
-	SolverHooks *getSolverHooks() ;
+	void setSolverHooks(SolverHooks H);
+	SolverHooks getSolverHooks() ;
 };
 
 

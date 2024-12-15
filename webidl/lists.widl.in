@@ -1,0 +1,6 @@
+interface KIND_list {
+	void KIND_list();
+	long get_len();
+	KIND get(long pos);
+};
+

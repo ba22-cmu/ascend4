@@ -19,8 +19,8 @@
 	job, which can then be easily exported to a spreadsheet for plotting (or
 	we can implement ASCPLOT style plotting, perhaps).
 */
-#ifndef ASCXX_INTEGRATOR_H
-#define ASCXX_INTEGRATOR_H
+#ifndef WEBCXX_INTEGRATOR_H
+#define WEBCXX_INTEGRATOR_H
 
 #include <string>
 #include <map>

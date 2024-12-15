@@ -1,5 +1,5 @@
-#ifndef ASCXX_ANNOTATION_DB_H
-#define ASCXX_ANNOTATION_DB_H
+#ifndef WEBCXX_ANNOTATION_DB_H
+#define WEBCXX_ANNOTATION_DB_H
 
 #include "annotation.h"
 
@@ -15,11 +15,11 @@ public:
 	AnnotationDatabase(const SymChar &dbid);
 
 #ifdef __EMSCRIPTEN
-	list_Annotation getNotes_list(const Type &type, const SymChar *lang
+	Annotation_list getNotes_list(const Type &type, const SymChar *lang
 		, const SymChar *id, const SymChar *method=NULL, const int flag=0
 	);
 
-	list_Annotation getTypeRefinedNotesLang_list(const Type &type ,
+	Annotation_list getTypeRefinedNotesLang_list(const Type &type ,
 		       	const SymChar *lang
 	);
 #endif
@@ -36,4 +36,4 @@ public:
 	);
 };
 
-#endif // ASCXX_ANNOTATION_DB_H
+#endif // WEBCXX_ANNOTATION_DB_H

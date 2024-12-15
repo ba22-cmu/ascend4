@@ -7,11 +7,11 @@
 
 
 
-interface Registry{
-//	void setInteger(const char *key, int value);
-	void setPointer(const char *key, void *value);
-	Instanc *getInstance(const char *key);
-	Simulation &getSimulation(const char *key);
+ partial interface Registry{
+//	void setInteger(DOMString key, int value);
+	void setPointer(DOMString key, long long ptr_value_as_i64);
+	aw_Instance getInstance(DOMString key);
+	[Ref] Simulation getSimulation(DOMString key);
 
 	// void setPyObject(const char *key, PyObject *obj);
 

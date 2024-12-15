@@ -1,5 +1,5 @@
-#ifndef ASCXX_UNITS_H
-#define ASCXX_UNITS_H
+#ifndef WEBCXX_UNITS_H
+#define WEBCXX_UNITS_H
 
 #include "config.h"
 extern "C"{
@@ -15,7 +15,7 @@ extern "C"{
 class Dimensions;
 
 /**
-	This class will be renamed Units for use in Python
+	This class might be renamed Units for use in javascript
 */
 class UnitsM{
 private:

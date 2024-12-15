@@ -1,18 +1,18 @@
 	
 /// Wrapper interface for slv_parameters_t
-interface SolverParameters{
+ partial interface SolverParameters{
 
-	SolverParameters();
-	SolverParameters(const SolverParameters &);
+	void SolverParameters();
+	void SolverParameters([Const, Ref] SolverParameters sp);
 
-	const std::string toString() ;
+	[Const] DOMString stringFormat() ;
 
-	const int getLength() ; ///< Number of parameters
-	SolverParameter getParameter(const int &index) ;
-	SolverParameter getParameter(const std::string &name) ;
+	[Const] long getLength() ; ///< Number of parameters
+	SolverParameter getParameterI([Const, Ref] long index) ;
+	SolverParameter getParameterN([Const, Ref] DOMString name) ;
 
-	const SolverParameterIterator begin() ;
-	const SolverParameterIterator end() ;
+	[Const] SolverParameterIterator begin() ;
+	[Const] SolverParameterIterator end() ;
 };
 
 

@@ -1,5 +1,5 @@
-#ifndef ASCXX_INCIDENCEMATRIX_H
-#define ASCXX_INCIDENCEMATRIX_H
+#ifndef WEBCXX_INCIDENCEMATRIX_H
+#define WEBCXX_INCIDENCEMATRIX_H
 
 #include <vector>
 
@@ -37,6 +37,7 @@ public:
 list_vector(IncidencePoint);
 list_vector(Variable);
 list_vector(Relation);
+#endif
 /**
 	Special class for plotting incidence matrices using matplotlib
 
@@ -74,11 +75,11 @@ public:
 	const int getNumBlocks();
 
 #ifdef __EMSCRIPTEN__
-	list_IncidencePoint getIncidenceData_list();
-	list_Variable getBlockVars_list(const int &block);
-	list_Relation getBlockRels_list(const int &block);
-	list_int getBlockLocation_list(const int &block) const;
+	IncidencePoint_list getIncidenceData_list();
+	Variable_list getBlockVars_list(const int &block);
+	Relation_list getBlockRels_list(const int &block);
+	int* getBlockLocation_list(const int &block) const;
 #endif
 };
 
-#endif // ASCXX_INCIDENCEMATRIX_H
+#endif // WEBCXX_INCIDENCEMATRIX_H

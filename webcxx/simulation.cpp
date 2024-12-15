@@ -103,7 +103,8 @@ Instanc Simulation::getRoot(){
 Simulation::~Simulation(){
 	//CONSOLE_DEBUG("Destroying Simulation...");
 	/*
-	// FIXME removing this here, because Python overzealously seems to delete simulations
+	// FIXME removing this here, because binding in py overzealously seems to delete simulations
+	// need shared_ptr?
 
 	CONSOLE_DEBUG("Deleting simulation %s", getName().toString());
 	system_free_reused_mem();
@@ -199,7 +200,7 @@ Simulation::write(const char *fname, const char *type) const{
 void
 Simulation::run(const Method &method){
 
-	// we have to assign hooks every time, because the Python layer causes
+	// we have to assign hooks every time, because the ui layer may be
 	// copying of Simulation objects, resulting in the 'this' address changing.
 	SolverHooksManager::Instance()->getHooks()->assign(this);
 	

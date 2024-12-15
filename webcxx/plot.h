@@ -1,12 +1,12 @@
-#ifndef ASCXX_PLOT_H
-#define ASCXX_PLOT_H
+#ifndef WEBCXX_PLOT_H
+#define WEBCXX_PLOT_H
 
 #include <vector>
 #include <string>
 
 #include "instance.h"
 
-#ifndef ASCXX_CURVE_H
+#ifndef WEBCXX_CURVE_H
 #include "curve.h"
 #else
 class Curve;
@@ -32,14 +32,13 @@ class Curve;
 
 /**
 	This is interface for accessing plottable data from ASCEND. It's needed in order
-	to cleanly access the MatPlotLib commands via Python, but it could also be used to
-	abstract the xgraph plotting code somewhat as well.
+	to cleanly access the graphing code.
 */
-class Plot : public Instanc{
+class Plot : public aw_Instance {
 
 private:
-	friend class Instanc;
-	explicit Plot(const Instanc &);
+	friend class aw_Instance;
+	explicit Plot(const aw_Instance &);
 	Plot();
 public:
 	Plot(const Plot &plot);	

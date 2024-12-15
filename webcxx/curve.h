@@ -1,5 +1,5 @@
-#ifndef ASCXX_CURVE_H
-#define ASCXX_CURVE_H
+#ifndef WEBCXX_CURVE_H
+#define WEBCXX_CURVE_H
 
 #include <vector>
 #include <string>
@@ -8,19 +8,19 @@
 #include "instance.h"
 #include "lists.h"
 
-class Curve : public Instanc{
+class Curve : public aw_Instance{
 	friend class std::vector<Curve>;
 private:
 	friend class Plot;
-	explicit Curve(const Instanc &);	
+	explicit Curve(const aw_Instance &);	
 public:
 	Curve(); // hack -- this was previously private. not sure what this breaks.
 	Curve(const Curve &);
 	std::vector<double> x;
 	std::vector<double> y;
 #ifdef __EMSCRIPTEN__
-	list_double get_x();
-	list_double get_y();
+	double* get_x();
+	double* get_y();
 #endif
 	
 

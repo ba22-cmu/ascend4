@@ -1,5 +1,5 @@
-#ifndef ASCXX_MODULE_H
-#define ASCXX_MODULE_H
+#ifndef WEBCXX_MODULE_H
+#define WEBCXX_MODULE_H
 
 #include "config.h"
 extern "C"{

@@ -14,8 +14,8 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef ASCXX_VARIABLE_H
-#define ASCXX_VARIABLE_H
+#ifndef WEBCXX_VARIABLE_H
+#define WEBCXX_VARIABLE_H
 
 #include <string>
 #include <vector>
@@ -55,9 +55,9 @@ public:
 	const std::vector<Relation> getIncidentRelations() const;
 	const int getNumIncidentRelations() const;
 
-	Instanc getInstance();
+	aw_Instance getInstance();
 #ifdef __EMSCRIPTEN__
-	list_Relation getIncidentRelations_list() const;
+	Relation_list getIncidentRelations_list() const;
 #endif
 };
 

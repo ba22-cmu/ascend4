@@ -18,6 +18,7 @@ list_vector_impl(double);
 list_vector_impl(int);
 list_vector_impl(stdstring);
 list_vector_impl(unsigned);
+list_vector_impl(uint32_t;
 
 apply_classes(list_vector_impl)
 

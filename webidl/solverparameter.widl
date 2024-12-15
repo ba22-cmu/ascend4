@@ -1,42 +1,42 @@
-interface SolverParameter{
-	explicit SolverParameter(slv_parameter *);
-	SolverParameter &operator=(const SolverParameter &);
+ partial interface SolverParameter{
+	//void SolverParameter(slv_parameter sp);
+	// void SolverParameter &operator=([Const] SolverParameter &);
 
-	const std::string getName() ;
-	const std::string getDescription() ;
-	const std::string getLabel() ;
-	const int &getNumber() ;
-	const int &getPage() ;
+	[Const] DOMString getName() ;
+	[Const] DOMString getDescription() ;
+	[Const] DOMString getLabel() ;
+	[Const, Ref] long getNumber() ;
+	[Const, Ref] long getPage() ;
 
-	const bool isInt() ;
-	const bool isBool() ;
-	const bool isStr() ;
-	const bool isReal() ;
+	[Const] boolean isInt() ;
+	[Const] boolean isBool() ;
+	[Const] boolean isStr() ;
+	[Const] boolean isReal() ;
 
 	// The following throw execeptions unless the parameter type is correct
-	const int &getIntValue() ;
-	const int &getIntLowerBound() ;
-	const int &getIntUpperBound() ;
-	void setIntValue(const int&);
+	[Const, Ref] long getIntValue() ;
+	[Const, Ref] long getIntLowerBound() ;
+	[Const, Ref] long getIntUpperBound() ;
+	void setIntValue([Const, Ref] long v);
 
-	const bool getBoolValue() ;
-	void setBoolValue(const bool&);
+	[Const] boolean getBoolValue() ;
+	void setBoolValue([Const] boolean b);
 
-	const std::string getStrValue() ;
-	const std::vector<std::string> getStrOptions() ;
-	void setStrValue(const std::string &);
-	void setStrOption(const int &opt);
+	[Const] DOMString getStrValue() ;
+	[Const] DOMString[] getStrOptions() ;
+	void setStrValue([Const, Ref] DOMString s);
+	void setStrOption([Const, Ref] long opt);
 
-	const double &getRealValue() ;
-	const double &getRealLowerBound() ;
-	const double &getRealUpperBound() ;
-	void setRealValue(const double&);
+	[Const, Ref] double getRealValue() ;
+	[Const, Ref] double getRealLowerBound() ;
+	[Const, Ref] double getRealUpperBound() ;
+	void setRealValue([Const, Ref] double d);
 
-	const bool isBounded() ;
+	[Const] boolean isBounded() ;
 
-	const std::string toString() ;
+	[Const] DOMString stringFormat() ;
 
-	void setValueValue(const Value &V);
+	void setValueValue([Const, Ref] Value V);
 };
 
 

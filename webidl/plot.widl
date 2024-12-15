@@ -3,13 +3,13 @@
 	to cleanly access the MatPlotLib commands via Python, but it could also be used to
 	abstract the xgraph plotting code somewhat as well.
 */
-interface Plot : public Instanc{
+ partial interface Plot /* : aw_Instance */ { 
 
-	Plot(const Plot &plot);	
+	void Plot([Const, Ref] Plot plot);	
 
-	const std::string getTitle() ;
-	const std::string getXLabel() ;
-	const std::string getYLabel() ;
+	[Const] DOMString getTitle() ;
+	[Const] DOMString getXLabel() ;
+	[Const] DOMString getYLabel() ;
 
 	/**
 		Get 'legend position', an integer for use by matplotlib, see here for
@@ -18,16 +18,16 @@ interface Plot : public Instanc{
 
 		This value is not used by the Tcl/Tk GUI's plotting routine.
 	*/
-	const int getLegendPosition() ;
+	[Const] long getLegendPosition() ;
 
-	const bool isXLog() ;
-	const bool isYLog() ;
-	const double getXLow() ;
-	const double getXHigh() ;
-	const double getYLow() ;
-	const double getYHigh() ;
+	[Const] boolean isXLog() ;
+	[Const] boolean isYLog() ;
+	[Const] double getXLow() ;
+	[Const] double getXHigh() ;
+	[Const] double getYLow() ;
+	[Const] double getYHigh() ;
 	
-	std::vector<Curve> curves;
+	attribute Curve_list curves;
 };
 
 

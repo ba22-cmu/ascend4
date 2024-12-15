@@ -5,18 +5,15 @@
 	hopefully between other scripting languages/GUI combinations in future)
 */
 
-#ifndef ASCXX_REGISTRY_H
-#define ASCXX_REGISTRY_H
+#ifndef WEBCXX_REGISTRY_H
+#define WEBCXX_REGISTRY_H
 
 #include "config.h"
 
-#ifdef ASCXX_USE_PYTHON
-# include <Python.h>
-#endif
 
 /*
 extern "C"{
-#ifdef ASCXX_USE_PYTHON
+#ifdef WEBCXX_USE_PYTHON
 ASC_IMPORT void * importhandler_getsharedpointer(const char *);
 #endif
 }
@@ -28,11 +25,8 @@ class Registry{
 public:
 //	void setInteger(const char *key, int value);
 	void setPointer(const char *key, void *value);
-	Instanc *getInstance(const char *key);
+	aw_Instance *getInstance(const char *key);
 	Simulation &getSimulation(const char *key);
-#ifdef ASCXX_USE_PYTHON
-	void setPyObject(const char *key, PyObject *obj);
-#endif
 };
 
-#endif /* ASCXX_REGISTRY_H */
+#endif /* WEBCXX_REGISTRY_H */

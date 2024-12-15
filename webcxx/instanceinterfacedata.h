@@ -1,5 +1,5 @@
-#ifndef ASCXX_INSTANCEINTERFACEDATA_H
-#define ASCXX_INSTANCEINTERFACEDATA_H
+#ifndef WEBCXX_INSTANCEINTERFACEDATA_H
+#define WEBCXX_INSTANCEINTERFACEDATA_H
 
 #include "instance.h"
 
@@ -10,13 +10,13 @@
 
 	The first of these is the ability to show whether or
 	not an instance has been solved. We will have a function
-	that calls instance.setInterfaceValue(ASCXX_VAR_STATUS,ASCXX_VAR_ACTIVE)
+	that calls instance.setInterfaceValue(WEBCXX_VAR_STATUS,ASCXX_VAR_ACTIVE)
 	when a solver variable is made active, and then
-	instance.setInterfaceValue(ASCXX_VAR_STATUS,ASCXX_VAR_SOLVED)
+	instance.setInterfaceValue(WEBCXX_VAR_STATUS,ASCXX_VAR_SOLVED)
 	once it's solved.
 
 	From the interface, python will be able to call
-	instance.getInterfaceValue(ASCXX_VAR_STATUS) and
+	instance.getInterfaceValue(WEBCXX_VAR_STATUS) and
 	will then be able to show an icon accordingly.
 
 	@NOTE LEAKY!
@@ -25,10 +25,10 @@
 */
 class InstanceInterfaceData{
 private:
-	friend class Instanc;
+	friend class aw_Instance;
 	InstanceInterfaceData();
 	InstanceStatus status;
 };
 	
 
-#endif /* ASCXX_INSTANCEINTERFACEDATA_H */
+#endif /* WEBCXX_INSTANCEINTERFACEDATA_H */

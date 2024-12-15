@@ -1,13 +1,12 @@
-interface SolverParameterIterator{
-	explicit SolverParameterIterator();
+ partial interface SolverParameterIterator{
+	void SolverParameterIterator();
 
-	void operator++();
-	void operator=(const SolverParameterIterator &);
+	void inc();
+	void set([Const, Ref] SolverParameterIterator it);
 
-	const bool operator<(const SolverParameterIterator &) const;
-	SolverParameter operator*() const;
+	boolean lt([Const] SolverParameterIterator it); // < op
+	SolverParameter mult(long v);
 
-//	friend std::ostream &operator<<( std::ostream &outs, const SolverParameterIterator &I);
 };
 
 

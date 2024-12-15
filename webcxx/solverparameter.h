@@ -1,5 +1,5 @@
-#ifndef ASCXX_SOLVER_PARAMETER_H
-#define ASCXX_SOLVER_PARAMETER_H
+#ifndef WEBCXX_SOLVER_PARAMETER_H
+#define WEBCXX_SOLVER_PARAMETER_H
 
 #include <string>
 #include <vector>

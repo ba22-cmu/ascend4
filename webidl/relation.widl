@@ -1,14 +1,14 @@
-interface Relation : public Instance{
-	Relation();
-	Relation(const Relation &old);
-	Relation(Simulation *sim, rel_relation *rel);
+ partial interface Relation /* : aw_Instance */ {
+	void Relation();
+	void Relation([Const, Ref] Relation old);
+	// void Relation(Simulation sim, rel_relation rel);
 
-	const std::string getName() ;
+	[Const] DOMString getName() ;
 	double getResidual() ;
-	const std::vector<Variable> getIncidentVariables() ;
-	int getNumIncidentVariables() ;
-	Instanc getInstance() ;
-	std::string getRelationAsString() ;
+	[Const] Variable_list getIncidentVariables() ;
+	long getNumIncidentVariables() ;
+	aw_Instance getInstance() ;
+	DOMString getRelationAsString() ;
 };
 
 

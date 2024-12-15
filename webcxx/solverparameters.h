@@ -1,5 +1,5 @@
-#ifndef ASCXX_SOLVERPARAMETERS_H
-#define ASCXX_SOLVERPARAMETERS_H
+#ifndef WEBCXX_SOLVERPARAMETERS_H
+#define WEBCXX_SOLVERPARAMETERS_H
 
 extern "C"{
 #include <ascend/system/slv_common.h>

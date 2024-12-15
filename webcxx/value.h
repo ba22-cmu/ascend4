@@ -27,16 +27,10 @@
 
 	See also SlvReqHooks in ascend/compiler/slvreq.h.
 	
-	In relation to the C++/SWIG wrapper for libascend, we might need to 
-	receive value_t in the context of external relations, perhaps, or 
-	and we definitely need to be able to pass through values for the slvreq 
-	functionality (hence SolverParameter::setValueValue). It would be useful 
-	to have a reliable __repr__ function for value_t in Python. But it is not
-	clear whether we need a full-featured wrapping of this type.
 */
 
-#ifndef ASCXX_VALUE_H
-#define ASCXX_VALUE_H
+#ifndef WEBCXX_VALUE_H
+#define WEBCXX_VALUE_H
 
 struct value_t;
 class SolverParameter;

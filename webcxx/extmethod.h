@@ -1,11 +1,8 @@
-#ifndef ASCXX_EXTMETHOD_H
-#define ASCXX_EXTMETHOD_H
+#ifndef WEBCXX_EXTMETHOD_H
+#define WEBCXX_EXTMETHOD_H
 
 #include "config.h"
 
-#ifdef ASCXX_USE_PYTHON
-#include <Python.h>
-#endif
 
 extern "C"{
 #include <ascend/general/platform.h>
@@ -24,9 +21,6 @@ private:
 	const struct ExternalFunc *e;
 public:
 	ExtMethod();
-#ifdef ASCXX_USE_PYTHON
-	ExtMethod(PyObject *);
-#endif
 	ExtMethod(const struct ExternalFunc *);
 	ExtMethod(const ExtMethod &);
 	const char *getHelp() const;
@@ -35,4 +29,4 @@ public:
 	const unsigned long getNumOutputs() const;
 };
 
-#endif // ASCXX_EXTMETHOD_H
+#endif // WEBCXX_EXTMETHOD_H

@@ -1,5 +1,5 @@
-#ifndef ASCXX_SYMCHAR_H
-#define ASCXX_SYMCHAR_H
+#ifndef WEBCXX_SYMCHAR_H
+#define WEBCXX_SYMCHAR_H
 
 #include <iostream>
 #include <string>

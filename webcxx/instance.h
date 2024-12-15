@@ -15,8 +15,8 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ASCXX_INSTANCE_H
-#define ASCXX_INSTANCE_H
+#ifndef WEBCXX_INSTANCE_H
+#define WEBCXX_INSTANCE_H
 
 #include "symchar.h"
 #include "type.h"
@@ -39,21 +39,25 @@ extern "C"{
 #include <vector>
 #ifdef __EMSCRIPTEN__
 #include "lists.h"
-list_vector(Instanc);
+list_vector(aw_Instance);
 #endif
 
 
 typedef enum{
-	ASCXX_INST_STATUS_UNKNOWN=0, ASCXX_VAR_FIXED, ASCXX_VAR_UNSOLVED, ASCXX_VAR_ACTIVE, ASCXX_VAR_SOLVED
-	, ASCXX_REL_INACTIVE
+	webcxx_INST_STATUS_UNKNOWN=0,
+	webcxx_VAR_FIXED,
+	webcxx_VAR_UNSOLVED,
+	webcxx_VAR_ACTIVE,
+	webcxx_VAR_SOLVED,
+	webcxx_REL_INACTIVE
 } InstanceStatus;
 
 /**
 	This class has to be called 'Instanc' in C++ to avoid a name clash
 	with C. Maybe coulda done it with namespaces but didn't know how.
 
-	This class is renamed back to 'Instance' by SWIG, so use 'Instance'
-	when you're in Python.
+	This class may be renamed back to 'Instance' by SWIG, so use 'Instance'
+	when you're in javascript.
 
 	The Right Way to implement this class would be as a base class
 	with lots of diffent subclasses for the different atom types.
@@ -63,24 +67,24 @@ typedef enum{
 	some other way, it's not going to be worth the effort. We discussed
 	this in the mailing list.
 */
-class Instanc{
+class aw_Instance{
 protected:
 	struct Instance *i;
 	SymChar name;
-	std::vector<Instanc> children;
+	std::vector<aw_Instance> children;
 	void setName(SymChar);
 	static SymChar fixedsym;
 	static SymChar solvervarsym;
 public:
-	Instanc();
-	Instanc(Instance *i);
-	Instanc(Instance *i, const SymChar &name);
-	Instanc(const Instanc &parent, const unsigned long &childnum);
-	Instanc(const Instanc&);
-	~Instanc();
-	std::vector<Instanc> &getChildren();
-	Instanc getChild(const SymChar &) const;
-	Instanc getChild(const long &) const;
+	aw_Instance();
+	aw_Instance(Instance *i);
+	aw_Instance(Instance *i, const SymChar &name);
+	aw_Instance(const aw_Instance &parent, const unsigned long &childnum);
+	aw_Instance(const aw_Instance&);
+	~aw_Instance();
+	std::vector<aw_Instance> &getChildren();
+	aw_Instance getChild(const SymChar &) const;
+	aw_Instance getChild(const long &) const;
 	const enum inst_t getKind() const;
 	const std::string getKindStr() const;
 	const Type getType() const;
@@ -115,10 +119,10 @@ public:
 	const long getIntValue() const;
 	const SymChar getSymbolValue() const;
 
-	const std::string getWhenAsString(const Instanc &relative_to) const;
-	const std::string getLogrelAsString(const Instanc &relative_to) const;
+	const std::string getWhenAsString(const aw_Instance &relative_to) const;
+	const std::string getLogrelAsString(const aw_Instance &relative_to) const;
 	const std::string getValueAsString() const;
-	const std::string getRelationAsString(const Instanc &relative_to) const;
+	const std::string getRelationAsString(const aw_Instance &relative_to) const;
 	Plot getPlot() const;
 
 	const bool isPlottable() const;
@@ -132,16 +136,16 @@ public:
 	void setSymbolValue(const SymChar &);
 
 	template<class T>
-	const ASCXX_Set<T> getSetValue() const{
+	const WEBCXX_Set<T> getSetValue() const{
 		if(!isSet()){
 			ERROR_REPORTER_NOLINE(ASC_USER_ERROR,"Variable '%s' is not set-valued",getName().toString());
-			return ASCXX_Set<T>();
+			return WEBCXX_Set<T>();
 		}
 		if(!isConst() && !isDefined()){
 			ERROR_REPORTER_NOLINE(ASC_USER_ERROR,"Variable '%s' is not defined",getName().toString());
-			return ASCXX_Set<T>();
+			return WEBCXX_Set<T>();
 		}
-		return ASCXX_Set<T>(SetAtomList(i));
+		return WEBCXX_Set<T>(SetAtomList(i));
 	}
 
 	const enum set_kind getSetType() const;
@@ -158,14 +162,14 @@ public:
 	const double  getUpperBound() const;
 	const double  getNominal() const;
 
-	const std::vector<Instanc> getClique() const;
+	const std::vector<aw_Instance> getClique() const;
 	const std::vector<std::string> getAliases() const;
 
 	const double getResidual() const;
 	const bool getLogicalResidual() const;
 #ifdef __EMSCRIPTEN__
-	list_Instanc getChildren_list();
-	list_Instanc getClique_list() const;
+	aw_Instance_list getChildren_list();
+	aw_Instance_list getClique_list() const;
 	list_stdstring getAliases_list() const;
 #endif
 };

@@ -17,25 +17,19 @@
 	Some interesting possibilities exist in exporting to numpy/numarray formats
 	as these do include some support for permutations and so on.
 
-	@NOTE we don't use iostream for input/output here as (a) it's not compatible
-	with the underlying C routines and (b) we want to wrap the FILE* objects
-	and allow access to them using Python's file methods, eg:
-	http://www.swig.org/Doc1.1/HTML/Python.htm
-	(search down to " Converting a Python file object to a FILE *")
-	@ENDNOTE
 */
 
 
 
-interface Matrix{
+ partial interface Matrix{
 
-	Matrix();
-	Matrix(const Matrix &M);
+	void Matrix();
+	void Matrix([Const, Ref] Matrix M);
 
-	Matrix(mtx_matrix_t M);
+	// void Matrix(mtx_matrix_t M);
 
-	int write(char *fname, const std::string &format);
-	std::vector<unsigned> size();
+	long write(DOMString fname, [Const, Ref] DOMString format);
+	unsigned long[] size();
 };
 
 

@@ -1,5 +1,5 @@
-#ifndef ASCXX_NAME_H
-#define ASCXX_NAME_H
+#ifndef WEBCXX_NAME_H
+#define WEBCXX_NAME_H
 
 #include <string>
 
@@ -19,8 +19,8 @@ extern "C"{
 	Handles 'temporary names', which are used for example
 	when calling methods on instances.
 
-	This class will be renamed to 'Name' when used
-	from Python.
+	This class may be renamed to 'Name' when used
+	from javascript.
 */
 class Nam{
 private:

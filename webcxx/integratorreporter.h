@@ -14,13 +14,13 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *//** @file
-	C++ wrapper for the IntegratorReporter struct in the solver C-API.
-	This class is intended to be exposed via the SWIG 'director' functionality
-	which allows it to be overloaded in Python, so reporting of integration
-	results can be done directly with python scripts of the user's design.
+*	C++ wrapper for the IntegratorReporter struct in the solver C-API.
+*	This class is intended to be exposed via the SWIG 'director' functionality
+*	which allows it to be overloaded in ui, so reporting of integration
+*	results can be done directly with scripts of the user's design.
 */
-#ifndef ASCXX_INTEGRATORREPORTER_H
-#define ASCXX_INTEGRATORREPORTER_H
+#ifndef WEBCXX_INTEGRATORREPORTER_H
+#define WEBCXX_INTEGRATORREPORTER_H
 
 extern "C"{
 #include <ascend/general/platform.h>
@@ -33,7 +33,7 @@ class Integrator;
 
 /**
 	Observer API to allow ASCEND to add rows/columns to the observer panel
-	in the Python interface.
+	in the interface.
 
 	Should also be generalisable so that we can output observations to files
 	etc.

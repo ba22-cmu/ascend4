@@ -1,5 +1,4 @@
 
-/* needs to be first so that <Python.h> gets included before <iostream> */
 #include "library.h" 
 
 #include "instance.h"
@@ -50,7 +49,7 @@ using namespace std;
 /**
 	Create an instance of a type. @see Simulation for instantiation.
 */
-Instanc::Instanc(Instance *i) : i(i), name("unnamed1"){
+aw_Instance::aw_Instance(Instance *i) : i(i), name("unnamed1"){
 	if(i==NULL){
 		stringstream ss;
 		ss << "Attempted to create Instance object will null 'Instance *', name " << name;
@@ -60,7 +59,7 @@ Instanc::Instanc(Instance *i) : i(i), name("unnamed1"){
 	// nothing else;
 }
 
-Instanc::Instanc(Instance *i, const SymChar &name) : i(i), name(name){
+aw_Instance::aw_Instance(Instance *i, const SymChar &name) : i(i), name(name){
 	/*if(i==NULL){
 		stringstream ss;
 		ss << "Attempted to create Instance object will null 'Instance *', name " << name;
@@ -69,18 +68,18 @@ Instanc::Instanc(Instance *i, const SymChar &name) : i(i), name(name){
 	//cerr << "A NEW INSTANCE " << name << endl;
 }
 
-Instanc::Instanc(const Instanc&old) : i(old.i), name(old.name){
+aw_Instance::aw_Instance(const aw_Instance&old) : i(old.i), name(old.name){
 	// nothing else
 }
 
-Instanc::Instanc() : i(NULL), name("unnamed0"){
+aw_Instance::aw_Instance() : i(NULL), name("unnamed0"){
 	// nothing else
 }
 
 /*
 	Create a child instance given the parent
 */
-Instanc::Instanc(const Instanc &parent, const unsigned long &childnum)
+aw_Instance::aw_Instance(const aw_Instance &parent, const unsigned long &childnum)
 		: i( InstanceChild(parent.i,childnum) ), name( ChildName(parent.i,childnum) ){
 	// cerr << "CREATED CHILD #" << childnum << ", named '" << getName() << "' OF " << parent.getName() << endl;
 }
@@ -90,9 +89,9 @@ Instanc::Instanc(const Instanc &parent, const unsigned long &childnum)
 
 	There's no data owned by this object, so nothing to be done here.
 */
-Instanc::~Instanc(){
+aw_Instance::~aw_Instance(){
 /* we seriously need a way to free 'interface pointer' data. this doesn't work
-	though, because Python gets messed up
+	though, because wrapper gets messed up
 	InstanceInterfaceData *d = (InstanceInterfaceData *)GetInterfacePtr(i);
 	if(d){
 		cerr << "Destroying interface pointer data" << endl;
@@ -103,22 +102,22 @@ Instanc::~Instanc(){
 }
 
 const SymChar &
-Instanc::getName() const{
+aw_Instance::getName() const{
 	return name;
 }
 
 void
-Instanc::setName(SymChar name){
+aw_Instance::setName(SymChar name){
 	this->name=name;
 }
 
 Instance *
-Instanc::getInternalType() const{
+aw_Instance::getInternalType() const{
 	return i;
 }
 
 const enum inst_t
-Instanc::getKind() const{
+aw_Instance::getKind() const{
 	if(i==NULL){
 		return DUMMY_INST;
 	}
@@ -129,7 +128,7 @@ Instanc::getKind() const{
 	Return the type of this instance as a string
 */
 const string
-Instanc::getKindStr() const{
+aw_Instance::getKindStr() const{
 	enum inst_t k = getKind();
 	stringstream ss;
 
@@ -166,7 +165,7 @@ Instanc::getKindStr() const{
 }
 
 const Type
-Instanc::getType() const{
+aw_Instance::getType() const{
 	if(i==NULL){
 		throw runtime_error("Invalid NULL instance (getType)");
 	}
@@ -183,19 +182,19 @@ Instanc::getType() const{
 }
 
 const bool
-Instanc::isAtom() const{
+aw_Instance::isAtom() const{
 	return getKind() & IATOM;
 	//return IsAtomicInstance(i);
 }
 
 const bool
-Instanc::isFixed() const{
+aw_Instance::isFixed() const{
 	if(getKind()!=REAL_ATOM_INST) throw runtime_error("Instanc::isFixed: not a REAL_ATOM_INST");
-	if(isFund()) throw runtime_error("Instanc::isFixed: not a fundamental type");
+	if(isFund()) throw runtime_error("aw_Instance::isFixed: not a fundamental type");
 	Type T = getType();
 	if(!T.isRefinedSolverVar()){
 		stringstream ss;
-		ss << "Instanc::isFixed: type '" << T.getName() << "' is not a refined solver_var";
+		ss << "aw_Instance::isFixed: type '" << T.getName() << "' is not a refined solver_var";
 		throw runtime_error(ss.str());
 	}
 	return getChild("fixed").getBoolValue();
@@ -203,20 +202,20 @@ Instanc::isFixed() const{
 
 /** Is the relation currently included in the simulation */
 const bool
-Instanc::isIncluded() const{
+aw_Instance::isIncluded() const{
 	if(getKind()==REL_INST){
 		return getChild("included").getBoolValue();
 	}
-	throw runtime_error("Instanc::isIncluded: Not a relation");
+	throw runtime_error("aw_Instance::isIncluded: Not a relation");
 }
 
 const bool
-Instanc::isCompound() const{
+aw_Instance::isCompound() const{
 	return getKind() & ICOMP;
 }
 
 const bool
-Instanc::isRelation() const{
+aw_Instance::isRelation() const{
 	if(getKind()==REL_INST){
 		return true;
 	}
@@ -224,7 +223,7 @@ Instanc::isRelation() const{
 }
 
 const bool
-Instanc::isLogicalRelation() const{
+aw_Instance::isLogicalRelation() const{
 	if(getKind()==LREL_INST){
 		return true;
 	}
@@ -232,66 +231,66 @@ Instanc::isLogicalRelation() const{
 }
 
 const bool
-Instanc::isWhen() const{
+aw_Instance::isWhen() const{
 	if(getKind()==WHEN_INST)return true;
 	return false;
 }
 
 const bool
-Instanc::isSet() const{
+aw_Instance::isSet() const{
 	return (getKind() == SET_INST || getKind() == SET_ATOM_INST);
 }
 
 const bool
-Instanc::isSetInt() const{
+aw_Instance::isSetInt() const{
 	return isSet() && getSetType()==integer_set;
 }
 
 const bool
-Instanc::isSetString() const{
+aw_Instance::isSetString() const{
 	return isSet() && getSetType()==string_set;
 }
 
 const bool
-Instanc::isSetEmpty() const{
+aw_Instance::isSetEmpty() const{
 	return isSet() && getSetType()==empty_set;
 }
 
 const bool
-Instanc::isFund() const{
+aw_Instance::isFund() const{
 	return getKind() & IFUND;
 	//return IsFundamentalInstance(i);
 }
 
 const bool
-Instanc::isConst() const{
+aw_Instance::isConst() const{
 	return getKind() & ICONS;
 	//return IsConstantInstance(i);
 }
 
 const bool
-Instanc::isAssigned() const{
+aw_Instance::isAssigned() const{
 	if(!isAtom() && !isConst()){
-		throw runtime_error("Instanc::isAssigned: not an Atom or Const");
+		throw runtime_error("aw_Instance::isAssigned: not an Atom or Const");
 	}
 	/* AtomAssigned works for constants as well */
 	return AtomAssigned(i);
 }
 
 const bool
-Instanc::isArray() const{
+aw_Instance::isArray() const{
 	return getKind() & IARR;
 	//return IsArrayInstance(i);
 }
 
 const bool
-Instanc::isChildless() const{
+aw_Instance::isChildless() const{
 	return getKind() & ICHILDLESS;
 	//return IsChildlessInstance(i);
 }
 
 const bool
-Instanc::isBool() const{
+aw_Instance::isBool() const{
 	switch(getKind()){
 		case BOOLEAN_INST:
 		case BOOLEAN_ATOM_INST:
@@ -303,7 +302,7 @@ Instanc::isBool() const{
 }
 
 const bool
-Instanc::isInt() const{
+aw_Instance::isInt() const{
 	switch(getKind()){
 		case INTEGER_INST:
 		case INTEGER_ATOM_INST:
@@ -315,7 +314,7 @@ Instanc::isInt() const{
 }
 
 const bool
-Instanc::isReal() const{
+aw_Instance::isReal() const{
 	switch(getKind()){
 		case REAL_INST:
 		case REAL_ATOM_INST:
@@ -327,7 +326,7 @@ Instanc::isReal() const{
 }
 
 const bool
-Instanc::isSymbol() const{
+aw_Instance::isSymbol() const{
 	switch(getKind()){
 		case SYMBOL_INST:
 		case SYMBOL_ATOM_INST:
@@ -339,13 +338,13 @@ Instanc::isSymbol() const{
 }
 
 const bool
-Instanc::isDefined() const{
-	if(!isAtom() && !isFund() && !isConst())throw runtime_error("Instanc::isDefined: not an atom/fund/const");
+aw_Instance::isDefined() const{
+	if(!isAtom() && !isFund() && !isConst())throw runtime_error("aw_Instance::isDefined: not an atom/fund/const");
 	return AtomAssigned(i);
 }
 
 const bool
-Instanc::isModel() const{
+aw_Instance::isModel() const{
 	if(getKind()==MODEL_INST){
 		return true;
 	}
@@ -353,7 +352,7 @@ Instanc::isModel() const{
 }
 
 const double
-Instanc::getRealValue() const{
+aw_Instance::getRealValue() const{
 	// Check that the instance has a real value:
 	switch(getKind()){
 		case REAL_INST:
@@ -375,19 +374,19 @@ Instanc::getRealValue() const{
 }
 
 const bool
-Instanc::isDimensionless() const{
+aw_Instance::isDimensionless() const{
 	if(!isReal())return true;
 	return Dimensions( RealAtomDims(i) ).isDimensionless();
 }
 
 const Dimensions
-Instanc::getDimensions() const{
-	if(!isReal())throw runtime_error("Instanc::getDimensions: not a real-valued instance");
+aw_Instance::getDimensions() const{
+	if(!isReal())throw runtime_error("aw_Instance::getDimensions: not a real-valued instance");
 	return Dimensions( RealAtomDims(i) );
 }
 
 const bool
-Instanc::getBoolValue() const{
+aw_Instance::getBoolValue() const{
 	// Check that the instance has a bool value:
 	switch(getKind()){
 		case BOOLEAN_INST:
@@ -408,7 +407,7 @@ Instanc::getBoolValue() const{
 
 
 const long
-Instanc::getIntValue() const{
+aw_Instance::getIntValue() const{
 	// Check that the instance has a bool value:
 	switch(getKind()){
 		case INTEGER_INST:
@@ -428,7 +427,7 @@ Instanc::getIntValue() const{
 }
 
 const SymChar
-Instanc::getSymbolValue() const{
+aw_Instance::getSymbolValue() const{
 	if(!isSymbol()){
 		ERROR_REPORTER_NOLINE(ASC_USER_ERROR,"Variable '%s' is not symbol-valued",getName().toString());
 		return SymChar("ERROR");
@@ -442,7 +441,7 @@ Instanc::getSymbolValue() const{
 }
 
 void
-Instanc::setSymbolValue(const SymChar &sym){
+aw_Instance::setSymbolValue(const SymChar &sym){
 	stringstream ss;
 	if(!isSymbol()){
 		ss << "Instance '" << getName().toString() << "' is not symbol-valued.";
@@ -457,7 +456,7 @@ Instanc::setSymbolValue(const SymChar &sym){
 }
 
 const string
-Instanc::getRelationAsString(const Instanc &relative_to) const{
+aw_Instance::getRelationAsString(const aw_Instance &relative_to) const{
 	stringstream ss;
 	if(isRelation()){
 		int len;
@@ -472,7 +471,7 @@ Instanc::getRelationAsString(const Instanc &relative_to) const{
 }
 
 const double
-Instanc::getResidual() const{
+aw_Instance::getResidual() const{
 	if(!isRelation()){
 		throw runtime_error("getResidual: not a relation");
 	}
@@ -484,7 +483,7 @@ Instanc::getResidual() const{
 }
 
 const bool
-Instanc::getLogicalResidual() const{
+aw_Instance::getLogicalResidual() const{
 	if(!isLogicalRelation()){
 		throw runtime_error("getResidual: not a relation");
 	}
@@ -499,7 +498,7 @@ Instanc::getLogicalResidual() const{
 	Else return the string 'undefined'.
 */
 const string
-Instanc::getValueAsString() const{
+aw_Instance::getValueAsString() const{
 	stringstream ss;
 
 	if(isAssigned()){
@@ -512,7 +511,7 @@ Instanc::getValueAsString() const{
 		}else if(isBool()){
 			ss << getBoolValue();
 		}else{
-			throw runtime_error("Invalid type in Instanc::getValueAsString");
+			throw runtime_error("Invalid type in aw_Instance::getValueAsString");
 		}
 	}else{
 		ss << "undefined";
@@ -521,29 +520,29 @@ Instanc::getValueAsString() const{
 }
 
 const string
-Instanc::getWhenAsString(const Instanc &relative_to) const {
+aw_Instance::getWhenAsString(const aw_Instance &relative_to) const {
 	if(isWhen()) {
 		stringstream ss;
 		ss << WriteWhenString(i, relative_to.getInternalType());
 		return ss.str();
 	}
 
-	throw runtime_error("Instanc::getWhenAsString: Instance is not a when");
+	throw runtime_error("aw_Instance::getWhenAsString: Instance is not a when");
 }
 
 const string
-Instanc::getLogrelAsString(const Instanc &relative_to) const {
+aw_Instance::getLogrelAsString(const aw_Instance &relative_to) const {
 	if (isLogicalRelation()) {
 		stringstream ss;
 		ss << WriteLogRelToString(i, relative_to.getInternalType());
 		return ss.str();
 	}
 
-	throw runtime_error("Instanc::getLogrelAsString: Instance is not a logical relation");
+	throw runtime_error("aw_Instance::getLogrelAsString: Instance is not a logical relation");
 }
 
 const bool
-Instanc::isPlottable() const{
+aw_Instance::isPlottable() const{
 	if(plot_allowed(i)){
 		return true;
 	}
@@ -551,7 +550,7 @@ Instanc::isPlottable() const{
 }
 
 const enum set_kind
-Instanc::getSetType() const{
+aw_Instance::getSetType() const{
 	if(!isSet())throw runtime_error("Not a set");
 	if(!isConst() && !isDefined()){
 		stringstream ss;
@@ -563,14 +562,14 @@ Instanc::getSetType() const{
 }
 
 /// Get the child instances :)
-vector<Instanc> &
-Instanc::getChildren()
+vector<aw_Instance> &
+aw_Instance::getChildren()
 {
 	Type t = getType();
 
-	children = vector<Instanc>();
+	children = vector<aw_Instance>();
 
-	if(i==NULL)throw runtime_error("NULL 'i' in Instanc::getChildren");
+	if(i==NULL)throw runtime_error("NULL 'i' in aw_Instance::getChildren");
 
 	unsigned long len = NumberChildren(i);
 	if(!len)return children;
@@ -578,7 +577,7 @@ Instanc::getChildren()
 
 	if(isArray()){
 		for(unsigned long ci=1; ci<=len; ++ci){
-			Instanc c(*this, ci);
+			aw_Instance c(*this, ci);
 			if(!TypeShow(c.getType().getInternalType()))continue;
 			if(c.i==NULL)continue;
 			children.push_back(c);
@@ -604,7 +603,7 @@ Instanc::getChildren()
 	for(unsigned long ci=1; ci<=len; ++ci){
 		if(!ChildVisible(clist,ci))continue;
 
-		Instanc c( *this, ci );
+		aw_Instance c( *this, ci );
 		if(c.i==NULL)continue;
 		//cerr << "FOUND CHILD #" << ci << ": " << c.getName() << endl;
 
@@ -613,19 +612,19 @@ Instanc::getChildren()
 	return children;
 }
 
-Instanc
-Instanc::getChild(const SymChar &name) const{
+aw_Instance
+aw_Instance::getChild(const SymChar &name) const{
 	struct Instance *c = ChildByChar(i,name.getInternalType());
 	stringstream ss;
 	if(c==NULL){
 		ss << "Child '" << name << "'  not found in " << getName();
 		throw runtime_error(ss.str());
 	}
-	return Instanc(c,name);
+	return aw_Instance(c,name);
 }
 
-Instanc
-Instanc::getChild(const long &index) const{
+aw_Instance
+aw_Instance::getChild(const long &index) const{
 	if(!isArray()){
 		stringstream ss;
 		ss << "Instance '" << getName() << "' is not an array; can't retrieve child index " << index;
@@ -636,7 +635,7 @@ Instanc::getChild(const long &index) const{
 	InstanceIntIndex(n) = index;
 	long childindex = ChildSearch(i,&n);
 	if(childindex){
-    	return Instanc(InstanceChild(i,childindex));
+    	return aw_Instance(InstanceChild(i,childindex));
 	}
 	stringstream ss;
 	ss << "Invalid child index '" << index << "' for instance '" << getName() << "'";
@@ -645,7 +644,7 @@ Instanc::getChild(const long &index) const{
 }
 
 Plot
-Instanc::getPlot() const{
+aw_Instance::getPlot() const{
 	if(isPlottable()){
 		return Plot(*this);
 	}
@@ -653,7 +652,7 @@ Instanc::getPlot() const{
 }
 
 void
-Instanc::write(const char *fname) const{
+aw_Instance::write(const char *fname) const{
 	FILE *fp;
 	fp = fopen(fname,"wb");
 	if(!fp)throw runtime_error("NULL file pointer");
@@ -665,30 +664,30 @@ Instanc::write(const char *fname) const{
 // SETTING VALUES of stuff
 
 void
-Instanc::setFixed(const bool &val){
+aw_Instance::setFixed(const bool &val){
 	if(isFixed()==val)return;
 	//CONSOLE_DEBUG("Fixing solver_var at %p",i);
 	getChild("fixed").setBoolValue(val);
 }
 
 void
-Instanc::setIncluded(const bool &val){
+aw_Instance::setIncluded(const bool &val){
 	if(isIncluded()==val)return;
 	getChild("included").setBoolValue(val);
 }
 
 void
-Instanc::setBoolValue(const bool &val, const unsigned &depth){
+aw_Instance::setBoolValue(const bool &val, const unsigned &depth){
 	SetBooleanAtomValue(i, val, depth);
 }
 
 void
-Instanc::setIntValue(const long &val, const unsigned &depth){
+aw_Instance::setIntValue(const long &val, const unsigned &depth){
 	SetIntegerAtomValue(i, val, depth);
 }
 
 void
-Instanc::setRealValue(const double &val, const unsigned &depth){
+aw_Instance::setRealValue(const double &val, const unsigned &depth){
 	SetRealAtomValue(i,val, depth);
 	//ERROR_REPORTER_HERE(ASC_USER_NOTE,"Set %s to %f",getName().toString(),val);
 }
@@ -697,7 +696,7 @@ Instanc::setRealValue(const double &val, const unsigned &depth){
 	Borrow the workings of this from tcltk UnitsProc.c
 */
 void
-Instanc::setRealValueWithUnits(double val, const char *units, const unsigned &depth){
+aw_Instance::setRealValueWithUnits(double val, const char *units, const unsigned &depth){
 
 	if(isConst()){
 		ERROR_REPORTER_NOLINE(ASC_USER_ERROR,"Can't change the value of a constant");
@@ -705,7 +704,7 @@ Instanc::setRealValueWithUnits(double val, const char *units, const unsigned &de
 	}
 
 	if(!isReal() || !isAtom()){
-		throw runtime_error("Instanc::setRealValueWithUnits: not a real-valued instance");
+		throw runtime_error("aw_Instance::setRealValueWithUnits: not a real-valued instance");
 	}
 
 	if(units == NULL || strlen(units)==0 || strcmp(units,"*")==0){
@@ -734,7 +733,7 @@ Instanc::setRealValueWithUnits(double val, const char *units, const unsigned &de
 	Set the instance variable status. See @getInstanceStatus
 */
 void
-Instanc::setStatus(const InstanceStatus &s){
+aw_Instance::setStatus(const InstanceStatus &s){
 	InstanceInterfaceData *d;
 	d = (InstanceInterfaceData *)GetInterfacePtr(i);
 	if(d==NULL && s!=ASCXX_INST_STATUS_UNKNOWN){
@@ -750,10 +749,10 @@ Instanc::setStatus(const InstanceStatus &s){
 	Return the instance variable status.
 	This data is stored in the 'interface_ptr' of the instance, so
 	that we can be sure we'll get it, regardless of which
-	instance of an Instanc we have in our hands :-)
+	instance of an aw_Instance we have in our hands :-)
 */
 const InstanceStatus
-Instanc::getStatus() const{
+aw_Instance::getStatus() const{
 	InstanceInterfaceData *d;
 	d = (InstanceInterfaceData *)GetInterfacePtr(i);
 	if(d==NULL){
@@ -774,15 +773,15 @@ Instanc::getStatus() const{
 
 #define DEFINE_GET_REAL_CHILD(METHOD,CHILD) \
 	const double \
-	Instanc::get##METHOD() const{ \
-		Instanc c = getChild(CHILD); \
+	aw_Instance::get##METHOD() const{ \
+		aw_Instance c = getChild(CHILD); \
 		return c.getRealValue(); \
 	}
 
 #define DEFINE_SET_REAL_CHILD(METHOD,CHILD) \
 	void \
-	Instanc::set##METHOD(const double &v){ \
-		Instanc c = getChild(CHILD); \
+	aw_Instance::set##METHOD(const double &v){ \
+		aw_Instance c = getChild(CHILD); \
 		c.setRealValue(v); \
 	}
 
@@ -796,19 +795,19 @@ DEFINE_CHILD_METHODS(DEFINE_GET_REAL_CHILD)
 
 //------------------------------------------------------
 
-const vector<Instanc>
-Instanc::getClique() const{
-	vector<Instanc> v;
+const vector<aw_Instance>
+aw_Instance::getClique() const{
+	vector<aw_Instance> v;
 	struct Instance *i1 = i;
 	do{
-		v.push_back(Instanc(i1));
+		v.push_back(aw_Instance(i1));
 		i1=NextCliqueMember(i1);
 	}while(i1 != i); // ie we've gone around the circuit
 	return v;
 }
 
 const vector<string>
-Instanc::getAliases() const{
+aw_Instance::getAliases() const{
 	vector<string> v;
 	struct gl_list_t *paths;
 	unsigned long c,len;
@@ -823,25 +822,25 @@ Instanc::getAliases() const{
 }
 
 #ifdef __EMSCRIPTEN__
-list_Instanc getChildren_list()
+aw_Instance_list getChildren_list()
 {
-	return list_Instanc(getChildren());
+	return aw_Instance_list(getChildren());
 }
 
-list_Instanc getClique_list() const
+aw_Instance_list getClique_list() const
 {
-	return list_Instanc(getClique());
+	return aw_Instance_list(getClique());
 }
 
-list_stdstring getAliases_list() const
+stdstring_list getAliases_list() const
 {
-	return list_stdstring(getAliases());
+	return stdstring_list(getAliases());
 }
 #endif
 //------------------------------------------------------
 // static properties
 SymChar
-Instanc::fixedsym = SymChar("fixed");
+aw_Instance::fixedsym = SymChar("fixed");
 
 SymChar
-Instanc::solvervarsym = SymChar("solver_var");
+aw_Instance::solvervarsym = SymChar("solver_var");

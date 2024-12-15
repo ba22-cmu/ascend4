@@ -8,21 +8,21 @@
 	To view what types are present in a given Module, you currently
 	need to query the Library object.
 */
-interface Module{
-	Module();
-	Module(const module_t *t);
+ partial interface Module{
+	void Module();
+	// void Module([Const] module_t t);
 
 	/// Name of the current module (as identified by ASCEND)
-	const char *getName() ;
+	[Const] DOMString getName() ;
 
 	/// Modification time (see <time.h>) for the current module
-	const struct tm* getMtime() ;
+	[Const] double getMtimeD() ;
 
 	/// Filename for the current module
-	const char *getFilename() ;
+	[Const] DOMString getFilename() ;
 
 	/// Return the internal representation of the module
-	const struct module_t *getInternalType() ;
+	// [Const] module_t getInternalType() ;
 };
 
 

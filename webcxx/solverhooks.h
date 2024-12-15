@@ -22,8 +22,8 @@
 	See also SlvReqHooks in ascend/compiler/slvreq.h.
 */
 
-#ifndef ASCXX_SOLVERHOOKS_H
-#define ASCXX_SOLVERHOOKS_H
+#ifndef WEBCXX_SOLVERHOOKS_H
+#define WEBCXX_SOLVERHOOKS_H
 
 #include "config.h"
 #include "value.h"
@@ -45,8 +45,7 @@ SlvReqDoSolveFn ascxx_slvreq_do_solve;
 /**
 	A C++ structure to handle the calling of slvreq hooks by METHODs. This
 	has to provide a mechanism that allows access to both the pure C++ API
-	(see testslvreq.cpp) as well as the Python/PyGTK GUI. So we will allow
-	subclassing of SolverHooks as SolverHooksPython for that case.
+	(see testslvreq.cpp) as well as the javascript. 
 */
 class SolverHooks{
 private:
@@ -75,12 +74,12 @@ public:
 	to Simulation objects in the C++ layer. This needs to be a singleton because
 	the Type::getSimulation method needs to be able to grab the solver hooks
 	from an as-it-were global object of some sort. But we also need to ability
-	to reassign different solver hooks in the C++ layer, because the Python
+	to reassign different solver hooks in the C++ layer, because the 
 	GUI will use different hooks to the pure C++ API (see testslvreq.cpp).
 
 	Note that if no setHooks() call has been made before the first call to
 	getHooks(), the SetHooksManager will assign a default C++ SolverHooks
-	object. Therefore, for users of Python or other possible interfaces based
+	object. Therefore, for users of javascript based
 	on this code, you must make sure you first call
 
 	SolverHooksManager::Instance()->setHooks(mysolverhooksobject);

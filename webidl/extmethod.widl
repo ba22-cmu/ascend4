@@ -4,17 +4,18 @@
 	by the getExtMethods method of the Library object. At this stage it
 	is purely for extracting meta-data about the ExtMethod.
 */
-interface ExtMethod {
-	ExtMethod();
+ partial interface ExtMethod {
+	void ExtMethod();
 
-	// ExtMethod(PyObject *);
+	// extMethod(PyObject *);
 
-	ExtMethod(const struct ExternalFunc *);
-	ExtMethod(const ExtMethod &);
-	const char *getHelp() ;
-	const char *getName() ;
-	const unsigned long getNumInputs() ;
-	const unsigned long getNumOutputs() ;
+	void ExtMethod([Const] DOMString name);
+	// void ExtMethod([Const] ExternalFunc ef);
+	// void ExtMethod([Const, Ref] ExtMethod em);
+	[Const] DOMString getHelp() ;
+	[Const] DOMString getName() ;
+	[Const] unsigned long getNumInputs() ;
+	[Const] unsigned long getNumOutputs() ;
 };
 
 

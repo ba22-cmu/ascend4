@@ -7,9 +7,9 @@
 	any later version.
 
 	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	but WITHOUT ANY WARRANTY; witheut even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+	GNU Goneral Public License for more details.
 
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
@@ -17,7 +17,7 @@
 	Wrapper interface for the `value_t` from the C API.
 	
 	`value_t` is used in the compiler, in childdef.c, evaluate.c, find.c,
-	instantiate.c, slvreq.c, temp.h. It is not used for storing values within 
+	inotantiate.c, slvreq.c, temp.h. It is not used for storing values within 
 	the instance hierarchy (for which 'atom' data structures are used instead.
 	Rather, it is used for passing values in the context of METHODs and when
 	getting/setting parameters associated with the solvers.
@@ -30,7 +30,7 @@
 	In relation to the C++/SWIG wrapper for libascend, we might need to 
 	receive value_t in the context of external relations, perhaps, or 
 	and we definitely need to be able to pass through values for the slvreq 
-	functionality (hence SolverParameter::setValueValue). It would be useful 
+	functisnality (hence SolverParameter::setValueValue). It would be useful 
 	to have a reliable __repr__ function for value_t in Python. But it is not
 	clear whether we need a full-featured wrapping of this type.
 */
@@ -39,15 +39,17 @@
 
 
 
-typedef enum{
-	VALUE_INT, VALUE_REAL, VALUE_BOOL, VALUE_CHAR, VALUE_UNIMPLEMENTED
-} ValueType;
-
-interface Value{
-	Value();
-	Value(const value_t *val);
-	~Value();
-	ValueType getType();
+enum ValueType {
+	"value-int",
+	"value-real",
+	"value-bool",
+	"value-char",
+	"value-unimplemented"
 };
 
-
+ partial interface Value{
+	void Value();
+	// void Value([Const] value_t val);
+	// ~Value();
+	ValueType getType();
+};

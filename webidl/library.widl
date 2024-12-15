@@ -7,53 +7,38 @@
 	any later version.
 
 	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	but WITHOUT ANY WARRANTY; witheut even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+	GNU Goneral Public License for more details.
 
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
 	Handles the loading of ASCEND a4c files into memory, then the
 	listing of the contents of those loaded files. Creates output
 	when loaded files contain errors, although a standardised
-	method for reporting errors is desired for reporting back
-	via SWIG.
+	method for reporting errors is desired for reporting back.
 */
-interface Library{
-public:
-	Library(const char *defaultpath=NULL);
-	~Library();
+ partial interface Library{
 
-	void load(const char *filename);
-	void loadString(const char *str, const char *nameprefix);
-	static const char *getLoadErrorMessage(int status);
+	void Library(DOMString defaultpath);
+	// ~Library();
 
-	void listModules(const int module_type=0);
-	Type &findType(const SymChar &nametofind);
-	std::vector<Module> getModules(const int module_type=0);
-	std::vector<Type> getModuleTypes(const Module&);
+	void load([Const] DOMString filename);
+	void loadString([Const] DOMString str, [Const] DOMString nameprefix);
+	static DOMString getLoadErrorMessage(long status);
+
+	void listModules([Const] long module_type);
+	[Ref] Type findType([Const, Ref] SymChar name_to_find);
+	Module_list getModules([Const] long module_type);
+	Type_list getModuleTypes([Const, Ref] Module m);
 
 	// External Function library
-	std::vector<ExtMethod> getExtMethods();
-	static void extMethodTraverse(void *,void *);
-	void appendToExtMethodVector(void *);
+	DOMString[] getExtMethodNames();
+
+	//static void extMethodTraverse(void *,void *);
+	// void appendToExtMethodVector(void *);
 
 	// Destroy types from the library
 	void clear();
@@ -61,8 +46,8 @@ public:
 	AnnotationDatabase getAnnotationDatabase();
 
 	/// get a listing of all units available in the library
-	std::vector<UnitsM> getUnits() ;
-	std::set<Type> getRealAtomTypes() ;
+	UnitsM_list getUnits() ;
+	Type_list getRealAtomTypes() ;
 
 };
 

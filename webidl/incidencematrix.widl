@@ -1,19 +1,27 @@
-typedef enum{
-	IM_NULL=0, IM_ACTIVE_FIXED, IM_ACTIVE_FREE, IM_DORMANT_FIXED, IM_DORMANT_FREE
-} IncidencePointType;
+enum IncidencePointType {
+	"im-null", // 0
+	"im-active-fixed",
+	"im-active-free",
+	"im-dormant-fixed",
+	"im-dormant-free"
+};
 
-typedef enum{
-	IM_CONVERGED=0, IM_OVER_ITER, IM_OVER_TIME, IM_DIVERGED, IM_NOT_YET_ATTEMPTED
-} BlockStatusType;
+enum BlockStatusType {
+	"im-converged", // 0
+	"im-over-iter",
+	"im-over-time",
+	"im-diverged",
+	"im-not-yet-attempteD"
+};
 
-interface IncidencePoint{
-	IncidencePoint(const int&row, const int&col, const IncidencePointType &type);
-	IncidencePoint(const IncidencePoint &);
-	IncidencePoint();
+ partial interface IncidencePoint{
+	void IncidencePoint([Const, Ref] long row, [Const, Ref] long col, [Const, Ref] IncidencePointType type);
+	void IncidencePoint([Const, Ref] IncidencePoint ipt);
+	void IncidencePoint();
 
-	int row;
-	int col;
-	IncidencePointType type;
+	attribute long row;
+	attribute long col;
+	attribute IncidencePointType type;
 };
 
 /**
@@ -25,22 +33,22 @@ interface IncidencePoint{
 
 	This is going to be like a C++ified copy of MtxProc.c
 */
-interface IncidenceMatrix{
+ partial interface IncidenceMatrix{
 
-	explicit IncidenceMatrix(Simulation &sim);
-	~IncidenceMatrix();
+	void IncidenceMatrix([Ref] Simulation sim);
+	// ~IncidenceMatrix();
 
-	const std::vector<IncidencePoint> &getIncidenceData();
-	const int &getNumRows() ;
-	const int &getNumCols() ;
-	const Variable getVariable(const int &row) ;
-	const Relation getRelation(const int &col) ;
-	const int getBlockRow(const int & row) ;
-	const std::vector<Variable> getBlockVars(const int &block);
-	const std::vector<Relation> getBlockRels(const int &block);
-	const std::vector<int> getBlockLocation(const int &block) ;
-	const BlockStatusType getBlockStatus(const int &block) ;
-	const int getNumBlocks();
+	[Const, Ref] IncidencePoint_list getIncidenceData();
+	[Const, Ref] long getNumRows() ;
+	[Const, Ref] long getNumCols() ;
+	[Const] Variable getVariable([Const, Ref] long row) ;
+	[Const] Relation getRelation([Const, Ref] long col) ;
+	[Const] long getBlockRow([Const, Ref] long row) ;
+	[Const] Variable_list getBlockVars([Const, Ref] long block);
+	[Const] Relation_list getBlockRels([Const, Ref] long block);
+	[Const] long[] getBlockLocation([Const, Ref] long block) ;
+	[Const] BlockStatusType getBlockStatus([Const, Ref] long block) ;
+	[Const] long getNumBlocks();
 };
 
 

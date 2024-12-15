@@ -454,28 +454,28 @@ std::vector<Type> getRealAtomTypesVec() const
 }
 
 #ifdef __EMSCRIPTEN__
-list_UnitsM Library::getUnits_list() const
+UnitsM_list Library::getUnits_list() const
 {
-	return list_UnitsM(getUnits());
+	return UnitsM_list(getUnits());
 }
 
-list_Type getRealAtomTypes_list() const
+Type_list getRealAtomTypes_list() const
 {
-	return list_Type(getRealAtomTypesVec());
+	return Type_list(getRealAtomTypesVec());
 }
 
-list_Module getModules_list(const int module_type=0)
+Module_list getModules_list(const int module_type=0)
 {
-	return list_Module(getModules(module_type));
+	return Module_list(getModules(module_type));
 }
 
-list_Type getModuleTypes_list(const Module& m)
+Type_list getModuleTypes_list(const Module& m)
 {
-	return list_Type(getModuleTypes(m));
+	return Type_list(getModuleTypes(m));
 }
 
-list_ExtMethod getExtMethods_list()
+ExtMethod_list getExtMethods_list()
 {
-	return list_ExtMethod(getExtMethods());
+	return ExtMethod_list(getExtMethods());
 }
 #endif

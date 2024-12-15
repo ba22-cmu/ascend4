@@ -1,15 +1,15 @@
 /**
 	This interface will be renamed Units for use in Python
 */
-interface UnitsM{
-	UnitsM();
-	UnitsM(const struct Units *u);
-	UnitsM(const char *units);
+ partial interface UnitsM{
+	void UnitsM();
+	// void UnitsM([Const] Units u);
+	void UnitsM([Const] DOMString units);
 
-	const SymChar getName() ;
-	const Dimensions getDimensions() ;
-	const double getConversion() ;
-	const bool operator==(const UnitsM &other) ;
+	[Const] SymChar getName() ;
+	[Const] Dimensions getDimensions() ;
+	[Const] double getConversion() ;
+	[Const] boolean eq([Const, Ref] UnitsM other) ;
 };
 
 

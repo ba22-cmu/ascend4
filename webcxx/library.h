@@ -15,9 +15,9 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ASCXX_LIBRARY_H
-#define ASCXX_LIBRARY_H
-
+#ifndef WEBCXX_LIBRARY_H
+#define WEBCXX_LIBRARY_H
+#include "webcxx/webcxx.h"
 #include "extmethod.h"
 #include "type.h"
 #include "module.h"
@@ -66,11 +66,11 @@ public:
 	std::set<Type> getRealAtomTypes() const;
 	std::vector<Type> getRealAtomTypesVec() const;
 #ifdef __EMSCRIPTEN__
-	list_UnitsM getUnits_list() const;
-	list_Type getRealAtomTypes_list() const;
-	list_Module getModules_list(const int module_type=0);
-	list_Type getModuleTypes_list(const Module&);
-	list_ExtMethod getExtMethods_list();
+	UnitsM_list getUnits_list() const;
+	Type_list getRealAtomTypes_list() const;
+	Module_list getModules_list(const int module_type=0);
+	Type_list getModuleTypes_list(const Module&);
+	ExtMethod_list getExtMethods_list();
 #endif
 private:
 	std::vector<ExtMethod> extmethod_vector;

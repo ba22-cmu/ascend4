@@ -1,5 +1,5 @@
-#ifndef ASCXX_SOLVERSTATUS_H
-#define ASCXX_SOLVERSTATUS_H
+#ifndef WEBCXX_SOLVERSTATUS_H
+#define WEBCXX_SOLVERSTATUS_H
 
 #include <cstdio>
 
@@ -49,4 +49,4 @@ public:
 	const double getBlockResidualRMS() const;
 };
 
-#endif // ASCXX_SOLVERSTATUS_H
+#endif // WEBCXX_SOLVERSTATUS_H

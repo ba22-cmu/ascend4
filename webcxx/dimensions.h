@@ -1,5 +1,5 @@
-#ifndef ASCXX_DIMENSIONS_H
-#define ASCXX_DIMENSIONS_H
+#ifndef WEBCXX_DIMENSIONS_H
+#define WEBCXX_DIMENSIONS_H
 
 #include <string>
 

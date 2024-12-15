@@ -3,9 +3,6 @@
 #include <stdexcept>
 using namespace std;
 
-#ifndef ASCXX_USE_PYTHON
-# error "Where's ASCXX_USE_PYTHON?"
-#endif
 
 /*--- WARNING ---
 	In the C++ interface I'm trying to make the nomenclature
@@ -31,20 +28,6 @@ ExtMethod::ExtMethod(const ExtMethod &old) : e(old.e) {
 ExtMethod::ExtMethod(){
 	throw runtime_error("Can't create empty ExtMethod");
 }
-
-#ifdef ASCXX_USE_PYTHON
-/**
-	Declare and register a new external script method from Python
-
-	@TODO not sure if this is the right place for this... problems when creating
-	the method might cause problems. Perhaps it should be in the 'library'
-	object instead?
-*/
-ExtMethod::ExtMethod(PyObject *obj){
-	throw runtime_error("Not allowed here");
-}
-#endif
-
 
 const char *
 ExtMethod::getName() const{

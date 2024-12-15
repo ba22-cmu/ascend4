@@ -1,5 +1,5 @@
-#ifndef ASCXX_SIMULATION_H
-#define ASCXX_SIMULATION_H
+#ifndef WEBCXX_SIMULATION_H
+#define WEBCXX_SIMULATION_H
 
 #include <string>
 #include <vector>
@@ -38,18 +38,18 @@ public:
 	std::vector<Variable> vars; /**< variables involved in the singularity */
 	std::vector<Variable> freeablevars; /**< vars that should be freed */
 #ifdef __EMSCRIPTEN__
-	list_Relation get_rels_list(); /**< relations involved in the singularity */
-	list_Variable get_vars_list(); /**< variables involved in the singularity */
-	list_Variable get_freeablevars_list(); /**< vars that should be freed */
+	Relation_list get_rels_list(); /**< relations involved in the singularity */
+	Variable_list get_vars_list(); /**< variables involved in the singularity */
+	Variable_list get_freeablevars_list(); /**< vars that should be freed */
 #endif
 
 };
 
 enum StructuralStatus{
-	ASCXX_DOF_UNDERSPECIFIED=1,
-	ASCXX_DOF_SQUARE=2, /* = everything's ok */
-	ASCXX_DOF_OVERSPECIFIED=4,
-	ASCXX_DOF_STRUCT_SINGULAR=3
+	WEBCXX_DOF_UNDERSPECIFIED=1,
+	WEBCXX_DOF_SQUARE=2, /* = everything's ok */
+	WEBCXX_DOF_OVERSPECIFIED=4,
+	WEBCXX_DOF_STRUCT_SINGULAR=3
 };
 
 /**
@@ -70,13 +70,13 @@ enum StructuralStatus{
 	delimitation of solver and integrator, and keeping better track of the 
 	state of the Simulation (has it been 'built', etc).
 */
-class Simulation : public Instanc{
+class Simulation : public aw_Instance{
 	friend class IncidenceMatrix;
 	friend class SolverStatus;
 	friend class Integrator;
 	friend class System;
 private:
-	Instanc simroot;
+	aw_Instance simroot;
 	slv_system_t sys;
 	bool is_built;
 	SingularityInfo *sing; /// will be used to store this iff singularity found
@@ -84,17 +84,17 @@ private:
 	SolverHooks *solverhooks;
 protected:
 	slv_system_t getSystem();
-	Instanc getRoot();
+	aw_Instance getRoot();
 public:
 	explicit Simulation(Instance *i, const SymChar &name);
 	Simulation(const Simulation &);
 	~Simulation();
 
-	Instanc &getModel();
+	aw_Instance &getModel();
 
 	void runDefaultMethod();
 	void run(const Method &method);
-	void run(const Method &method, Instanc &model);
+	void run(const Method &method, aw_Instance &model);
 
 
 	// checks on the instance tree
@@ -134,7 +134,7 @@ public:
 
 	IncidenceMatrix getIncidenceMatrix();
 
-	const std::string getInstanceName(const Instanc &) const;
+	const std::string getInstanceName(const aw_Instance &) const;
 
 	void processVarStatus();
 	const int getNumVars();
@@ -146,12 +146,12 @@ public:
 	void setSolverHooks(SolverHooks *H);
 	SolverHooks *getSolverHooks() const;
 #ifdef __EMSCRIPTEN__
-	list_Variable getFixableVariables_list();
-	list_Variable getVariablesNearBounds_list(const double &epsilon=1e-4);
-	list_Variable getVariablesFarFromNominals_list(const double &bignum);
-	list_Variable getFixedVariables_list();
-	list_Variable getallVariables_list();
-	list_Variable getFreeableVariables_list();
+	Variable_list getFixableVariables_list();
+	Variable_list getVariablesNearBounds_list(const double &epsilon=1e-4);
+	Variable_list getVariablesFarFromNominals_list(const double &bignum);
+	Variable_list getFixedVariables_list();
+	Variable_list getallVariables_list();
+	Variable_list getFreeableVariables_list();
 #endif
 };
 

@@ -7,47 +7,48 @@
 	any later version.
 
 	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	but WITHOUT ANY WARRANTY; witheut even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+	GNU Goneral Public License for more details.
 
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *//** @file
 	C++ wrapper for the Integrator interface. Intention is that this will allow
-	us to use the PyGTK 'observer' tab to receive the results of an integration
+	up to use the PyGTK 'observer' tab to receive the results of an integration
 	job, which can then be easily exported to a spreadsheet for plotting (or
 	we can implement ASCPLOT style plotting, perhaps).
 */
 
 
-const int LSODE = INTEG_LSODE;
 
-const int IDA = INTEG_IDA;
-interface Integrator{
-	Integrator(Simulation &);
-	~Integrator();
+ partial interface Integrator{
+	void Integrator([Ref] Simulation s);
+	readonly attribute long LSODE;
+	readonly attribute long IDA;
 
-	static std::vector<std::string> getEngines();
-	void setEngine(const std::string &name);
-	std::string getName() ;
+	static DOMString[] getEngines();
+	void setEngine([Const, Ref] DOMString name);
+	DOMString getName() ;
 
 	SolverParameters getParameters() ;
-	void setParameters(const SolverParameters &);
+	void setParameters([Const, Ref] SolverParameters sp);
 
-	void setReporter(IntegratorReporterCxx *reporter);
+	void setReporter(IntegratorReporterCxx reporter);
 
-	void setMinSubStep(double);
-	void setMaxSubStep(double);
-	void setInitialSubStep(double);
-	void setMaxSubSteps(int);
+	void setMinSubStep(double d);
+	void setMaxSubStep(double d);
+	void setInitialSubStep(double d);
+	void setMaxSubSteps(long mss);
 
 	void setLinearTimesteps(UnitsM units, double start, double end, unsigned long num);
 	void setLogTimesteps(UnitsM units, double start, double end, unsigned long num);
-	std::vector<double> getCurrentObservations();
+	double[] getCurrentObservations();
 	void saveObservations();
-	std::vector<std::vector<double> > getObservations();
-	Variable getObservedVariable(const long &i);
+	double[] getObservationIndex(long i);
+	// and goi function in webcxx::Integrator
+	// std::vector<std::vector<double> > getObservations();
+	Variable getObservedVariable([Const, Ref] long i);
 	Variable getIndependentVariable();
 
 	void findIndependentVar(); /**< find the independent variable (must not presume a certain choice of integration engine) */
@@ -55,13 +56,13 @@ interface Integrator{
 	void solve();
 
 	/** write out a named matrix associated with the integrator, if possible. type can be NULL for the default matrix. */
-	void writeMatrix(char *fname, const char *type) ;
-	void writeDebug(char *fname) ;
+	void writeMatrix(DOMString fname, [Const] DOMString type) ;
+	void writeDebug(DOMString fname) ;
 
 	double getCurrentTime();
 	long getCurrentStep();
 	long getNumSteps();
-	int getNumVars();
-	int getNumObservedVars();
+	long getNumVars();
+	long getNumObservedVars();
 
 };

@@ -5,30 +5,30 @@
 	Once you have a type, you can create an instance of it (getInstance)
 	which will then allow you to start on solving it.
 */
-interface Type{
-	Type();
-	Type(const TypeDescription *t);
-	const SymChar getName() ;
-	const int getParameterCount() ;
-	const TypeDescription *getInternalType() ;
+ partial interface Type{
+	void Type();
+	// void Type([Const] TypeDescription t);
+	[Const] SymChar getName() ;
+	[Const] long getParameterCount() ;
+	// [Const] TypeDescription getInternalType() ;
 	// workaround for bug #494:
-	Simulation getSimulation(const SymChar &name, const bool rundefaultmethod);
-	//Simulation getSimulation(const SymChar &name="sim", const bool &rundefaultmethod=true);
-	const Dimensions getDimensions() ;
-	std::vector<Method> getMethods() ; ///< FIXME this does not report 'built in' methods like reset, ClearAll
-	Method getMethod(const SymChar &name) ; ///< exception if not found
-	const bool isRefinedSolverVar() ; ///< is this type a refinement of solver_var?
-	const bool isRefinedAtom() ;
-	const bool isRefinedReal() ;
-	const bool isRefinedConstant() ;
-	const bool isFundamental() ;
-	const bool isModel() ;
-	const bool hasParameters() ;
-	const Type &findMember(const SymChar &name);
+	Simulation getSimulation([Const, Ref] SymChar name, [Const] boolean rundefaultmethod);
+	//Simulation getSimulation([Const] SymChar &name="sim", [Const] boolean &rundefaultmethod=true);
+	[Const] Dimensions getDimensions() ;
+	Method_list getMethods() ; ///< FIXME this does not report 'built in' methods like reset, ClearAll
+	Method getMethod([Const, Ref] SymChar name) ; ///< exception if not found
+	[Const] boolean isRefinedSolverVar() ; ///< is this type a refinement of solver_var?
+	[Const] boolean isRefinedAtom() ;
+	[Const] boolean isRefinedReal() ;
+	[Const] boolean isRefinedConstant() ;
+	[Const] boolean isFundamental() ;
+	[Const] boolean isModel() ;
+	[Const] boolean hasParameters() ;
+	[Const, Ref] Type findMember([Const, Ref] SymChar name);
 
 	Module getModule() ;
 
-	bool operator<(const Type &other) ;
+	boolean lt([Const, Ref] Type other) ; // <
 };
 
 

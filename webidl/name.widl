@@ -1,17 +1,14 @@
 /*
 	Handles 'temporary names', which are used for example
 	when calling methods on instances.
-
-	This interface will be renamed to 'Name' when used
-	from Python.
 */
-interface Nam{
-	Nam();
-	Nam(const SymChar &);
-	Nam(struct Name*);
-	~Nam();
-	struct Name *getInternalType();
-	const std::string getName();
+ partial interface aw_Name{
+	void aw_Name();
+	void aw_Name([Const, Ref] SymChar s);
+	void aw_Name(aw_Name n, boolean dummy);
+	// ~Nam();
+	// Name getInternalType();
+	[Const] DOMString getName();
 };
 
 

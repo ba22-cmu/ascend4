@@ -1,5 +1,5 @@
-#ifndef ASCXX_SOLVERREPORTER_H
-#define ASCXX_SOLVERREPORTER_H
+#ifndef WEBCXX_SOLVERREPORTER_H
+#define WEBCXX_SOLVERREPORTER_H
 
 #include "solverstatus.h"
 
@@ -12,4 +12,4 @@ public:
 	virtual void finalise(SolverStatus *status);
 };
 
-#endif // ASCXX_SOLVERREPORTER_H
+#endif // WEBCXX_SOLVERREPORTER_H

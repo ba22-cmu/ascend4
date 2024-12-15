@@ -2,15 +2,15 @@
 // Don't edit this file unless it's named 'config.h.in' unless
 // it doesn't bother you that your changes will be IGNORED!
 
-#ifndef ASCXX_CONFIG_H
-#define ASCXX_CONFIG_H
+#ifndef WEBCXX_CONFIG_H
+#define WEBCXX_CONFIG_H
 
 #define DEFAULT_ASCENDLIBRARY "/usr/local/lib/ascend/models"
 
 #define ASC_DLLDIRS "@DLLDIRS@"
 
 #if 1
-# define ASCXX_USE_PYTHON
+# define WEBCXX_USE_PYTHON
 #endif
 
 #ifndef ASC_WITH_GRAPHVIZ

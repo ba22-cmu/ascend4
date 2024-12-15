@@ -1,9 +1,9 @@
-interface SolverReporter{
-	SolverReporter();
-	~SolverReporter();
+ partial interface SolverReporter{
+	void SolverReporter();
+	// ~SolverReporter();
 
-	int report(SolverStatus *status);
-	void finalise(SolverStatus *status);
+	long report(SolverStatus status);
+	void finalise(SolverStatus status);
 };
 
 

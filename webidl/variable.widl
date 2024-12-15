@@ -7,9 +7,9 @@
 	any later version.
 
 	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	but WITHOUT ANY WARRANTY; witheut even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+	GNU Goneral Public License for more details.
 
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
@@ -20,20 +20,20 @@
 	type is used in reporting the variables in an instance, including
 	when looking for 'eligible' variables which can be fixed.
 */
-interface Variable{
-	Variable();
-	Variable(const Variable &old);
-	Variable(Simulation *sim, var_variable *var);
+partial interface Variable{
+	void Variable();
+	void Variable([Const, Ref] Variable old);
+	// void Variable(Simulation sim, var_variable var);
 
-	const std::string getName() ;
-	const double getValue() ;
-	const double getNominal() ;
-	const double getUpperBound() ;
-	const double getLowerBound() ;
-	const std::vector<Relation> getIncidentRelations() ;
-	const int getNumIncidentRelations() ;
+	[Const] DOMString getName() ;
+	[Const] double getValue() ;
+	[Const] double getNominal() ;
+	[Const] double getUpperBound() ;
+	[Const] double getLowerBound() ;
+	[Const] Relation_list getIncidentRelations() ;
+	[Const] long getNumIncidentRelations() ;
 
-	Instanc getInstance();
+	aw_Instance getInstance();
 };
 
 

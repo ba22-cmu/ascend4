@@ -1,5 +1,5 @@
-#ifndef ASCXX_RELATION_H
-#define ASCXX_RELATION_H
+#ifndef WEBCXX_RELATION_H
+#define WEBCXX_RELATION_H
 
 #include <string>
 #include <vector>
@@ -30,11 +30,11 @@ public:
 	double getResidual() const;
 	const std::vector<Variable> getIncidentVariables() const;
 	int getNumIncidentVariables() const;
-	Instanc getInstance() const;
+	aw_Instance getInstance() const;
 	std::string getRelationAsString() const;
 #ifdef __EMSCRIPTEN__
-	list_Variable getIncidentVariables_list() const;
+	Variable_list getIncidentVariables_list() const;
 #endif
 };
 
-#endif /* ASCXX_RELATION_H */
+#endif /* WEBCXX_RELATION_H */

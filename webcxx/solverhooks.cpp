@@ -133,22 +133,8 @@ SolverHooks::getSolverReporter(){
 }
 
 //------------------------------------------------------------------------------
-// SOLVER HOOKS (Python layer implementation)
+// SOLVER HOOKS 
 
-#if 0
-class SolverHooksPython{
-private:
-	PyObject *set_solver_py;
-	PyObject *set_param_py;
-	PyObject *do_solve_py;
-	PyObject *context_py;
-public:
-	SolverHooksPython(PyObject *set_solver_fn, PyObject *set_param_fn, PyObject *do_solve_fn, PyObject *context);
-	virtual int setSolver(const char *solvername, Simulation *S);
-	virtual int setOption(const char *optionname, const char *val, Simulation *S);
-	virtual int doSolve(Instance *i, Simulation *S);
-};
-#endif
 
 //------------------------------------------------------------------------------
 // SOLVER HOOKS MANAGER (singleton)

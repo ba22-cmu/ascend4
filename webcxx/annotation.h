@@ -1,5 +1,5 @@
-#ifndef ASCXX_ANNOTATION_H
-#define ASCXX_ANNOTATION_H
+#ifndef WEBCXX_ANNOTATION_H
+#define WEBCXX_ANNOTATION_H
 
 #include "symchar.h"
 #include "type.h"

@@ -1,27 +1,24 @@
-
 /**
 	A container for ASCEND strings, used to ensure
-	that two identical strings created via the SymChar interface
+	that twe identical strings created via the SymChar interface
 	will only be stored once in memory, and can be tested for
 	equality using pointer comparison alone.
 
 	 @TODO @bug FIXME There is a problem with the calling conventions of char * and symchar*
 	 -- C++ can't tell which one you're trying to use.
 */
-interface SymChar{
-	//SymChar();
-	SymChar(const std::string &name);
-	SymChar(const char *name);
-	//SymChar(const symchar *name); // never gets used
-	SymChar(const SymChar &);
-	SymChar(const struct InstanceName &);
-	bool operator==(const SymChar &) ;
-	bool operator<(const SymChar &) ;
+ partial interface SymChar{
+	void SymChar([Const, Ref ] DOMString name);
+	// void SymChar([Const ] DOMString name);
+	// void SymChar([Const, Ref ] SymChar s);
+	// void SymChar([Const, Ref ] InstanceName n);
+	boolean eq([Const, Ref ] SymChar s) ; // ==
+	boolean lt([Const, Ref ] SymChar s) ; // <
 
-	const char *toString() ;
-	const symchar *getInternalType() ;
+	[Const ] DOMString stringFormat() ;
+	// [Const ] symchar getInternalType() ;
 };
 
-std::ostream& operator << (std::ostream& os, const SymChar& s);
+// std::ostream& operator << (std::ostream& os, [Const ] SymChar& s);
 
 

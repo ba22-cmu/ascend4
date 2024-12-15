@@ -19,13 +19,11 @@
 
 	@NOTE we don't use iostream for input/output here as (a) it's not compatible
 	with the underlying C routines and (b) we want to wrap the FILE* objects
-	and allow access to them using Python's file methods, eg:
-	http://www.swig.org/Doc1.1/HTML/Python.htm
-	(search down to " Converting a Python file object to a FILE *")
+	and allow access to them using javascript file methods, eg:
 	@ENDNOTE
 */
-#ifndef ASCXX_MATRIX_H
-#define ASCXX_MATRIX_H
+#ifndef WEBCXX_MATRIX_H
+#define WEBCXX_MATRIX_H
 
 extern "C"{
 #include <ascend/linear/mtx.h>

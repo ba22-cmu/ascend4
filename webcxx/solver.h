@@ -1,5 +1,5 @@
-#ifndef ASCXX_SOLVER_H
-#define ASCXX_SOLVER_H
+#ifndef WEBCXX_SOLVER_H
+#define WEBCXX_SOLVER_H
 
 #include <string>
 #include <vector>
@@ -38,7 +38,7 @@ void registerStandardSolvers();
 //void registerSolver(SlvRegistration regfuncptr);
 const std::vector<Solver> getSolvers();
 #ifdef __EMSCRIPTEN__
-list_Solver getSolvers_list();
+Solver_list getSolvers_list();
 #endif
 
 #endif

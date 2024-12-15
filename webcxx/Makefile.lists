@@ -1,0 +1,44 @@
+# this makefile works standalone to create the webassembly version of ascend
+# Before it will work:
+# emcc must be in a PATH dir
+CXXFILES= \
+	library.cpp compiler.cpp type.cpp module.cpp symchar.cpp \
+	instance.cpp instanceinterfacedata.cpp \
+	matrix.cpp method.cpp name.cpp \
+	reporter.cpp simulation.cpp set.cpp units.cpp dimensions.cpp extmethod.cpp \
+	variable.cpp registry.cpp relation.cpp  \
+	solver.cpp curve.cpp plot.cpp \
+	solverhooks.cpp \
+	solverparameters.cpp solverparameter.cpp solverparameteriterator.cpp \
+	solverstatus.cpp solverreporter.cpp \
+	value.cpp \
+	incidencematrix.cpp \
+	annotation.cpp
+
+CXXFILES_INTEGRATOR = \
+	integratorreporter.cpp \
+	integrator.cpp
+
+CXXHDRFILES= \
+	library.h compiler.h type.h module.h symchar.h \
+	instance.h instanceinterfacedata.h \
+	matrix.h method.h name.h \
+	reporter.h simulation.h set.h units.h dimensions.h extmethod.h \
+	variable.h registry.h relation.h  \
+	solver.h curve.h plot.h \
+	solverhooks.h \
+	solverparameters.h solverparameter.h solverparameteriterator.h \
+	solverstatus.h solverreporter.h \
+	value.h \
+	incidencematrix.h \
+	annotation.h \
+	annotationdatabase.h
+
+CXXFILES_INTEGRATOR = \
+	integrator.h \
+	integratorreporter.h
+
+CXXSRCS_INTEGRATOR=$(addprefix ../webcxx/,$(CXXFILES_INTEGRATOR))
+CXXHDRS_INTEGRATOR=$(addprefix ../webcxx/,$(CXXHDRFILES_INTEGRATOR))
+CXXSRCS=$(addprefix ../webcxx/,$(CXXFILES))
+CXXHDRS=$(addprefix ../webcxx/,$(CXXHDRFILES))

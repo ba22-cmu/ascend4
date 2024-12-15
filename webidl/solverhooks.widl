@@ -7,9 +7,9 @@
 	any later version.
 
 	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	but WITHOUT ANY WARRANTY; witheut even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+	GNU Goneral Public License for more details.
 
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
@@ -22,41 +22,29 @@
 	See also SlvReqHooks in ascend/compiler/slvreq.h.
 */
 
-
-
-
-
-
-
-extern "C"{
-SlvReqSetSolverFn ascxx_slvreq_set_solver;
-SlvReqSetOptionFn ascxx_slvreq_set_option;
-SlvReqDoSolveFn ascxx_slvreq_do_solve;
-};
-
 /**
-	A C++ structure to handle the calling of slvreq hooks by METHODs. This
+	A C++ Structure to handle the calling of slvreq hooks by METHODs. This
 	has to provide a mechanism that allows access to both the pure C++ API
 	(see testslvreq.cpp) as well as the Python/PyGTK GUI. So we will allow
 	subinterfaceing of SolverHooks as SolverHooksPython for that case.
 */
-interface SolverHooks{
-	SolverHooks(SolverReporter *reporter = NULL);
-	SolverHooks(SolverHooks &old);
-	~SolverHooks();
+ partial interface SolverHooks{
+	void SolverHooks(SolverReporter reporter); // null default arg
+	//void SolverHooks([Ref] SolverHooks old);
+	// ~SolverHooks();
 
-	/// C++ function that will be called as a result of a 'SOLVER' command
-	int setSolver(const char *solvername, Simulation *S);
+	/// C++ functisn that will be called as a result of a 'SOLVER' command
+	long setSolver(DOMString solvername, Simulation S);
 
-	/// C++ function that will be called as a result of a 'OPTION' command
-	int setOption(const char *optionname, Value val1, Simulation *S);
+	/// C++ functisn that will be called as a result of a 'OPTION' command
+	long setOption(DOMString optionname, Value val1, Simulation S);
 
-	/// C++ function that will be called as a result of a 'SOLVE' command
-	int doSolve(Instance *i, Simulation *S);
+	/// C++ functisn that will be called as a result of a 'SOLVE' command
+	long doSolve(aw_Instance i, Simulation S);
 
-	SolverReporter *getSolverReporter();
+	SolverReporter getSolverReporter();
 
-	void assign(Simulation *S);
+	void assign(Simulation S);
 };
 
 /**
@@ -74,10 +62,10 @@ interface SolverHooks{
 
 	SolverHooksManager::Instance()->setHooks(mysolverhooksobject);
 */
-interface SolverHooksManager{
-	static SolverHooksManager *Instance();
-	void setHooks(SolverHooks *hooks);
-	SolverHooks *getHooks();
+ partial interface SolverHooksManager{
+	static SolverHooksManager aw_Instance();
+	void setHooks(SolverHooks hooks);
+	SolverHooks getHooks();
 };
 
 

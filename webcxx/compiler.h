@@ -1,5 +1,5 @@
-#ifndef ASCXX_COMPILER_H
-#define ASCXX_COMPILER_H
+#ifndef WEBCXX_COMPILER_H
+#define WEBCXX_COMPILER_H
 
 #include <string>
 
@@ -50,7 +50,7 @@ public:
 	void setVerbosity(const int&);
 };
 
-/** Compiler access function for use with Python */
+/** Compiler access function for use with wrapper */
 Compiler *getCompiler();
 
 #endif
