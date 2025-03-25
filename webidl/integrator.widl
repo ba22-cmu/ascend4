@@ -27,7 +27,7 @@
 	readonly attribute long LSODE;
 	readonly attribute long IDA;
 
-	static DOMString[] getEngines();
+	static StringList getEngines();
 	void setEngine([Const, Ref] DOMString name);
 	DOMString getName() ;
 

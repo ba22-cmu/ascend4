@@ -1,8 +1,6 @@
 interface StringList {
 	void StringList();
 	void add(DOMString[] s);
-	void add_json(DOMString s);
 	DOMString get(unsigned long i);
 	unsigned long size();
-	DOMString json();
 };

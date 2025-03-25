@@ -4,6 +4,7 @@
 #include "StringList.h"
 class Dumper {
 public:
+	//Dumper();
 	char *getFile(std::string fname);
 	void printFile(std::string fname);
 	int makeFile(std::string path, std::string content);

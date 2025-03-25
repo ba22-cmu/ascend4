@@ -3,11 +3,14 @@
 #include <string>
 #include <vector>
 class StringList {
-	private:
-		std::vector<std::string> sv;
-	public:
+private:
+	std::vector<std::string> sv;
+public:
 	StringList(std::vector<std::string> v) : sv(v) {}
 	int add(char **a);
+	// caller will need to free result.
+	char *json();
+	int add_json(const char *j);
 	// caller will need to free result.
 	char * get(size_t i);
 	size_t size();

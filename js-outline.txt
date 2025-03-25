@@ -1,0 +1,72 @@
+mobaxterm x11 server
+
+
+python load is:
+	ascend
+	gtkbrowser.py (Browser(librarypath))
+		ascpy.Library(path)
+		# create browser window; features include below; starting at line 249 of gtkbrowser.py
+			buttons = ["open","reload","solve","integrate","check","methodrun"]
+			widgets = ["autotoggle","automenu","methodsel","maintabs","lowertabs","consolescroll","statusbar","browsermenu","reloadwarn"]
+
+tcl load is messier.
+
+Simple c++ driver is in:
+	ascxx/testslvreq.cpp
+	create c++ library L
+	L.load($test_a4c_file)
+	Type t
+	Simulation S
+	Method M
+
+The goal then is to display all the basic data in appropriate windows/widgets in response
+to user selection of name from choice list.
+
+Minimum things to dummy up:
+	Script window
+		File picker
+			load ascend4/models/vessel.a4s
+		Run
+			
+DELETE TYPES;
+READ FILE "vessel.a4c";
+
+COMPILE v OF vessel;
+BROWSE {v};
+RUN {v.values};
+RUN {v.reset};
+SOLVE {v} WITH QRSlv;
+	
+	Library
+		delete types
+		read file
+		list all files loaded
+		list names of models in chosen filename
+		create instance v of vessel
+		get root types
+		
+	Browser
+		browse instance v
+			child list of current position (names and types)
+		run method v.values
+		run method v.reset
+		
+	Type
+		show code
+		show ancestry
+		get atom types
+		get parts list
+		
+	Simulation
+		delete
+		check pending
+		send to browse
+		send to solver
+
+	Method
+		get name list for local scope
+		run method
+		run clearvars
+
+	SolverHooks for JS
+

@@ -23,7 +23,7 @@
 	void setBoolValue([Const] boolean b);
 
 	[Const] DOMString getStrValue() ;
-	[Const] DOMString[] getStrOptions() ;
+	[Const] StringList getStrOptions() ;
 	void setStrValue([Const, Ref] DOMString s);
 	void setStrOption([Const, Ref] long opt);
 

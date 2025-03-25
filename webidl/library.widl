@@ -35,7 +35,7 @@
 	Type_list getModuleTypes([Const, Ref] Module m);
 
 	// External Function library
-	DOMString[] getExtMethodNames();
+	StringList getExtMethodNames();
 
 	//static void extMethodTraverse(void *,void *);
 	// void appendToExtMethodVector(void *);

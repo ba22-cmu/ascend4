@@ -1,4 +1,4 @@
- partial interface Annotation{
+interface Annotation{
 	void Annotation();
 	// void Annotation(Note note);
 	// Annotation(struct Note *note);

@@ -34,17 +34,30 @@ int main(int argc, char **argv) {
 	print_directory("..");
 #endif
 
+	printf("names count: ");
 	auto sv = d.getNames();
 	std::cout << sv->size() << std::endl;
 
+	printf("lies count: ");
 	auto sv2 = d.getLies();
 	std::cout << sv2->size() << std::endl;
 
 	d.addNames(sv2);
+	printf("sv info 1: \n");
 	sv = d.getNames();
 	std::cout << sv->size() << std::endl;
 	std::cout << sv->get(1) << std::endl;
 	std::cout << sv->get(sv->size()-1) << std::endl;
 
+	const char *json = "[\"j1\", \"j2\", \"j3\", 4]";
+	sv->add_json(json);
+	printf("sv info 2: \n");
+	std::cout << sv->size() << std::endl;
+	std::cout << sv->get(sv->size()-1) << std::endl;
+	std::cout << sv->get(sv->size()-2) << std::endl;
+
+	char *js = sv->json();
+	printf("===\n%s\n", js);
+	free(js);
 	return 0;
 }

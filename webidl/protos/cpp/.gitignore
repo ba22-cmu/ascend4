@@ -1,0 +1,10 @@
+fstest.html
+fstest.js
+*.wasm
+all.idl
+output.js
+d.x
+small_glue.js
+small_output.js
+web_glue.cpp
+web_glue.js

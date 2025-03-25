@@ -91,7 +91,7 @@ enum InstanceStatus {
 	void setSymbolValue([Const, Ref] SymChar s);
 
 	[Const] long[] getIntegerSetValue();
-	[Const] DOMString[] getSymbolSetValue();
+	[Const] StringList getSymbolSetValue();
 
 	//[Const] set_kind getSetType() ;
 	[Const] DOMString getSetType() ;
@@ -109,7 +109,7 @@ enum InstanceStatus {
 	[Const] double getNominal() ;
 
 	[Const] aw_Instance_list getClique() ;
-	[Const] DOMString[] getAliases() ;
+	[Const] StringList getAliases() ;
 
 	[Const] double getResidual() ;
 	[Const] boolean getLogicalResidual() ;

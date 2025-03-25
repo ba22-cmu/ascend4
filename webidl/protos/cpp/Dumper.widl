@@ -1,9 +1,10 @@
 interface Dumper {
+	void Dumper();
 	DOMString getFile(DOMString fname);
 	void printFile(DOMString fname);
 	long makeFile(DOMString path, DOMString content);
 	void penv();
-	long addNames(DOMString[] n);
+	long addNames(StringList sl);
 	StringList getNames();
 	StringList getLies();
 	// none of the following currently do what we want: return some equivalent of vector<string>
