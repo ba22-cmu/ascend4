@@ -259,13 +259,13 @@ proc ShowWindow.debug {args} {# xf ignore me 7
     -anchor {w} \
     -font $ascDebuVect(font) \
     -height {2} \
-    -text { Block:}
+    -text { Block number:}
 
   # build widget .debug.label_eqn
   label .debug.label_eqn \
     -anchor {w} \
     -font $ascDebuVect(font) \
-    -text { Equation:}
+    -text { Equation number:}
   # bindings
   bind .debug.label_eqn <Button-2> {
     MenuPopupPost .debug.label_eqn.poptest %X %Y
@@ -288,7 +288,7 @@ proc ShowWindow.debug {args} {# xf ignore me 7
     -font $ascDebuVect(font) \
     -foreground {black} \
     -height {2} \
-    -text { Variable:}
+    -text { Variable number:}
 
   # pack widget .debug
   pack append .debug \
