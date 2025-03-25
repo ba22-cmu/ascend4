@@ -946,7 +946,9 @@ proc ascRightMouseAddCommand {widget enabler {kind command} args} {
     set ascPopdata($b.in) 0
     switch $tk_version {
 	8.4 -
-	8.5 {
+	8.5 -
+	8.6 -
+	8.7 {
     bind $b <Leave> "
       set ascPopdata($b.in) 0
       set ascPopdata($b.id) \[after \$ascPopdata(delay) \{if \{!\$ascPopdata($b.in)\} \{ tk::MenuUnpost $b \} \}\]
