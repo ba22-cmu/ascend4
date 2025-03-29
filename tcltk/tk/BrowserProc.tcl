@@ -33,7 +33,7 @@
 # do not use this function in new scripts, use qassgn3 instead.
 #------------------------------------------------------------------------
 proc qassgn {qid val {units ""}} {
-  return [qassqn3 $qid $val $units]
+  return [qassgn3 $qid $val $units]
 }
 
 #
