@@ -1,0 +1,11 @@
+# this makefile works standalone to create the webassembly version of ascend
+# Before it will work:
+# emcc must be in a PATH dir
+CXXFILES= \
+	Driver.cpp  argv.cc  ascjson.cpp  main_json.cpp
+
+CXXHDRFILES= \
+	HelpProcDS.hpp  LibraryProcDS.hpp  ascjson.hpp  ascjson_util.hpp 
+
+CXXSRCS=$(addprefix ../json/,$(CXXFILES))
+CXXHDRS=$(addprefix ../json/,$(CXXHDRFILES))

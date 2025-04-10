@@ -240,9 +240,7 @@ extern int Asc_HelpCmd(ClientData cdata, Tcl_Interp *interp,
  * <!--  Asc_HelpCmd(cdata,interp,argc,argv);                          -->
  * This is the tcl callback for our commandline help facility.
  */
-#include "tcltk/help-data/HelpProc.data.h"
 
-#if 0
 /** Registered as */
 #define Asc_HelpCmdHN "help"
 /** Usage */
@@ -295,6 +293,5 @@ extern int Asc_HelpCmd(ClientData cdata, Tcl_Interp *interp,
  * In this example name is Asc_HelpCmd.
  */
 
-#endif
 #endif  /* ASCTK_HELPPROC_H */
 

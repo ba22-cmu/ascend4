@@ -1,0 +1,417 @@
+
+enum vtype {
+        "SVjson",
+        "SVjson5",
+        "SVcstr"
+};
+
+interface rt {
+	readonly attribute long rc;
+	[Const] readonly attribute DOMString v;
+	readonly attribute vtype t;
+};
+
+// attribute sequence<DOMString> stringArray;
+interface ascjson {
+
+ void ascjson(DOMString vargv);
+
+ [Const] rt libr_query (DOMString vargv);
+
+ [Const] rt asc_compiler_option (DOMString vargv) ;
+
+ [Const] rt libr_parsestring (DOMString vargv) ;
+
+ [Const] rt librread (DOMString vargv) ;
+
+ [Const] rt libr_moduleinfo (DOMString vargv) ;
+
+ [Const] rt libr_destroy_types (DOMString vargv) ;
+
+ [Const] rt libr_hide_type (DOMString vargv) ;
+
+ [Const] rt libr_unhide_type (DOMString vargv) ;
+
+ [Const] rt libr_type_is_shown (DOMString vargv) ;
+
+ [Const] rt libr_types_in_module (DOMString vargv) ;
+
+ [Const] rt Asc_ExtractTypeHC (DOMString vargv) ;
+
+ [Const] rt qlfdid (DOMString vargv) ;
+
+ [Const] rt bgetproc (DOMString vargv) ;
+
+ [Const] rt brow_runmethod (DOMString vargv) ;
+
+ [Const] rt brow_assign (DOMString vargv) ;
+
+ [Const] rt qassgn3 (DOMString vargv) ;
+
+ [Const] rt x__brow_iname (DOMString vargv) ;
+
+ [Const] rt x__brow_isrelation (DOMString vargv) ;
+
+ [Const] rt x__brow_ismodel (DOMString vargv) ;
+
+ [Const] rt bgetrels (DOMString vargv) ;
+
+ [Const] rt bgetrelspf (DOMString vargv) ;
+
+ [Const] rt x__brow_relsforatom (DOMString vargv) ;
+
+ [Const] rt x__brow_islogrel (DOMString vargv) ;
+
+ [Const] rt bgetlogrels (DOMString vargv) ;
+
+ [Const] rt bgetlogrelspf (DOMString vargv) ;
+
+ [Const] rt x__brow_logrelsforatom (DOMString vargv) ;
+
+ [Const] rt bgetcondrels (DOMString vargv) ;
+
+ [Const] rt bgetcondlogrels (DOMString vargv) ;
+
+ [Const] rt x__brow_iswhen (DOMString vargv) ;
+
+ [Const] rt x__brow_isinstanceinwhen (DOMString vargv) ;
+
+ [Const] rt bgetwhens (DOMString vargv) ;
+
+ [Const] rt x__brow_whensforinstance (DOMString vargv) ;
+
+ [Const] rt bwritependings (DOMString vargv) ;
+
+ [Const] rt bnumpendings (DOMString vargv) ;
+
+ [Const] rt count_names (DOMString vargv) ;
+
+ [Const] rt aliases (DOMString vargv) ;
+
+ [Const] rt isas (DOMString vargv) ;
+
+ [Const] rt cliques (DOMString vargv) ;
+
+ [Const] rt brow_child_list (DOMString vargv) ;
+
+ [Const] rt bmerge (DOMString vargv) ;
+
+ [Const] rt brefine (DOMString vargv) ;
+
+ [Const] rt bmakealike (DOMString vargv) ;
+
+ [Const] rt b_isplottable (DOMString vargv) ;
+
+ [Const] rt b_prepplotfile (DOMString vargv) ;
+
+ [Const] rt free_all_vars (DOMString vargv) ;
+
+ [Const] rt Asc_SimBinTokenSetOptionsHC (DOMString vargv) ;
+
+ [Const] rt sims (DOMString vargv) ;
+
+ [Const] rt sim_instantiate (DOMString vargv) ;
+
+ [Const] rt sim_unique (DOMString vargv) ;
+
+ [Const] rt sim_reinstantiate (DOMString vargv) ;
+
+ [Const] rt x__sims_copy (DOMString vargv) ;
+
+ [Const] rt x__sims_proto (DOMString vargv) ;
+
+ [Const] rt x__sims_saveinst (DOMString vargv) ;
+
+ [Const] rt sim_destroy (DOMString vargv) ;
+
+ [Const] rt simlistpending (DOMString vargv) ;
+
+ [Const] rt ddefine (DOMString vargv) ;
+
+ [Const] rt ddiffdefine (DOMString vargv) ;
+
+ [Const] rt disp (DOMString vargv) ;
+
+ [Const] rt hier (DOMString vargv) ;
+
+ [Const] rt file_by_type (DOMString vargv) ;
+
+ [Const] rt dchild (DOMString vargv) ;
+
+ [Const] rt drefines_me (DOMString vargv) ;
+
+ [Const] rt drefines_meall (DOMString vargv) ;
+
+ [Const] rt drefinement_tree (DOMString vargv) ;
+
+ [Const] rt dgetparts (DOMString vargv) ;
+
+ [Const] rt disroot_type (DOMString vargv) ;
+
+ [Const] rt x__probe (DOMString vargv) ;
+
+ [Const] rt x__var_analyze (DOMString vargv) ;
+
+ [Const] rt x__rel_analyze (DOMString vargv) ;
+
+ [Const] rt x__userdata_init (DOMString vargv) ;
+
+ [Const] rt x__userdata_create (DOMString vargv) ;
+
+ [Const] rt x__userdata_destroy (DOMString vargv) ;
+
+ [Const] rt x__userdata_save (DOMString vargv) ;
+
+ [Const] rt x__userdata_restore (DOMString vargv) ;
+
+ [Const] rt x__userdata_query (DOMString vargv) ;
+
+ [Const] rt x__userdata_print (DOMString vargv) ;
+
+ [Const] rt get_model_children (DOMString vargv) ;
+
+ [Const] rt slv_checksim (DOMString vargv) ;
+
+ [Const] rt slv_checksys (DOMString vargv) ;
+
+ [Const] rt slv_get_obj_list (DOMString vargv) ;
+
+ [Const] rt slv_set_obj_by_num (DOMString vargv) ;
+
+ [Const] rt slv_get_obj_num (DOMString vargv) ;
+
+ [Const] rt slv_get_parms (DOMString vargv) ;
+
+ [Const] rt set_slv_parms (DOMString vargv) ;
+
+ [Const] rt set_slv_parmsnew (DOMString vargv) ;
+
+ [Const] rt slv_get_parmsnew (DOMString vargv) ;
+
+ [Const] rt slv_get_insttype (DOMString vargv) ;
+
+ [Const] rt slv_get_cost_page (DOMString vargv) ;
+
+ [Const] rt slv_get_stat_page (DOMString vargv) ;
+
+ [Const] rt slv_get_objval (DOMString vargv) ;
+
+ [Const] rt slv_get_instname (DOMString vargv) ;
+
+ [Const] rt slv_get_pathname (DOMString vargv) ;
+
+ [Const] rt slv_get_vr (DOMString vargv) ;
+
+ [Const] rt slvdump (DOMString vargv) ;
+
+ [Const] rt slv_presolve (DOMString vargv) ;
+
+ [Const] rt slv_reanalyze (DOMString vargv) ;
+
+ [Const] rt slv_check_and_reanalyze (DOMString vargv) ;
+
+ [Const] rt slv_set_independent (DOMString vargv) ;
+
+ [Const] rt slv_resolve (DOMString vargv) ;
+
+ [Const] rt slv_solve (DOMString vargv) ;
+
+ [Const] rt slv_iterate (DOMString vargv) ;
+
+ [Const] rt slv_available (DOMString vargv) ;
+
+ [Const] rt slv_number (DOMString vargv) ;
+
+ [Const] rt slv_name (DOMString vargv) ;
+
+ [Const] rt slv_linsol_names (DOMString vargv) ;
+
+ [Const] rt slv_eligible_solver (DOMString vargv) ;
+
+ [Const] rt slv_select_solver (DOMString vargv) ;
+
+ [Const] rt slv_get_solver (DOMString vargv) ;
+
+ [Const] rt slv_flush_solver (DOMString vargv) ;
+
+ [Const] rt slv_import_qlfdid (DOMString vargv) ;
+
+ [Const] rt slv_lnmget (DOMString vargv) ;
+
+ [Const] rt slv_lnmset (DOMString vargv) ;
+
+ [Const] rt slv_set_haltflag (DOMString vargv) ;
+
+ [Const] rt slvhelp (DOMString vargv) ;
+
+ [Const] rt slv_near_bounds (DOMString vargv) ;
+
+ [Const] rt slv_far_from_nominals (DOMString vargv) ;
+
+ [Const] rt slv_monitor (DOMString vargv) ;
+
+ [Const] rt dbg_get_blk_of_var (DOMString vargv) ;
+
+ [Const] rt dbg_get_blk_of_eqn (DOMString vargv) ;
+
+ [Const] rt dbg_get_blk_coords (DOMString vargv) ;
+
+ [Const] rt dbg_get_eqn_of_var (DOMString vargv) ;
+
+ [Const] rt dbg_get_varpartition (DOMString vargv) ;
+
+ [Const] rt dbg_get_eqnpartition (DOMString vargv) ;
+
+ [Const] rt dbg_list_rels (DOMString vargv) ;
+
+ [Const] rt dbg_list_vars (DOMString vargv) ;
+
+ [Const] rt dbg_write_var (DOMString vargv) ;
+
+ [Const] rt dbg_write_unattvar (DOMString vargv) ;
+
+ [Const] rt brow_write_var (DOMString vargv) ;
+
+ [Const] rt dbg_write_rel (DOMString vargv) ;
+
+ [Const] rt brow_write_rel (DOMString vargv) ;
+
+ [Const] rt dbg_write_obj (DOMString vargv) ;
+
+ [Const] rt brow_write_obj (DOMString vargv) ;
+
+ [Const] rt dbg_write_varattr (DOMString vargv) ;
+
+ [Const] rt dbg_write_qlfattr (DOMString vargv) ;
+
+ [Const] rt dbg_rel_included (DOMString vargv) ;
+
+ [Const] rt dbg_var_fixed (DOMString vargv) ;
+
+ [Const] rt dbg_get_incidence (DOMString vargv) ;
+
+ [Const] rt dbg_get_order (DOMString vargv) ;
+
+ [Const] rt dbg_write_incidence (DOMString vargv) ;
+
+ [Const] rt dbg_find_eligible (DOMString vargv) ;
+
+ [Const] rt brow_find_eligible (DOMString vargv) ;
+
+ [Const] rt dbg_consistency_analysis (DOMString vargv) ;
+
+ [Const] rt dbg_global_eligible (DOMString vargv) ;
+
+ [Const] rt dbg_find_activerels (DOMString vargv) ;
+
+ [Const] rt brow_find_activerels (DOMString vargv) ;
+
+ [Const] rt dbg_struct_singular (DOMString vargv) ;
+
+ [Const] rt dbg_num_block_singular (DOMString vargv) ;
+
+ [Const] rt var_free2nom (DOMString vargv) ;
+
+ [Const] rt var_nom2free (DOMString vargv) ;
+
+ [Const] rt dbg_calc_relnoms (DOMString vargv) ;
+
+ [Const] rt dbg_check_rels (DOMString vargv) ;
+
+ [Const] rt dbg_write_slv0_xsys (DOMString vargv) ;
+
+ [Const] rt dbg_write_slv0_sys (DOMString vargv) ;
+
+ [Const] rt dbg_mtxwriteplot (DOMString vargv) ;
+
+ [Const] rt dbg_calc_jacobian (DOMString vargv) ;
+
+ [Const] rt dbghelp (DOMString vargv) ;
+
+ [Const] rt integrate_setup (DOMString vargv) ;
+
+ [Const] rt integrate_cleanup (DOMString vargv) ;
+
+ [Const] rt integrate_set_y_file (DOMString vargv) ;
+
+ [Const] rt integrate_set_obs_file (DOMString vargv) ;
+
+ [Const] rt integrate_logunits (DOMString vargv) ;
+
+ [Const] rt integrate_logformat (DOMString vargv) ;
+
+ [Const] rt integrate_get_samples (DOMString vargv) ;
+
+ [Const] rt integrate_set_samples (DOMString vargv) ;
+
+ [Const] rt integrate_able (DOMString vargv) ;
+
+ [Const] rt x__mtx_norms (DOMString vargv) ;
+
+ [Const] rt mtx_gui_plot_incidence (DOMString vargv) ;
+
+ [Const] rt mtxhelp (DOMString vargv) ;
+
+ [Const] rt u_destroy_units (DOMString vargv) ;
+
+ [Const] rt u_setSIdef (DOMString vargv) ;
+
+ [Const] rt u_getbasedef (DOMString vargv) ;
+
+ [Const] rt u_dump (DOMString vargv) ;
+
+ [Const] rt u_dims (DOMString vargv) ;
+
+ [Const] rt u_dim_setverify (DOMString vargv) ;
+
+ [Const] rt u_dim2num (DOMString vargv) ;
+
+ [Const] rt u_num2dim (DOMString vargv) ;
+
+ [Const] rt u_frombasedim (DOMString vargv) ;
+
+ [Const] rt u_fromatomdim (DOMString vargv) ;
+
+ [Const] rt u_getdimatoms (DOMString vargv) ;
+
+ [Const] rt u_change_baseunit (DOMString vargv) ;
+
+ [Const] rt u_getprec (DOMString vargv) ;
+
+ [Const] rt u_setprec (DOMString vargv) ;
+
+ [Const] rt u_get_atoms (DOMString vargv) ;
+
+ [Const] rt u_get_units (DOMString vargv) ;
+
+ [Const] rt u_set_user (DOMString vargv) ;
+
+ [Const] rt u_get_user (DOMString vargv) ;
+
+ [Const] rt u_get_list (DOMString vargv) ;
+
+ [Const] rt u_clear_user (DOMString vargv) ;
+
+ [Const] rt u_getval (DOMString vargv) ;
+
+ [Const] rt u_browgetval (DOMString vargv) ;
+
+ [Const] rt u_slvgetrelval (DOMString vargv) ;
+
+ [Const] rt u_slvgetvarval (DOMString vargv) ;
+
+ [Const] rt u_slvgetobjval (DOMString vargv) ;
+
+ [Const] rt uhelp (DOMString vargv) ;
+
+ [Const] rt srefine (DOMString vargv) ;
+
+ [Const] rt smerge (DOMString vargv) ;
+
+ [Const] rt ascloadwin (DOMString vargv) ;
+
+ [Const] rt gnutext (DOMString vargv) ;
+
+ [Const] rt help (DOMString vargv);
+
+};

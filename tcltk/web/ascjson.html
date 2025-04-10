@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<script src="output.js" crossorigin="anonymous"></script>
+	<script>
+		var mod;
+		var world;
+		async function create_mod() {
+			mod = await createMyModule();
+		};
+		window.onload = async function() {
+			await create_mod();
+		}
+		
+		function displayOutput(x) {
+			const elmt = document.createElement("p");
+			elmt.appendChild(document.createTextNode(x));
+			document.body.appendChild(elmt);
+		}
+		function run_ascend() {
+			world = new mod.ascjson();
+			rt1 = world.libr_destroy_types("dummy");
+			console.log(rt1.rc);
+			console.log(rt1.v);
+			console.log(rt1.t);
+			rt2 = world.librread(["dummy", "/models/basemodel.a4l"].join("\v"));
+			console.log(rt2.rc);
+			console.log(rt2.v);
+			console.log(rt2.t);
+			rt3 = world.libr_types_in_module(["dummy", "basemodel.a4l<0>"].join("\v"));
+			console.log(rt3.rc);
+			console.log(rt3.v);
+			console.log(rt3.t);
+		}
+	</script>
+</head>
+
+<body>
+	<button onclick="run_ascend();">try ascend interpreter</button>
+	<!-- buttons wont function properly since async not set up properly
+	<button onclick="console.log(f.getf());">log Foo f</button>
+	<button onclick="console.log(b.getf());">log Bar f</button>
+	<button onclick="displayOutput(f.getf());">append Foo f</button>
+	<button onclick="displayOutput(b.getf());">append Bar f</button>
+	<br>
+	<input id="bar-f" type="number" placeholder="Insert Number">
+	<button onclick="b.setf(document.getElementById('bar-f').value)">set Bar.f</button>
+		--!>
+</body>
+
+</html>

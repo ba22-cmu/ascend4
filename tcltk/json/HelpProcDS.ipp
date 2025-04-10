@@ -1,23 +1,19 @@
 /*
- *  HelpProc.c
+ *  HelpProcDS.c
  *  ASCEND IV interface help functions.
  *  by Benjamin Andrew Allan
- *  Created April 29, 1997
- *  Version: $Revision: 1.12 $
- *  Version control file: $RCSfile: HelpProc.c,v $
- *  Date last modified: $Date: 2003/08/23 18:43:06 $
- *  Last modified by: $Author: ballan $
+ *  Created April 2025
  *
- *  This file is part of the ASCEND Tcl/Tk interface
+ *  This file is part of the ASCEND general utilities 
  *
- *  Copyright 1997, Carnegie Mellon University
+ *  Copyright 2025, Benjamin Allan
  *
- *  The ASCEND Tcl/Tk interface is free software; you can redistribute
+ *  The ASCEND software is free software; you can redistribute
  *  it and/or modify it under the terms of the GNU General Public License as
  *  published by the Free Software Foundation; either version 2 of the
  *  License, or (at your option) any later version.
  *
- *  The ASCEND Tcl/Tk interface is distributed in hope that it will be
+ *  The ASCEND software is distributed in hope that it will be
  *  useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *  General Public License for more details.
@@ -29,12 +25,12 @@
 #define ASC_BUILDING_INTERFACE
 
 #include <stdarg.h>
-#include <tcl.h>
 #include "config.h"
 #include <ascend/general/ascMalloc.h>
 #include <ascend/general/list.h>
 #include <ascend/general/pool.h>
-#include "HelpProc.h"
+#include "HelpProcDS.hpp"
+#define HALL ASC_ALL_STRING
 
 struct HelpData {
   struct HelpData *next; /* if we decide we need a hash table use this */
@@ -58,9 +54,9 @@ static struct gl_list_t *g_helpgroups = NULL;
 /* this list is responsible for all allocated HelpGroup. */
 
 
-char *HelpBuildString(char *first,...)
+char *ascjson::HelpBuildString(const char *first,...)
 {
-  char *argv[MAXHELPARGS];
+  const char *argv[MAXHELPARGS];
   int argl[MAXHELPARGS];
   char *str;
   char *result;
@@ -107,35 +103,35 @@ char *HelpBuildString(char *first,...)
   return result;
 }
 
-int Asc_HelpCheck(ClientData cdata, Tcl_Interp *interp,
-                  int argc, CONST84 char *argv[])
+int ascjson::Asc_HelpCheckDS(Asc_DString *hptr, int argc, char **argv)
 {
-  (void)cdata; /* shut up gcc */
   if (argc >=2 && argv[1][0]=='-') {
     if (argv[1][1]=='h') {
-      Tcl_AppendResult(interp,argv[0],":\n",(char *)NULL);
-      (void)Asc_HelpGetShort(interp,argv[0]);
-      Tcl_AppendResult(interp,"\n",(char *)NULL);
-      (void)Asc_HelpGetUsage(interp,argv[0]);
-      return TCL_BREAK;
+      Asc_DStringAppend(hptr, argv[0], HALL);
+      Asc_DStringAppend(hptr, ":\n", 2);
+      (void)Asc_HelpGetShortDS(hptr, argv[0]);
+      Asc_DStringAppend(hptr,"\n",1);
+      (void)Asc_HelpGetUsageDS(hptr, argv[0]);
+      return HELP_BREAK;
     }
     if (argv[1][1]=='H') {
-      Tcl_AppendResult(interp,argv[0],":\n",(char *)NULL);
-      (void)Asc_HelpGetLong(interp,argv[0]);
-      return TCL_BREAK;
+      Asc_DStringAppend(hptr, argv[0], HALL);
+      Asc_DStringAppend(hptr, ":\n",2);
+      (void)Asc_HelpGetLongDS(hptr, argv[0]);
+      return HELP_BREAK;
     }
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
 
-int Asc_HelpInit(void)
+int ascjson::Asc_HelpInit(void)
 {
   assert(g_helplist==NULL);
   assert(g_helpgroups==NULL);
   g_helplist = gl_create(200L);
   g_helpgroups = gl_create(20L);
-  return TCL_OK;
+  return HELP_OK;
 }
 
 static
@@ -153,7 +149,7 @@ void DestroyHelpData(void *g)
   }
 }
 
-int Asc_HelpDestroy(void)
+void ascjson::Asc_HelpDestroy(void)
 {
   gl_iterate(g_helpgroups,DestroyHelpGroup);
   gl_free_and_destroy(g_helpgroups);
@@ -162,7 +158,6 @@ int Asc_HelpDestroy(void)
   gl_free_and_destroy(g_helplist);
 
   g_helplist = g_helpgroups = NULL;
-  return TCL_OK;
 }
 
 /* returns the strcmp of the names of two helpdata */
@@ -202,7 +197,7 @@ int CompareHelpGroup(struct HelpGroup *h1,struct HelpGroup *h2)
  * such command is known.
  */
 static
-struct HelpData *FindHelpData(CONST char *name)
+struct HelpData *FindHelpData(const char *name)
 {
   struct HelpData srch;
   unsigned long pos;
@@ -221,7 +216,7 @@ struct HelpData *FindHelpData(CONST char *name)
  * such command is known.
  */
 static
-struct HelpGroup *FindHelpGroup(CONST char *group)
+struct HelpGroup *FindHelpGroup(const char *group)
 {
   struct HelpGroup srch;
   unsigned long pos;
@@ -240,7 +235,7 @@ struct HelpGroup *FindHelpGroup(CONST char *group)
  * Returns NULL if error occurs.
  */
 static
-struct HelpGroup *CreateHelpGroup(CONST char *group, CONST char *explanation)
+struct HelpGroup *CreateHelpGroup(const char *group, const char *explanation)
 {
   struct HelpGroup *g;
   g = (struct HelpGroup *)ascmalloc(sizeof(struct HelpGroup));
@@ -264,7 +259,7 @@ struct HelpGroup *CreateHelpGroup(CONST char *group, CONST char *explanation)
  * Returns tcl style int values.
  */
 static
-int AssignHelpGroup(struct HelpData *d, CONST char *group)
+int AssignHelpGroup(struct HelpData *d, const char *group)
 {
   struct HelpGroup *g;
   unsigned long pos;
@@ -286,11 +281,11 @@ int AssignHelpGroup(struct HelpData *d, CONST char *group)
   if (g == NULL) {
     g = CreateHelpGroup(group,"Explanation: none given yet.");
     if (g==NULL) {
-      return TCL_ERROR;
+      return HELP_ERROR;
     }
   }
   gl_insert_sorted(g->data,d,(CmpFunc)CompareHelpData);
-  return TCL_OK;
+  return HELP_OK;
 }
 
 /* Inserts help information into the list, or if the same
@@ -300,11 +295,11 @@ int AssignHelpGroup(struct HelpData *d, CONST char *group)
  * Currently only possible error is insufficient memory.
  */
 static
-int AddHelpData(CONST char *name,
-                CONST char *group,
-                CONST char *usage,
-                CONST char *shorth,
-                CONST char *longh)
+int AddHelpData(const char *name,
+                const char *group,
+                const char *usage,
+                const char *shorth,
+                const char *longh)
 {
   struct HelpData *d;
 
@@ -312,7 +307,7 @@ int AddHelpData(CONST char *name,
   if (d == NULL) {
     d = (struct HelpData *)ascmalloc(sizeof(struct HelpData));
     if (d==NULL) {
-      return TCL_ERROR;
+      return HELP_ERROR;
     }
     d->group = NULL;
   }
@@ -323,36 +318,32 @@ int AddHelpData(CONST char *name,
   d->longh = longh;
   AssignHelpGroup(d,group);
   gl_insert_sorted(g_helplist,d,(CmpFunc)CompareHelpData);
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_HelpDefineGroup(CONST char *group, CONST char *explanation)
+int ascjson::Asc_HelpDefineGroup(const char *group, CONST char *explanation)
 {
   struct HelpGroup *g;
   if (explanation==NULL ||
       strlen(explanation)<11 ||
       strncmp(explanation,"Explanation",11)!=0) {
-    return TCL_ERROR;
+    return HELP_ERROR;
   }
   g = FindHelpGroup(group);
   if (g == NULL) {
     g = CreateHelpGroup(group,explanation);
     if (g==NULL) {
-      return TCL_ERROR;
+      return HELP_ERROR;
     }
-    return TCL_OK;
+    return HELP_OK;
   } else {
     g->explanation = explanation;
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
 
-int Asc_HelpDefine(CONST char *name,
-                   CONST char *group,
-                   CONST char *usage,
-                   CONST char *shorth,
-                   HLFunc bigstring)
+int ascjson::Asc_HelpDefine(const char *name, const char *group, const char *usage, const char *shorth, HLFunc bigstring)
 {
   assert(g_helplist!=NULL);
   assert(g_helpgroups!=NULL);
@@ -363,179 +354,181 @@ int Asc_HelpDefine(CONST char *name,
   }
 }
 
-CONST char *Asc_HelpGetShort(Tcl_Interp *interp, CONST84 char *name)
+const char *ascjson::Asc_HelpGetShortDS(Asc_DString *hptr, const char *name)
 {
   struct HelpData *d;
   d = FindHelpData(name);
   if (d==NULL) {
     return NULL;
   } else {
-    Tcl_AppendResult(interp,d->shorth,(char *)NULL);
+    Asc_DStringAppend(hptr,d->shorth, HALL);
     return d->shorth;
   }
 }
 
-CONST char *Asc_HelpGetLong(Tcl_Interp *interp, CONST84 char *name)
+const char *ascjson::Asc_HelpGetLongDS(Asc_DString *hptr, const char *name)
 {
   struct HelpData *d;
   d = FindHelpData(name);
   if (d==NULL) {
     return NULL;
   } else {
-    Tcl_AppendResult(interp,d->longh,(char *)NULL);
+    Asc_DStringAppend(hptr,d->longh, HALL);
     return d->longh;
   }
 }
 
-CONST char *Asc_HelpGetUsage(Tcl_Interp *interp, CONST84 char *name)
+const char *ascjson::Asc_HelpGetUsageDS(Asc_DString *hptr, const char *name)
 {
   struct HelpData *d;
   d = FindHelpData(name);
   if (d==NULL) {
     return NULL;
   } else {
-    Tcl_AppendResult(interp,d->usage,(char *)NULL);
+    Asc_DStringAppend(hptr,d->usage, HALL);
     return d->usage;
   }
 }
 
 static
-void AppendHelpElements(Tcl_Interp *interp,struct gl_list_t *dlist)
+void AppendHelpElements(Asc_DString *hptr,struct gl_list_t *dlist)
 {
   unsigned long c,len;
   struct HelpData *d;
 
-  if (interp==NULL || dlist==NULL){
+  if (hptr==NULL || dlist==NULL){
     return;
   }
   len = gl_length(dlist);
   for (c=1;c <=len; c++) {
     d = (struct HelpData *)gl_fetch(dlist,c);
-    Tcl_AppendElement(interp,(char *)d->name);
+    Asc_DStringAppend(hptr,d->name, HALL);
+    Asc_DStringAppend(hptr,"\v", 1);
   }
   return;
 }
 
 static
-void AppendGroupElements(Tcl_Interp *interp, struct HelpGroup *g)
+void AppendGroupElements(Asc_DString *hptr, struct HelpGroup *g)
 {
   assert(g!=NULL);
-  AppendHelpElements(interp,g->data);
+  AppendHelpElements(hptr,g->data);
 }
 
-int Asc_HelpGetGroup(Tcl_Interp *interp, CONST84 char *gname)
+int ascjson::Asc_HelpGetGroupDS(Asc_DString *hptr, const char *gname)
 {
   struct HelpGroup *g;
 
   g = FindHelpGroup(gname);
   if (g==NULL) {
-    Tcl_SetResult(interp, "{Help group undefined}", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "Help group undefined");
+    return HELP_ERROR;
   }
   if (g->explanation !=NULL) {
-    Tcl_AppendElement(interp,(char *)g->explanation);
+    Asc_DStringAppend(hptr,(char *)g->explanation, HALL);
   }
-  AppendGroupElements(interp,g);
-  return TCL_OK;
+  AppendGroupElements(hptr,g);
+  return HELP_OK;
 }
 
 
-int Asc_HelpCommandGroups(Tcl_Interp *interp)
+int ascjson::Asc_HelpCommandGroupsDS(Asc_DString *hptr)
 {
   unsigned long c,len;
   struct HelpGroup *g;
 
-  if (interp==NULL || g_helpgroups==NULL){
-    return TCL_ERROR;
+  if (hptr==NULL || g_helpgroups==NULL){
+    return HELP_ERROR;
   }
   len = gl_length(g_helpgroups);
   for (c=1;c <=len; c++) {
     g = (struct HelpGroup *)gl_fetch(g_helpgroups,c);
-    Tcl_AppendElement(interp,(char *)g->gname);
+    Asc_DStringAppend(hptr, g->gname, HALL);
+    Asc_DStringAppend(hptr, "\v", 1);
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_HelpCommandList(Tcl_Interp *interp)
+int ascjson::Asc_HelpCommandListDS(Asc_DString *hptr)
 {
-  if (interp==NULL || g_helplist==NULL){
-    return TCL_ERROR;
+  if (hptr==NULL || g_helplist==NULL){
+    return HELP_ERROR;
   }
-  AppendHelpElements(interp,g_helplist);
-  return TCL_OK;
+  AppendHelpElements(hptr,g_helplist);
+  return HELP_OK;
 }
 
-int Asc_HelpCommandsByGroups(Tcl_Interp *interp)
+int ascjson::Asc_HelpCommandsByGroupsDS(Asc_DString *hptr)
 {
   unsigned long c,len;
   struct HelpGroup *g;
 
   if (g_helpgroups==NULL) {
-    return TCL_ERROR;
+    return HELP_ERROR;
   }
   len = gl_length(g_helpgroups);
   for (c=1;c <=len; c++) {
     g = (struct HelpGroup *)gl_fetch(g_helpgroups,c);
-    Tcl_AppendResult(interp," {GROUP ",g->gname,":} ",(char *)NULL);
-    AppendGroupElements(interp,g);
+    Asc_DStringAppend(hptr, "\v{GROUP ", 7);
+    Asc_DStringAppend(hptr, g->gname, HALL);
+    Asc_DStringAppend(hptr, ":}\v",3);
+    AppendGroupElements(hptr,g);
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
-STDHLF(Asc_HelpCmd,(Asc_HelpCmdHL1,Asc_HelpCmdHL2,Asc_HelpCmdHL3,
+STDHLF(Asc_HelpCmdHC, (Asc_HelpCmdHL1,Asc_HelpCmdHL2,Asc_HelpCmdHL3,
  Asc_HelpCmdHL4,HLFSTOP));
 
-#define ADDHELPSTR(s) Tcl_AppendResult(interp,s,(char *)NULL)
+#define ADDHELPSTR(s) Asc_DStringAppend(hptr,s,HALL)
 /* appends s to the tcl result */
 
-int Asc_HelpCmd(ClientData cdata, Tcl_Interp *interp, int argc, CONST84 char *argv[])
+int ascjson::Asc_HelpCmdDS(Asc_DString *hptr, int argc, char *argv[])
 {
-  CONST char *um, *sm, *lm;
-  UNUSED_PARAMETER(cdata);
+  const char *um, *sm, *lm;
 
-  ASCUSE;
 
   if (argc==1) {
-    Asc_HelpGetLong(interp,argv[0]);
-    return TCL_OK;
+    Asc_HelpGetLongDS(hptr, argv[0]);
+    return HELP_OK;
   }
   /* isn't -H*  or -h*  */
   if (argc==2) {
-    if (Asc_HelpGetGroup(interp,argv[1]) == TCL_OK) {
-      return TCL_OK;
+    if (Asc_HelpGetGroupDS(hptr, argv[1]) == HELP_OK) {
+      return HELP_OK;
     }
     /* isn't a group */
-    Tcl_ResetResult(interp);
+    Asc_DStringFree(hptr);
     ADDHELPSTR("Usage: ");
-    um =  Asc_HelpGetUsage(interp,argv[1]);
+    um =  Asc_HelpGetUsageDS(hptr, argv[1]);
     ADDHELPSTR("\nSummary: ");
-    sm = Asc_HelpGetShort(interp,argv[1]);
+    sm = Asc_HelpGetShortDS(hptr, argv[1]);
     ADDHELPSTR("\nDetails:\n");
-    lm = Asc_HelpGetLong(interp,argv[1]);
+    lm = Asc_HelpGetLongDS(hptr, argv[1]);
     if (um == NULL && sm == NULL && lm == NULL) {
-      Tcl_ResetResult(interp);
+      Asc_DStringFree(hptr);
       /* isn't a regular command, could be a help subcommand. */
       if (strcmp(argv[1],"all") == 0) {
-        Asc_HelpCommandList(interp);
-        return TCL_OK;
+        Asc_HelpCommandListDS(hptr);
+        return HELP_OK;
       }
       if (strcmp(argv[1],"commands") == 0) {
-        Asc_HelpCommandsByGroups(interp);
-        return TCL_OK;
+        Asc_HelpCommandsByGroupsDS(hptr);
+        return HELP_OK;
       }
       if (strcmp(argv[1],"groups") == 0) {
-        Asc_HelpCommandGroups(interp);
-        return TCL_OK;
+        Asc_HelpCommandGroupsDS(hptr);
+        return HELP_OK;
       }
       ADDHELPSTR("Unknown or undocumented command: ");
       ADDHELPSTR(argv[1]);
-      return TCL_ERROR;
+      return HELP_ERROR;
     } else {
-      return TCL_OK;
+      return HELP_OK;
     }
   }
   /* may want more here later. */
-  Tcl_SetResult(interp, "Too many arguments to help. Try help -h", TCL_STATIC);
-  return TCL_ERROR;
+  Asc_DStringSet(hptr, "Too many arguments to help. Try help -h");
+  return HELP_ERROR;
 }
 

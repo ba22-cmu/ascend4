@@ -1,0 +1,254 @@
+  enum qtype {
+    q_error,
+    q_ancestors,
+    q_basemethods,
+    q_catalog,
+    q_childnames,
+    q_childinfo,
+    q_definition,
+    q_exists,
+    q_externalfunctions,
+    q_findtype,
+    q_filetypes,
+    q_fundamentals,
+    q_language,
+    q_methods,
+    q_modulelist,
+    q_notes,
+    q_notesdump,
+    q_notekinds,
+    q_notesmatch,
+    q_notesdblist,
+    q_roottypes
+  } q = q_error;
+  symchar *type=NULL;
+  symchar *method=NULL;
+  symchar *child=NULL;
+  symchar *language=NULL;
+  symchar *dbid=NULL;
+  int mtype=0;
+  int i;
+  int status;
+  long noteptr = (long)NULL; /* parsed as long and cast to ptr. */
+  long tokenptr = (long)NULL; /* parsed as long and cast to ptr. */
+  char *pattern = NULL;
+  struct TypeDescription *desc=NULL;
+
+  ASCUSE;  /* see if first arg is -help */
+
+  if (argc < 2) {
+    Tcl_AppendResult(interp,Asc_LibrQueryTypeCmdHN " called without arguments",
+                     (char *)NULL);
+    return TCL_ERROR;
+  }
+  if (strcmp(argv[1],"-ancestors")==0) {
+    q = q_ancestors;
+  }
+  if (strcmp(argv[1],"-basemethods")==0) {
+    q = q_basemethods;
+  }
+  if (strcmp(argv[1],"-catalog")==0) {
+    q = q_catalog;
+  }
+  if (strcmp(argv[1],"-childnames")==0) {
+    q = q_childnames;
+  }
+  if (strcmp(argv[1],"-childinfo")==0) {
+    q = q_childinfo;
+  }
+  if (strcmp(argv[1],"-definition")==0) {
+    q = q_definition;
+  }
+  if (strcmp(argv[1],"-exists")==0) {
+    q = q_exists;
+  }
+  if (strcmp(argv[1],"-externalfunctions")==0) {
+    q = q_externalfunctions;
+  }
+  if (strcmp(argv[1],"-findtype")==0) {
+    q = q_findtype;
+  }
+  if (strcmp(argv[1],"-filetypes")==0) {
+    q = q_filetypes;
+  }
+  if (strcmp(argv[1],"-fundamentals")==0) {
+    q = q_fundamentals;
+  }
+  if (strcmp(argv[1],"-language")==0) {
+    q = q_language;
+  }
+  if (strcmp(argv[1],"-methods")==0) {
+    q = q_methods;
+  }
+  if (strcmp(argv[1],"-modulelist")==0) {
+    q = q_modulelist;
+  }
+  if (strcmp(argv[1],"-notesdblist")==0) {
+    q = q_notesdblist;
+  }
+  if (strcmp(argv[1],"-notes")==0) {
+    q = q_notes;
+  }
+  if (strcmp(argv[1],"-notesdump")==0) {
+    q = q_notesdump;
+  }
+  if (strcmp(argv[1],"-notekinds")==0) {
+    q = q_notekinds;
+  }
+  if (strcmp(argv[1],"-notesmatch")==0) {
+    q = q_notesmatch;
+  }
+  if (strcmp(argv[1],"-roottypes")==0) {
+    q = q_roottypes;
+  }
+  if (q==q_error) {
+    Tcl_AppendResult(interp,"Unknown option '",argv[1],"' to ",
+                     Asc_LibrQueryTypeCmdHN,(char *)NULL);
+    return TCL_ERROR;
+  }
+  /* pick off the options */
+  for (i=2; i < argc; /* ifs do increment */ ) {
+    if (strcmp(argv[i],"-type")==0) {
+      if (i < (argc-1)) {
+        type = AddSymbol(argv[i+1]);
+      }
+      i += 2;
+      continue;
+    }
+    if (strcmp(argv[i],"-dbid")==0) {
+      if (i < (argc-1)) {
+        dbid = AddSymbol(argv[i+1]);
+      }
+      i += 2;
+      continue;
+    }
+    if (strcmp(argv[i],"-child")==0) {
+      if (i < (argc-1)) {
+        child = AddSymbol(argv[i+1]);
+      }
+      i += 2;
+      continue;
+    }
+    if (strcmp(argv[i],"-method")==0) {
+      if (i < (argc-1)) {
+        method = AddSymbol(argv[i+1]);
+      }
+      i += 2;
+      continue;
+    }
+    if (strcmp(argv[i],"-pattern")==0) {
+      if (i < (argc-1)) {
+        pattern = QUIET(argv[i+1]);
+      }
+      i += 2;
+      continue;
+    }
+    if (strcmp(argv[i],"-language")==0) {
+      if (i < (argc-1)) {
+        language = AddSymbol(argv[i+1]);
+      }
+      i += 2;
+      continue;
+    }
+    if (strcmp(argv[i],"-destroytoken")==0 ||
+        strcmp(argv[i],"-notestoken")==0) {
+      if (i < (argc-1)) {
+        status = Tcl_ExprLong(interp,argv[i+1],&tokenptr);
+        if (status != TCL_OK) {
+          return status;
+        }
+      }
+      i += 2;
+      continue;
+    }
+    if (strcmp(argv[i],"-record")==0) {
+      if (i < (argc-1)) {
+        status = Tcl_ExprLong(interp,argv[i+1],&noteptr);
+        if (status != TCL_OK) {
+          return status;
+        }
+      }
+      i += 2;
+      continue;
+    }
+    if (strcmp(argv[i],"-mtype")==0 ||
+        strcmp(argv[i],"-textwidth")==0) {
+      if (i < (argc-1)) {
+        status = Tcl_GetInt(interp,argv[i+1],&mtype);
+        if (status != TCL_OK) {
+          return status;
+        }
+      }
+      i += 2;
+      continue;
+    }
+    Tcl_AppendResult(interp,"Unknown option '",argv[i],"' to ",
+                     Asc_LibrQueryTypeCmdHN,(char *)NULL);
+    return TCL_ERROR;
+  }
+
+  if (type != NULL) {
+    desc = FindType(type);
+    if (q != q_exists && desc == NULL) {
+      Tcl_AppendResult(interp,"Unknown type '",SCP(type),"' to ",
+                       Asc_LibrQueryTypeCmdHN,(char *)NULL);
+      return TCL_ERROR;
+    }
+  }
+  switch (q) {
+  case q_ancestors:
+    return LibrAncestorType(interp,desc);
+  case q_basemethods:
+    return LibrModelDefinitionMethods(interp);
+  case q_catalog:
+    return LibrCatalog(interp);
+  case q_childnames:
+    return LibrTypeChildren(interp,desc);
+  case q_childinfo:
+    return LibrChildInfo(interp,desc,child);
+  case q_definition:
+    return LibrUnimplemented(interp,argv);
+  case q_exists:
+    if (desc==NULL) {
+      Tcl_SetResult(interp,"0",TCL_STATIC);
+    } else {
+      Tcl_SetResult(interp,"1",TCL_STATIC);
+    }
+    return TCL_OK;
+  case q_externalfunctions:
+    return LibrExternalFuncs(interp);
+  case q_findtype:
+    return LibrFindType(interp,desc);
+  case q_filetypes:
+    return LibrFileExtsCmd(interp);
+  case q_fundamentals:
+    return LibrGetFundamentals(interp);
+  case q_language:
+    return LibrUnimplemented(interp,argv);
+  case q_methods:
+    return LibrMethods(interp,desc);
+  case q_modulelist:
+    return LibrModuleList(interp,mtype);
+  case q_notekinds:
+    return LibrNoteLangs(interp,dbid);
+  case q_notesdblist:
+    return LibrNoteDBList(interp);
+  case q_notes:
+    return LibrGetNotes(interp,type,language,child,method,
+                        noteptr,tokenptr,dbid);
+  case q_notesmatch:
+    return LibrMatchNotes(interp,pattern,tokenptr,dbid);
+  case q_notesdump:
+    if (mtype == 0) {
+      mtype = 15;
+    }
+    return LibrDumpNotes(interp,mtype,tokenptr,dbid);
+  case q_roottypes:
+    return LibrRootTypes(interp);
+  default:
+    Tcl_AppendResult(interp,"Unhandled option '",argv[1],"' in ",
+                     Asc_LibrQueryTypeCmdHN,(char *)NULL);
+    break;
+  }
+  return TCL_ERROR;
+}
