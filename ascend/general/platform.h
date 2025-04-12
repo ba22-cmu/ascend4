@@ -281,6 +281,13 @@ ASC_DLLSPEC FILE*g_ascend_information;    /**< File stream to receive general me
 # define ASCINF stderr
 #endif
 
+/* macros for stringify and join */
+#ifndef STR
+#define STR(x) #x
+#define LHN(NAME) LHN1(NAME, HLF)
+#define LHN1(NAME, SUFFIX) LHN2(NAME, SUFFIX)
+#define LHN2(NAME, SUFFIX) NAME ##  SUFFIX
+#endif
 
 /*
  *  file pointers for whine. they default to stderr. if you change

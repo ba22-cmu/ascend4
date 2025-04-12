@@ -81,7 +81,7 @@ extern void (*InterfacePtrDelete)(struct Instance *i, char *ptr);
  *  </pre>
  */
 
-extern void (*InterfaceNotify)(char *ptr, struct Instance *old, struct Instance *new);
+extern void (*InterfaceNotify)(char *ptr, struct Instance *iold, struct Instance *inew);
 /**<
  *  This global variable should be provided by the interface.  It is a
  *  pointer to a void function(procedure).  This procedure will be called

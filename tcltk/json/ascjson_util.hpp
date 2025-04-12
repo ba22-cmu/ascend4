@@ -46,12 +46,12 @@ struct jcache;
 #define VQUIET(a) a.c_str()
 #define QUIET(a) a
 #define QUIET2(a) a
+#ifndef STR
 #define STR(x) #x
-
 #define LHN(NAME) LHN1(NAME, HLF)
 #define LHN1(NAME, SUFFIX) LHN2(NAME, SUFFIX)
 #define LHN2(NAME, SUFFIX) NAME ##  SUFFIX
-
+#endif
 /** add vtab separated entry to string */
 #define VTcl_AppendElement(a, b) \
 	Asc_DStringAppend(a, b, HALL); \

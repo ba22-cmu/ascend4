@@ -401,7 +401,7 @@ Library::getAnnotationDatabase(){
 vector<UnitsM>
 Library::getUnits() const{
 	vector<UnitsM> v;
-    register unsigned long c;
+    unsigned long c;
     const struct Units *p;
     for(c = 0;c<UNITS_HASH_SIZE;c++) {
 		for(p = g_units_hash_table[c];p!=NULL;p = p->next){
