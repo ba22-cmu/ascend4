@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+	<script type="text/javascript" src="rt.js" crossorigin="anonymous"> </script>
+<script>
+		var instance;
+		// this is supposed to not finish until all is well. (via webidl binder)
+		// seem to be missing a promise here... unless that is 'then'
+		createMyModule().then(function (Module) {
+			instance = Module;
+		});
+
+		/*
+		async function create_mod() {
+			instance = await createMyModule();
+		};
+		window.onload = async function() {
+			await create_mod();
+		}
+		*/
+		
+		function run_rt() {
+			console.log("called run_rt")
+			rt1 = new instance.rc();
+			console.log(rt1.e);
+			console.log(rt1.v);
+			console.log(rt1.t);
+			destroy(rt1);
+		}
+	</script>
+<head>
+<body>
+	<button onclick="run_rt();">try rt</button>
+</body>
+</html>

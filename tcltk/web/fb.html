@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+	<script type="text/javascript" src="fbout.js" crossorigin="anonymous"> </script>
+<script>
+		var instance;
+		// this is supposed to not finish until all is well. (via webidl binder)
+		// seem to be missing a promise here... unless that is 'then'
+		createMyModule().then(function (Module) {
+			instance = Module;
+		});
+
+		function run_fb() {
+			console.log("called run_fb")
+			f = new instance.Foo();
+			console.log(b.getf());
+			b.setf(17);
+			console.log(b.getf());
+		}
+	</script>
+<head>
+<body>
+	<button onclick="run_fb();">try rt</button>
+</body>
+</html>

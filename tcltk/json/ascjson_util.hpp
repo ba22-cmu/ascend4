@@ -3,18 +3,29 @@
 #include <string>
 #include <cstdlib>
 
+
+#if 0
 enum vtype {
 	SVjson,
 	SVjson5,
 	SVcstr
 };
+#define enum
+#else
+typedef int vtype;
+#define SVjson 0
+#define SVjson5 1
+#define SVcstr 2
+#define ENUM
+#endif
+
 
 struct rc {
-	rc(std::string msg, int e, enum vtype t): s(msg), e(e), v(s.c_str()), t(t) {}
+	rc(std::string msg, int e, ENUM vtype t): s(msg), e(e), v(s.c_str()), t(t) {}
 	std::string s;
 	int e; // possibly a -ERRNO value, or see call documentation.
 	const char *v; 
-	enum vtype t;
+	ENUM vtype t;
 };
 
 typedef const struct rc * rcp;

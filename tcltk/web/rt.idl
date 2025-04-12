@@ -1,0 +1,6 @@
+interface rc {
+	void rc();
+	readonly attribute long e;
+	[Const] readonly attribute DOMString v;
+	readonly attribute long t;
+};

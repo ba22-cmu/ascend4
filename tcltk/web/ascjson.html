@@ -2,24 +2,40 @@
 <html>
 
 <head>
-	<script src="output.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+	<script type="text/javascript" src="output.js" crossorigin="anonymous"></script>
 	<script>
-		var mod;
+		var instance;
 		var world;
+		// this is supposed to not finish until all is well. (via webidl binder)
+		createMyModule().then(module => {
+			instance = module;
+		});
+
+		/*
 		async function create_mod() {
-			mod = await createMyModule();
+			instance = await createMyModule();
 		};
 		window.onload = async function() {
 			await create_mod();
 		}
+		*/
 		
-		function displayOutput(x) {
-			const elmt = document.createElement("p");
-			elmt.appendChild(document.createTextNode(x));
-			document.body.appendChild(elmt);
-		}
+//		function displayOutput(x) {
+//			const elmt = document.createElement("p");
+//			elmt.appendChild(document.createTextNode(x));
+//			document.body.appendChild(elmt);
+//		}
+//		
 		function run_ascend() {
-			world = new mod.ascjson();
+			console.log("called run_ascend")
+			if (world == null) {
+				console.log("creating the world")
+				world = new instance.ascjson();
+				console.log("joy to the world")
+			}
 			rt1 = world.libr_destroy_types("dummy");
 			console.log(rt1.rc);
 			console.log(rt1.v);
@@ -34,9 +50,6 @@
 			console.log(rt3.t);
 		}
 	</script>
-</head>
-
-<body>
 	<button onclick="run_ascend();">try ascend interpreter</button>
 	<!-- buttons wont function properly since async not set up properly
 	<button onclick="console.log(f.getf());">log Foo f</button>

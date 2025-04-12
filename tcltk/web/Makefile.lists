@@ -92,8 +92,9 @@ CSRCS_CORE = \
 ../../ascend/linear/rankiba2.c \
 ../../ascend/linear/densemtx.c \
 ../../ascend/linear/linsolqr.c \
-../../ascend/system/calc.c \
 ../../ascend/system/slv_stdcalls.c \
+../../ascend/system/block.c \
+../../ascend/system/calc.c \
 ../../ascend/system/diffvars.c \
 ../../ascend/system/analyze.c \
 ../../ascend/system/rel.c \
@@ -102,7 +103,6 @@ CSRCS_CORE = \
 ../../ascend/system/logrelman.c \
 ../../ascend/system/incidence.c \
 ../../ascend/system/conditional.c \
-../../ascend/system/block.c \
 ../../ascend/system/relman.c \
 ../../ascend/system/model_reorder.c \
 ../../ascend/system/graph.c \

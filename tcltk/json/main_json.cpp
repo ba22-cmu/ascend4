@@ -16,7 +16,11 @@
 */
 #include "config.h"
 
+extern "C" {
+
 ASC_IMPORT int AscDriver(int, CONST char **argv);
+
+}
 
 #ifdef __WIN32__
 static void setargv(int*, char ***);

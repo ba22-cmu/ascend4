@@ -119,6 +119,7 @@ static char build_name[]=TIMESTAMP;
 	from the Tk8.0 distribution.  See the files tkMain.c and tkAppInit.c
 	in the Tk sources.
 */
+extern "C" {
 int AscDriver(int argc, CONST char **argv)
 {
 
@@ -127,7 +128,8 @@ int AscDriver(int argc, CONST char **argv)
   /*
    *  Create the interpreter
    */
-	ascjson	*world = new ascjson("try\vme");
+	ascjson	*world = new ascjson();
+	world->config("foo");
 
 	const char *libdestroy = Asc_LibrDestroyTypesCmdHN;
 	auto r1 = world->Asc_LibrDestroyTypesCmdHC(libdestroy);
@@ -144,10 +146,12 @@ int AscDriver(int argc, CONST char **argv)
 	printf("%d\n", r3->e);
 	printf("%s\n", r3->v);
 	// should return testcmumodel cmumodel your_site_models catch_Word_model as a vtab list
-
-  return 0;
+	
+	int count = world->call_all_force_link();
+	printf("force count was: %d", count);
+	return 0;
 }
-
+}
 
 #ifdef ASC_SIGNAL_TRAPS
 /**

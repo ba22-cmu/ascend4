@@ -1,0 +1,11 @@
+interface Bar {
+void Bar();
+long getf();
+void setf(long i);
+};
+interface Foo {
+void Foo();
+long getf();
+void setf(long i);
+};
+

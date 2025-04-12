@@ -1,24 +1,27 @@
-
+/*
 enum vtype {
-        "SVjson",
-        "SVjson5",
-        "SVcstr"
+        "vtype::SVjson",
+        "vtype::SVjson5",
+        "vtype::SVcstr"
 };
-
+*/
 interface rt {
+	void rt();
 	readonly attribute long rc;
 	[Const] readonly attribute DOMString v;
-	readonly attribute vtype t;
+	//readonly attribute vtype t;
+	readonly attribute long t;
 };
 
 // attribute sequence<DOMString> stringArray;
 interface ascjson {
 
- void ascjson(DOMString vargv);
+ void ascjson();
+ long config (DOMString vargv);
 
  [Const] rt libr_query (DOMString vargv);
 
- [Const] rt asc_compiler_option (DOMString vargv) ;
+// [Const] rt asc_compiler_option (DOMString vargv) ;
 
  [Const] rt libr_parsestring (DOMString vargv) ;
 
@@ -36,8 +39,8 @@ interface ascjson {
 
  [Const] rt libr_types_in_module (DOMString vargv) ;
 
- [Const] rt Asc_ExtractTypeHC (DOMString vargv) ;
-
+ [Const] rt libr_extract_type (DOMString vargv) ;
+/*
  [Const] rt qlfdid (DOMString vargv) ;
 
  [Const] rt bgetproc (DOMString vargv) ;
@@ -125,7 +128,7 @@ interface ascjson {
  [Const] rt sim_destroy (DOMString vargv) ;
 
  [Const] rt simlistpending (DOMString vargv) ;
-
+*/
  [Const] rt ddefine (DOMString vargv) ;
 
  [Const] rt ddiffdefine (DOMString vargv) ;
@@ -147,7 +150,7 @@ interface ascjson {
  [Const] rt dgetparts (DOMString vargv) ;
 
  [Const] rt disroot_type (DOMString vargv) ;
-
+/*
  [Const] rt x__probe (DOMString vargv) ;
 
  [Const] rt x__var_analyze (DOMString vargv) ;
@@ -409,7 +412,7 @@ interface ascjson {
  [Const] rt smerge (DOMString vargv) ;
 
  [Const] rt ascloadwin (DOMString vargv) ;
-
+*/
  [Const] rt gnutext (DOMString vargv) ;
 
  [Const] rt help (DOMString vargv);
