@@ -1,0 +1,2 @@
+#! /bin/bash
+ scons GCOV=1 CUNIT_PREFIX=$HOME/.local ascend models solvers ascxx tcltk test a4

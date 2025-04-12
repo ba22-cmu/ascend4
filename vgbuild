@@ -1,0 +1,2 @@
+#! /bin/bash
+ scons ascend models solvers ascxx tcltk a4
