@@ -52,6 +52,7 @@ extern int Asc_ExtractType(ClientData cdata, Tcl_Interp *interp,
  */
 /**  Registered as */
 #define Asc_ExtractTypeHN "libr_extract_type"
+#define Asc_ExtractTypeHC libr_extract_type
 /** Usage */
 #define Asc_ExtractTypeHU \
     Asc_ExtractTypeHN " [-c] <type> [source_file] [-s,destination_file]"
