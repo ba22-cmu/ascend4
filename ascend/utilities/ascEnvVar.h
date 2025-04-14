@@ -184,7 +184,7 @@ ASC_DLLSPEC int Asc_ImportPathList(CONST char *osEnvVar);
  *  @return Returns 0 if variable is successfully imported, 1 otherwise.
  */
 
-ASC_DLLSPEC int Asc_AppendPath(char *envvar, char *newelement);
+ASC_DLLSPEC int Asc_AppendPath(const char *envvar, const char *newelement);
 /**<
  *  Adds a new element to the list of values for an ASCEND environment
  *  variable.  If envvar does not exist, it is created.  newelement is

@@ -406,7 +406,7 @@ int Asc_ImportPathList(CONST char *envvar)
 }
 
 
-int Asc_AppendPath(char *envvar, char *newelement)
+int Asc_AppendPath(const char *envvar, const char *newelement)
 {
   struct asc_env_t *ev;
   char *keepname, *keepval;
