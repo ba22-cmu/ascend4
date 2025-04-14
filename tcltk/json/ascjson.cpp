@@ -27,6 +27,7 @@
 extern "C" {
 #include <ascend/utilities/config.h>
 #include <ascend/utilities/ascSignal.h>
+#include <ascend/utilities/ascEnvVar.h>
 #include "config.h"
 #include <ascend/general/ascMalloc.h>
 #include <ascend/general/dstring.h>
@@ -93,14 +94,14 @@ extern "C" {
 
 static void banner()
 {
-  ASC_FPRINTF(stderr,"\nASCEND modeling environment\n");
-  ASC_FPRINTF(stderr,"Copyright(C) 1997, 2006-2007 Carnegie Mellon University\n");
-  ASC_FPRINTF(stderr,"Copyright(C) 1993-1996 Kirk Andre Abbott, Ben Allan\n");
-  ASC_FPRINTF(stderr,"Copyright(C) 1990, 1993, 1994 Thomas Guthrie Epperly\n");
-  // ASC_FPRINTF(stderr,"Built %s %s %s\n\n",__DATE__,__TIME__,build_name);
-  ASC_FPRINTF(stderr,"ASCEND comes with ABSOLUTELY NO WARRANTY, and is free software that you may\n");
-  ASC_FPRINTF(stderr,"redistribute within the conditions of the GNU General Public License. See the\n");
-  ASC_FPRINTF(stderr,"included file 'LICENSE.txt' for full details.\n\n");
+  ASC_FPRINTF(stdout,"\nASCEND modeling environment\n");
+  ASC_FPRINTF(stdout,"Copyright(C) 1997, 2006-2007 Carnegie Mellon University\n");
+  ASC_FPRINTF(stdout,"Copyright(C) 1993-1996 Kirk Andre Abbott, Ben Allan\n");
+  ASC_FPRINTF(stdout,"Copyright(C) 1990, 1993, 1994 Thomas Guthrie Epperly\n");
+  // ASC_FPRINTF(stdout,"Built %s %s %s\n\n",__DATE__,__TIME__,build_name);
+  ASC_FPRINTF(stdout,"ASCEND comes with ABSOLUTELY NO WARRANTY, and is free software that you may\n");
+  ASC_FPRINTF(stdout,"redistribute within the conditions of the GNU General Public License. See the\n");
+  ASC_FPRINTF(stdout,"included file 'LICENSE.txt' for full details.\n\n");
 }
 
 static
@@ -112,6 +113,12 @@ void AscTrap(int sig)
 
 int g_interface_simplify_relations = 0;
 
+static void initEnv() {
+	Asc_AppendPath("ASCENDLIBRARY","/models");
+	const char * e = Asc_GetEnv("ASCENDLIBRARY");
+	printf("ascgetenv(ASCENDLIBRARY) returns %s\n", e);
+}
+
 static void cInit()
 {
 #ifdef ASC_SIGNAL_TRAPS
@@ -122,15 +129,9 @@ static void cInit()
     Asc_Panic(2, "Asc_CompilerInit",
               "Insufficient memory to initialize compiler.");
   }
+  initEnv();
 
   SlvRegisterStandardClients();
-}
-
-static void initEnv() {
-	setenv("ASCENDLIBRARY","/models", 1);
-	printf("Updated ASCENDLIBRARY to /models\n");
-	const char * e = getenv("ASCENDLIBRARY");
-	printf("getenv(ASCENDLIBRARY) returns %s\n", e);
 }
 
 static void cFinal()
@@ -143,20 +144,8 @@ static void cFinal()
 
 ascjson::ascjson()
 {
-#if 0
-	bad = false;
-        int argc; \
-        char **argv; \
-        int err = toArgv(vargv, "\v", &argc, &argv); \
-	if (err) {
-		setc(__func__, SVcstr, " vargv failed", -err);
-		bad = true;
-		return;
-	}
-#endif
 
 	banner();
-	initEnv();
 	cInit();
 	if( Asc_HelpInit() == HELP_ERROR ) {
 		bad = true;
@@ -164,7 +153,6 @@ ascjson::ascjson()
 		"Insufficient memory to initialize help system.");
 	}
 	register_command_help();
-	// freeArgv(argv);
 }
 
 ascjson::~ascjson()
@@ -182,7 +170,7 @@ int ascjson::config( const char *argv )
 	return 0;
 }
 
-void ascjson::setc(const char *idx, ENUM vtype t, std::string& v, int r)
+void ascjson::setc(const char *idx, enum vtype t, std::string& v, int r)
 {
 	// std::string msg = std::string(idx) + ": " + v;
 	if (!m.count(idx)) {
@@ -196,7 +184,7 @@ void ascjson::setc(const char *idx, ENUM vtype t, std::string& v, int r)
 	}
 }
 
-void ascjson::setc(const char* idx, ENUM vtype t, const char *v, int r)
+void ascjson::setc(const char* idx, enum vtype t, const char *v, int r)
 {
 	// std::string msg = std::string(idx) + ": " + v;
 	std::string msg = v;

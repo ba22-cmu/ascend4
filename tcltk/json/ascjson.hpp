@@ -44,8 +44,8 @@ class ascjson {
 private:
 	/* data and core utility functions */
 	std::map<std::string, struct rc *> m;
-	void setc(const char *func, ENUM vtype st, const char *c, int rc);
-	void setc(const char *func, ENUM vtype st, std::string& val, int rc);
+	void setc(const char *func, enum vtype st, const char *c, int rc);
+	void setc(const char *func, enum vtype st, std::string& val, int rc);
 	rcp getc(const char *func);
 	bool bad;
 	
