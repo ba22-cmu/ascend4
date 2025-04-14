@@ -347,7 +347,7 @@ unsigned SuchThatForm(CONST struct Expr *expr,
 static
 int GetNameAndSet(CONST struct Expr *ex, CONST struct Expr *stop,
 		  symchar **name, struct value_t *value,
-		  struct value_t (*EvaluateName) (/* ??? */))
+		  struct value_t (*EvaluateName) (CONST struct Name *nptr/* ??? */))
 {
 	/* NAME SET IN */
 	if (ExprType(ex)==e_var){
@@ -411,7 +411,7 @@ static
 struct value_t EvaluateLeftIteration(CONST struct Expr *expr,
 				     CONST struct Expr *stop,
 				     CONST struct Expr *depth_one,
-				     struct value_t (*EvaluateName)(/* ??? */))
+				     struct value_t (*EvaluateName)(CONST struct Name *nptr/* ??? */))
 {
   CONST struct Expr *st_node,*rhs;
   struct set_t *sptr;
@@ -522,7 +522,7 @@ static
 struct value_t EvaluateRightIteration(CONST struct Expr *expr,
 				      CONST struct Expr *stop,
 				      CONST struct Expr *depth_one,
-				      struct value_t (*EvaluateName)(/*???*/))
+				      struct value_t (*EvaluateName)(CONST struct Name *nptr/*???*/))
 {
   symchar *tmp_name;
   CONST struct Expr *node;
@@ -611,7 +611,7 @@ void EvaluateRightIterationNamesNeeded(CONST struct Expr *expr,
 static
 struct value_t EvaluateSuchThat(CONST struct Expr *expr,
 				CONST struct Expr *stop,
-				struct value_t (*EvaluateName) (/* ??? */))
+				struct value_t (*EvaluateName) (CONST struct Name *nptr))
 {
   CONST struct Expr *depth_one;
   switch(SuchThatForm(expr,stop,&depth_one)){
@@ -648,7 +648,7 @@ void EvaluateSuchThatNamesNeeded(CONST struct Expr *expr,
 	@TODO document this
 */
 struct value_t EvaluateExpr(CONST struct Expr *expr, CONST struct Expr *stop,
-			    struct value_t (*EvaluateName) (/* ? */))
+			    struct value_t (*EvaluateName) (CONST struct Name *nptr/* ? */))
 {
   struct value_t top,next;
   symchar *cptr;
@@ -1062,7 +1062,7 @@ struct gl_list_t *EvaluateNamesNeededShallow(CONST struct Expr *expr,
  * of our memory activity
  */
 struct value_t EvaluateSet(CONST struct Set *sptr,
-			   struct value_t (*EvaluateName) (/* ??? */))
+			   struct value_t (*EvaluateName) (CONST struct Name *nptr/* ??? */))
 {
   struct value_t result,lower,upper;
   long l,u,c;

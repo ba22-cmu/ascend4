@@ -1285,7 +1285,7 @@ struct module_t *NewModule(CONST char *name){
   ospath_free_str(tmp); /* we can free tmp, since 'AddSymbol' takes a copy */
   ospath_free(fp1);
 
-  MSG("Module base-name: %s",newmodule->base_name);
+  MSG("Module base-name: %s",SCP(newmodule->base_name));
   return newmodule;
 }
 

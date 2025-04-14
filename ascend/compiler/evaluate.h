@@ -42,14 +42,14 @@
 */
 
 extern struct value_t EvaluateSet(CONST struct Set *sptr,
-                                  struct value_t (*EvaluateName)());
+                                  struct value_t (*EvaluateName)(CONST struct Name *nptr));
 /**<
  *  Return the value of a Set structure, which just might be a set.
  */
 
 extern struct value_t EvaluateExpr(CONST struct Expr *expr,
                                    CONST struct Expr *stop,
-                                   struct value_t (*EvaluateName)());
+                                   struct value_t (*EvaluateName)(CONST struct Name *nptr));
 /**<
  *  Return the value of a name structure.
  *  In most cases stop = NULL.  stop can be used to evaluate just part of
