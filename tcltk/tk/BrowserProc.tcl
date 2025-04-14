@@ -130,12 +130,8 @@ proc set_Browser_Defaults {} {
       }
     }
 
-#   bind $ascBrowVect(parents) <3> {# Parentsbox
-#     set d [%W nearest %y]
-#     if {$d != "" } {
-#       Brow_do_ParentsSetValue $d
-#     }
-#   }
+# Parentsbox
+#   bind $ascBrowVect(parents) <3> { set d [%W nearest %y]; if {$d != "" } { Brow_do_ParentsSetValue $d } }
 
     ascRightMouseAddCommand $ascBrowVect(parents) BrowUpdateFindCascade \
       cascade -label "Find" \
@@ -306,7 +302,6 @@ proc BrowUpdateFindCascade {} {
              \{ tk::MenuUnpost $ascBrowVect(parents).childpop \} \}\]
     "
 	}
-    # pre-8.4
     default {
       bind $m <Any-Leave> "+
       set ascPopdata($ascBrowVect(parents).childpop.in) 0
@@ -343,7 +338,9 @@ proc BrowUpdateFindCascade {} {
   
   return normal
 }
+
 #update methods menu
+
 proc BrowUpdateRunCascade {} {
   global ascBrowVect ascPopdata
   set m $ascBrowVect(parents).childpop.mrun
@@ -388,7 +385,7 @@ proc BrowUpdateRunCascade {} {
       \[after \$ascPopdata(delay) \{if \{!\$ascPopdata($ascBrowVect(parents).childpop.in)\} \
            \{ tk::MenuUnpost $ascBrowVect(parents).childpop \} \}\]
   "
-  # pre-8.4
+  }
   default {
     bind $m <Any-Leave> "+
     set ascPopdata($ascBrowVect(parents).childpop.in) 0
