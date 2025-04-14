@@ -11,15 +11,15 @@ EM=$(HOME)/emsdk/upstream/emscripten/emcc
 CSRCS = $(CSRCS_CORE) $(CSRCS_PACKAGES)
 CHDRS = $(CSRCS_ALL) 
 
-RTSRCS = ../json/rt.cc
+RTSRCS = ../json/rt.cc rt_glue_wrapper.cc
 RTHDRS = ../json/rt.hpp
 
 EXP=-sEXPORT_KEEPALIVE
 EXP=-sEXPORT_ALL
 EXP=-sEXPORTED_FUNCTIONS=@./nm_glue.txt -sEXPORTED_FUNCTIONS=_AscDriver
 EXP=-sEXPORT_KEEPALIVE
-EXP=-sEXPORT_ALL
-EMFLAGS= -O0 -g -sMODULARIZE=1  -sENVIRONMENT=web -s'EXPORT_NAME="createModule"' --emit-symbol-map
+EXP=
+EMFLAGS= -O0 -g -sMODULARIZE=1  -sENVIRONMENT=web -s'EXPORT_NAME="createModule"'
 HTEMFLAGS= -O0 -g  -sENVIRONMENT=web #--emit-symbol-map
 EMBEDS= --embed-file $(MODELS)@/models
 
@@ -33,6 +33,8 @@ RTPOST=
 
 lib: $(CXXSRCS) $(CXXHDRS) $(CSRCS) $(CHDRS) web_glue.js ascjson_glue_wrapper.cc
 	$(EM) -I../.. -I. $(EXP) $(CXXSRCS) $(CSRCS) \
+		-DMODULE_DEBUG \
+		ascjson_glue_wrapper.cc \
 		--post-js web_glue.js \
 		-o output.js $(EMFLAGS) $(EMBEDS)
 

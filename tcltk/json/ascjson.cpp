@@ -69,6 +69,8 @@ extern "C" {
 
 #include <string>
 #include <map>
+#include <cstdlib>
+#include <cstdio>
 #include <cerrno>
 
 /* convert string to argv by splitting. must be called before ASCUSE */
@@ -124,6 +126,13 @@ static void cInit()
   SlvRegisterStandardClients();
 }
 
+static void initEnv() {
+	setenv("ASCENDLIBRARY","/models", 1);
+	printf("Updated ASCENDLIBRARY to /models\n");
+	const char * e = getenv("ASCENDLIBRARY");
+	printf("getenv(ASCENDLIBRARY) returns %s\n", e);
+}
+
 static void cFinal()
 {
 //  Asc_UnitValue(NULL); fixme. need unitproc.ipp
@@ -147,6 +156,7 @@ ascjson::ascjson()
 #endif
 
 	banner();
+	initEnv();
 	cInit();
 	if( Asc_HelpInit() == HELP_ERROR ) {
 		bad = true;
@@ -174,13 +184,13 @@ int ascjson::config( const char *argv )
 
 void ascjson::setc(const char *idx, ENUM vtype t, std::string& v, int r)
 {
-	std::string msg = std::string(idx) + ": " + v;
+	// std::string msg = std::string(idx) + ": " + v;
 	if (!m.count(idx)) {
-		struct rc *c = new rc(msg, r, t);
+		struct rc *c = new rc(v, r, t);
 		m[idx] = c;
 	} else {
 		m[idx]->e = r;
-		m[idx]->s = msg;
+		m[idx]->s = v;
 		m[idx]->v = m[idx]->s.c_str();
 		m[idx]->t = t;
 	}
@@ -188,7 +198,8 @@ void ascjson::setc(const char *idx, ENUM vtype t, std::string& v, int r)
 
 void ascjson::setc(const char* idx, ENUM vtype t, const char *v, int r)
 {
-	std::string msg = std::string(idx) + ": " + v;
+	// std::string msg = std::string(idx) + ": " + v;
+	std::string msg = v;
 	if (!m.count(idx)) {
 		struct rc *c = new rc(msg, r, t);
 		m[idx] = c;

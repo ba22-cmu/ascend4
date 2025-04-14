@@ -2,8 +2,8 @@
 #define LibraryProc_json_h
 
 
-#define Asc_LibrParseCmdHN "libr_parsestring"
-#define Asc_LibrParseCmdHC  libr_parsestring 
+#define Asc_LibrParseCmdHC libr_parsestring
+#define Asc_LibrParseCmdHN TOSTR(Asc_LibrParseCmdHC)
 /**  Usage */
 #define Asc_LibrParseCmdHU \
   Asc_LibrParseCmdHN " <ascend code>"
@@ -19,7 +19,7 @@
 "
 
 #define Asc_LibrReadCmdHN "librread"
-#define Asc_LibrReadCmdHC  librread 
+#define Asc_LibrReadCmdHC  librread
 /**  Usage */
 #define Asc_LibrReadCmdHU \
   Asc_LibrReadCmdHN " <filename> [parse_relations]"
@@ -36,7 +36,7 @@
 "
 
 #define Asc_LibrOptionsCmdHN "asc_compiler_option"
-#define Asc_LibrOptionsCmdHC  asc_compiler_option 
+#define Asc_LibrOptionsCmdHC  asc_compiler_option
 /**  Usage */
 #define Asc_LibrOptionsCmdHU \
   Asc_LibrOptionsCmdHN " [-<option> [value]]"
@@ -57,7 +57,7 @@
 "
 
 #define Asc_LibrTypeListCmdHN "libr_types_in_module"
-#define Asc_LibrTypeListCmdHC  libr_types_in_module 
+#define Asc_LibrTypeListCmdHC  libr_types_in_module
 /**  Usage  */
 #define Asc_LibrTypeListCmdHU \
   Asc_LibrTypeListCmdHN " <module>"
@@ -70,7 +70,7 @@
 "
 
 #define Asc_LibrModuleInfoCmdHN "libr_moduleinfo"
-#define Asc_LibrModuleInfoCmdHC  libr_moduleinfo 
+#define Asc_LibrModuleInfoCmdHC  libr_moduleinfo
 /**  Usage  */
 #define Asc_LibrModuleInfoCmdHU \
   Asc_LibrModuleInfoCmdHN " <module> [<module>...]"
@@ -85,7 +85,7 @@
 "
 
 #define Asc_LibrDestroyTypesCmdHN "libr_destroy_types"
-#define Asc_LibrDestroyTypesCmdHC  libr_destroy_types 
+#define Asc_LibrDestroyTypesCmdHC  libr_destroy_types
 /**  Usage  */
 #define Asc_LibrDestroyTypesCmdHU \
   Asc_LibrDestroyTypesCmdHN " takes no arguments"
@@ -100,7 +100,7 @@
 "
 
 #define Asc_LibrHideTypeCmdHN "libr_hide_type"
-#define Asc_LibrHideTypeCmdHC  libr_hide_type 
+#define Asc_LibrHideTypeCmdHC  libr_hide_type
 /**  Usage  */
 #define Asc_LibrHideTypeCmdHU \
   Asc_LibrHideTypeCmdHN " <type> [part]"
@@ -118,7 +118,7 @@
 "
 
 #define Asc_LibrUnHideTypeCmdHN "libr_unhide_type"
-#define Asc_LibrUnHideTypeCmdHC  libr_unhide_type 
+#define Asc_LibrUnHideTypeCmdHC  libr_unhide_type
 /**  Usage  */
 #define Asc_LibrUnHideTypeCmdHU \
   Asc_LibrUnHideTypeCmdHN " <type> [part]"
@@ -135,7 +135,7 @@
 "
 
 #define Asc_LibrTypeIsShownCmdHN "libr_type_is_shown"
-#define Asc_LibrTypeIsShownCmdHC  libr_type_is_shown 
+#define Asc_LibrTypeIsShownCmdHC  libr_type_is_shown
 /**  Usage  */
 #define Asc_LibrTypeIsShownCmdHU \
   Asc_LibrTypeIsShownCmdHN " <type>"
@@ -149,7 +149,7 @@
 "
 
 #define Asc_LibrQueryTypeCmdHN "libr_query"
-#define Asc_LibrQueryTypeCmdHC  libr_query 
+#define Asc_LibrQueryTypeCmdHC  libr_query
 /**  Usage  */
 #define Asc_LibrQueryTypeCmdHU \
   Asc_LibrQueryTypeCmdHN " -H for more details."

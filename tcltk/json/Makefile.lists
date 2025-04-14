@@ -2,7 +2,8 @@
 # Before it will work:
 # emcc must be in a PATH dir
 CXXFILES= \
-	Driver.cpp  argv.cc  ascjson.cpp  main_json.cpp
+	Driver.cpp  argv.cc  ascjson.cpp 
+# main_json.cpp
 
 CXXHDRFILES= \
 	HelpProcDS.hpp  LibraryProcDS.hpp  ascjson.hpp  ascjson_util.hpp 

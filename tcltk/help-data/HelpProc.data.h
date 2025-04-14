@@ -1,8 +1,11 @@
 #ifndef HelpProc_data_h
 #define HelpProc_data_h
 
+#define STR(x) #x
+#define TOSTR(x) STR(x)
+
 #define Asc_HelpCmdHC help 
-#define Asc_HelpCmdHN STR(Asc_HelpCmdHC)
+#define Asc_HelpCmdHN TOSTR(Asc_HelpCmdHC)
 /** Usage */
 #define Asc_HelpCmdHU \
   "help [commandname] OR help help"

@@ -10,13 +10,13 @@
 		var instance;
 		var world;
 		// this is supposed to not finish until all is well. (via webidl binder)
-		createMyModule().then(module => {
+		createModule().then(module => {
 			instance = module;
 		});
 
 		/*
 		async function create_mod() {
-			instance = await createMyModule();
+			instance = await createModule();
 		};
 		window.onload = async function() {
 			await create_mod();
@@ -37,17 +37,51 @@
 				console.log("joy to the world")
 			}
 			rt1 = world.libr_destroy_types("dummy");
-			console.log(rt1.rc);
+			console.log(rt1.e);
 			console.log(rt1.v);
-			console.log(rt1.t);
+			if (rt1.e != 0)
+				return;
+			// rt2 = world.librread(["dummy", "/models/vesselPlot.a4c"].join("\v"));
+			// rt2 = world.librread(["dummy", "/models/system.a4l"].join("\v"));
 			rt2 = world.librread(["dummy", "/models/basemodel.a4l"].join("\v"));
-			console.log(rt2.rc);
+			console.log(rt2.e);
 			console.log(rt2.v);
-			console.log(rt2.t);
+			if (rt1.e != 0)
+				return;
+			rt2a = world.libr_query(["dummy", "-modulelist", "-mtype", "0"].join("\v"));
+			console.log(rt2a.e);
+			console.log(rt2a.v);
+			if (rt2a.e != 0)
+				return;
+			console.log("found modules:");
+			modules = rt2a.v.split("\v");
+			for (const m of modules) {
+				console.log(m);
+			}
 			rt3 = world.libr_types_in_module(["dummy", "basemodel.a4l<0>"].join("\v"));
-			console.log(rt3.rc);
+			console.log(rt3.e);
 			console.log(rt3.v);
-			console.log(rt3.t);
+			if (rt1.e != 0)
+				return;
+			types = rt3.v.split("\v");
+			console.log("found types:");
+			for (const t of types) {
+				console.log(t);
+			}
+			rth = world.help(["dummy", "library"].join("\v"));
+			if (rth.e == 0) {
+				console.log("commands from 'help library' output are:");
+				help = rth.v.split("\v");
+				for (const i of help) {
+					console.log(i);
+				}
+			}
+			rtcode = world.ddefine(["dummy", "cmumodel", "/codedump.txt"].join("\v"));
+			if (rtcode.e == 0) {
+				console.log("output of code is in:","/codedump.txt");
+			} else {
+				console.log("error:" + rtcode.v);
+			}
 		}
 	</script>
 	<button onclick="run_ascend();">try ascend interpreter</button>
