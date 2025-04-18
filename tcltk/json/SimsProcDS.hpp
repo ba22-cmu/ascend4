@@ -1,0 +1,13 @@
+int Asc_SimsQueryCmdDS(  Asc_DString *hptr, int argc, CONST84 char *argv[]);
+int Asc_SimsUniqueNameCmdDS(Asc_DString *hptr, int argc, CONST84 char *argv[]);
+int Asc_SimsCreateInstanceCmdDS( Asc_DString *hptr, int argc, CONST84 char *argv[]);
+int Asc_SimsResumeInstantiateCmdDS(Asc_DString *hptr, int argc, CONST84 char *argv[]);
+int Asc_SimsUpdateInstanceCmdDS(Asc_DString *hptr, int argc, CONST84 char *argv[]);
+int Asc_SimsCopyInstanceCmdDS( Asc_DString *hptr, int argc, CONST84 char *argv[]);
+int Asc_SimsProtoTypeInstanceCmdDS(Asc_DString *hptr, int argc, CONST84 char *argv[]);
+int Asc_SimsSaveInstanceCmdDS( Asc_DString *hptr, int argc, CONST84 char *argv[]);
+int Asc_SimsDestroySimulationCmdDS(Asc_DString *hptr, int argc, CONST84 char *argv[]);
+int Asc_BrowShowPendingsDS(Asc_DString *hptr, int argc, CONST84 char *argv[]);
+int Asc_BrowWritePendingsSTDOUTDS(Asc_DString *hptr, int argc, CONST84 char *argv[]);
+int Asc_SimListPendingDS( Asc_DString *hptr, int argc, CONST84 char *argv[]);
+int Asc_SimBinTokenSetOptionsDS( Asc_DString *hptr, int argc, CONST84 char **argv);

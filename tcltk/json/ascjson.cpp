@@ -44,6 +44,19 @@ extern "C" {
 #include <ascend/compiler/instance_enum.h>
 #include <ascend/compiler/dump.h>
 #include <ascend/compiler/stattypes.h>
+#include <ascend/compiler/simlist.h>
+#include <ascend/compiler/copyinst.h>
+#include <ascend/compiler/instquery.h>
+#include <ascend/compiler/instantiate.h>
+#include <ascend/compiler/qlfdid.h>
+#include <ascend/compiler/pending.h>
+#include <ascend/compiler/check.h>
+#include <ascend/compiler/statement.h>
+#include <ascend/compiler/statio.h>
+#include <ascend/compiler/bintoken.h>
+#include <ascend/compiler/instance_io.h>
+#include <ascend/compiler/destroyinst.h>
+#include <ascend/general/tm_time.h>
 #include <ascend/compiler/slist.h>
 #include <ascend/compiler/child.h>
 #include <ascend/compiler/childio.h>
@@ -70,6 +83,7 @@ extern "C" {
 
 #include <string>
 #include <map>
+#include <cstdint>
 #include <cstdlib>
 #include <cstdio>
 #include <cerrno>
@@ -206,12 +220,12 @@ rcp ascjson::getc(const char *idx)
 
 rcp ascjson::Asc_LibrQueryTypeCmdHC (const char *vargv) 
 {
-	wrap_dstring(Asc_LibrQueryTypeCmdDS, SVcstr);
+	wrap_dstring(Asc_LibrQueryTypeCmdDS, SVvtab);
 }
 
 rcp ascjson::Asc_LibrOptionsCmdHC (const char *vargv) 
 {
-	wrap_dstring(Asc_LibrOptionsCmdDS, SVcstr);
+	wrap_dstring(Asc_LibrOptionsCmdDS, SVvtab);
 }
 
 rcp ascjson::Asc_LibrParseCmdHC (const char *vargv) 
@@ -229,91 +243,41 @@ rcp ascjson::Asc_LibrModuleInfoCmdHC (const char *vargv)
 	wrap_dstring(Asc_LibrModuleInfoCmdDS, SVcstr);
 }
 
-// reduce these to wrap_dstring
 rcp ascjson::Asc_LibrDestroyTypesCmdHC (const char *vargv) 
 {
-	// INIT_ARGV(vargv);
-	if (bad) { 
-                setc(__func__, SVcstr, " badness detected. restart needed.", -EPERM); 
-                return getc(__func__); 
-        } 
-        int argc; 
-        char **argv; 
-        int err = toArgv(vargv, "\v", &argc, &argv); 
-        if (err) setc(__func__, SVcstr, " vargv failed", -err);
-
-	ASCUSE;
-	err = Asc_LibrDestroyTypesCmdDS(&hds, argc, argv);
-	setc(__func__, SVcstr, Asc_DStringValue(&hds), err);
-	Asc_DStringFree(&hds);
-	FREE_ARGV;
-	return getc(__func__);
+	wrap_dstring(Asc_LibrDestroyTypesCmdDS, SVcstr);
 }
 
 rcp ascjson::Asc_LibrHideTypeCmdHC (const char *vargv) 
 {
-	INIT_ARGV(vargv);
-	ASCUSE;
-	err = Asc_LibrHideTypeCmdDS(&hds, argc, argv);
-	setc(__func__, SVcstr, Asc_DStringValue(&hds), err);
-	Asc_DStringFree(&hds);
-	FREE_ARGV;
-	return getc(__func__);
+	wrap_dstring(Asc_LibrHideTypeCmdDS, SVcstr);
 }
 
 rcp ascjson::Asc_LibrUnHideTypeCmdHC (const char *vargv) 
 {
-	INIT_ARGV(vargv);
-	ASCUSE;
-	err = Asc_LibrUnHideTypeCmdDS(&hds, argc, argv);
-	setc(__func__, SVcstr, Asc_DStringValue(&hds), err);
-	Asc_DStringFree(&hds);
-	FREE_ARGV;
-	return getc(__func__);
+	wrap_dstring(Asc_LibrUnHideTypeCmdDS, SVcstr);
 }
 
 rcp ascjson::Asc_LibrTypeIsShownCmdHC (const char *vargv) 
 {
-	INIT_ARGV(vargv);
-	ASCUSE;
-	err = Asc_LibrTypeIsShownCmdDS(&hds, argc, argv);
-	setc(__func__, SVcstr, Asc_DStringValue(&hds), err);
-	Asc_DStringFree(&hds);
-	FREE_ARGV;
-	return getc(__func__);
+	wrap_dstring(Asc_LibrTypeIsShownCmdDS, SVcstr);
 }
 
 rcp ascjson::Asc_LibrTypeListCmdHC (const char *vargv) 
 {
-	INIT_ARGV(vargv);
-	ASCUSE;
-	err = Asc_LibrTypeListCmdDS(&hds, argc, argv);
-	setc(__func__, SVcstr, Asc_DStringValue(&hds), err);
-	Asc_DStringFree(&hds);
-	FREE_ARGV;
-	return getc(__func__);
+	wrap_dstring(Asc_LibrTypeListCmdDS, SVvtab);
 }
 
 rcp ascjson::Asc_ExtractTypeHC (const char *vargv) 
 {
-#if 0
-	ASCUSE;  /* see if first arg is -help */
-	err = Asc_ExtractTypeDS(&hds, argc, argv);
-	setc(__func__, SVcstr, Asc_DStringValue(&hds), err);
-	Asc_DStringFree(&hds);
-	FREE_ARGV;
-	return getc(__func__);
-#else
-	unimplemented;
-#endif
+	wrap_dstring(Asc_ExtractTypeDS, SVcstr);
 }
 
 // browser
 
 rcp ascjson::qlfdid (const char *vargv) 
 {
-	unimplemented;
-	//Asc_BrowQlfdidSearchCmd
+	wrap_dstring(Asc_BrowQlfdidSearchCmdDS, SVcstr);
 }
 
 rcp ascjson::bgetproc (const char *vargv) 
@@ -522,56 +486,48 @@ rcp ascjson::Asc_SimBinTokenSetOptionsHC (const char *vargv)
 
 rcp ascjson::sims (const char *vargv) 
 {
-	unimplemented;
+	wrap_dstring(Asc_SimsQueryCmdDS, SVcstr);
 	// Asc_SimsQueryCmd
 }
 
 rcp ascjson::sim_instantiate (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SimsCreateInstanceCmd
+	wrap_dstring(Asc_SimsCreateInstanceCmdDS, SVcstr);
 }
 
 rcp ascjson::sim_unique (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SimsUniqueNameCmd
+	wrap_dstring(Asc_SimsUniqueNameCmdDS, SVcstr);
 }
 
 rcp ascjson::sim_reinstantiate (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SimsResumeInstantiateCmd
+	wrap_dstring(Asc_SimsResumeInstantiateCmdDS, SVcstr);
 }
 
 rcp ascjson::x__sims_copy (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SimsCopyInstanceCmd
+	wrap_dstring(Asc_SimsCopyInstanceCmdDS, SVcstr);
 }
 
 rcp ascjson::x__sims_proto (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SimsProtoTypeInstanceCmd
+	wrap_dstring(Asc_SimsProtoTypeInstanceCmdDS, SVcstr);
 }
 
 rcp ascjson::x__sims_saveinst (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SimsSaveInstanceCmd
+	wrap_dstring(Asc_SimsSaveInstanceCmdDS, SVcstr);
 }
 
 rcp ascjson::sim_destroy (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SimsDestroySimulationCmd
+	wrap_dstring(Asc_SimsDestroySimulationCmdDS, SVcstr);
 }
 
 rcp ascjson::simlistpending (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SimListPending
+	wrap_dstring(Asc_SimListPendingDS, SVcstr);
 }
 
 rcp ascjson::ddefine (const char *vargv) 
@@ -1450,5 +1406,27 @@ rcp ascjson::Asc_HelpCmdHC (const char *vargv)
 
 #include "tcltk/json/HelpProcDS.ipp"
 #include "tcltk/json/CommandsDS.ipp"
-#include "tcltk/json/LibraryProc.ipp"
+#include "tcltk/json/LibraryProcDS.ipp"
+#include "tcltk/json/typelex_no_lex.ipp"
+#include "tcltk/json/SimsProcDS.ipp"
+#include "tcltk/json/QlfdidDS.ipp"
 #include "tcltk/json/all_call.ipp"
+
+/// utils
+
+int JTcl_GetInt(void *i, const char* str, int *iptr)
+{
+        *iptr = atoi(str);
+	return HELP_OK;
+}
+
+int JTcl_GetLong(void *i, const char* str, long *lptr)
+{
+        assert(sizeof(long) <= sizeof(void*));
+	char *end = NULL;
+        *lptr = strtol(str, &end, 0);
+	if (end != NULL)
+		return HELP_ERROR;
+	return HELP_OK;
+}
+

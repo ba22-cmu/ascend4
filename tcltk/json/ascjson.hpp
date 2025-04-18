@@ -7,16 +7,17 @@
 #include "tcltk/help-data/HelpProc.data.h"
 #include "tcltk/json/HelpProcDS.hpp"
 #include "tcltk/help-data/LibraryProc.data.h"
+#include "tcltk/help-data/typelex.data.h"
+#include "tcltk/help-data/SimsProc.data.h"
+#include "tcltk/help-data/Qlfdid.data.h"
 
 #include "BrowserMethod.json.h"
 #include "BrowserProc.json.h"
 #include "BrowserQuery.json.h"
 #include "EnvVarProc.json.h"
 #include "ProbeProc.json.h"
-#include "SimsProc.json.h"
 #include "SlvProc.json.h"
 #include "SolverProc.json.h"
-#include "typelex.json.h"
 #include <string>
 #include <map>
 
@@ -48,7 +49,11 @@ private:
 	void setc(const char *func, enum vtype st, std::string& val, int rc);
 	rcp getc(const char *func);
 	bool bad;
-	
+
+	struct Instance *g_curinst; // browser current instance
+	struct Instance *g_root; // browser root instance
+	struct Instance *g_solvinst_root;    /**< solver root instance */
+	struct Instance *g_solvinst_cur;     /**< solver current instance */
 public:
 
 	ascjson();
@@ -605,6 +610,7 @@ private:
 	STDHLF_H(Asc_HelpCmdHC);
 
 #include "tcltk/json/LibraryProcDS.hpp"
+#include "tcltk/json/typelex_no_lex.hpp"
 
 	STDHLF_H(Asc_EnvVarCmdHC);
 	STDHLF_H(Asc_TimeCmd);
@@ -624,9 +630,27 @@ private:
 	STDHLF_H(Asc_ProbeCmd);
 	STDHLF_H(Asc_SolvGetObjNumCmd);
 	STDHLF_H(Asc_SolveMonitorCmd);
+	STDHLF_H(Asc_SimBinTokenSetOptionsHC);
+
+#include "tcltk/json/SimsProcDS.hpp"
+	STDHLF_H(Asc_SimsQueryCmd);
+	STDHLF_H(Asc_SimsUniqueNameCmd);
+	STDHLF_H(Asc_SimsCreateInstanceCmd);
+	STDHLF_H(Asc_SimsResumeInstantiateCmd);
+	STDHLF_H(Asc_SimsUpdateInstanceCmd);
+	STDHLF_H(Asc_SimsCopyInstanceCmd);
+	STDHLF_H(Asc_SimsProtoTypeInstanceCmd);
+	STDHLF_H(Asc_SimsSaveInstanceCmd);
+	STDHLF_H(Asc_SimsDestroySimulationCmd);
+	STDHLF_H(Asc_BrowShowPendings);
+	STDHLF_H(Asc_BrowWritePendingsSTDOUT);
+	STDHLF_H(Asc_SimListPending);
+	//STDHLF_H(Asc_SimBinTokenSetOptions);
+
+#include "tcltk/json/QlfdidDS.hpp"
+	// if using a literal for the rcp function, use the HC argument to hlf_h.
+	STDHLF_H(Asc_BrowQlfdidSearchCmdHC);
 #if 0
-	STDHLF_H();
-	STDHLF_H();
 	STDHLF_H();
 	STDHLF_H();
 	STDHLF_H();

@@ -426,6 +426,7 @@ int ascjson::Asc_HelpGetGroupDS(Asc_DString *hptr, const char *gname)
   }
   if (g->explanation !=NULL) {
     Asc_DStringAppend(hptr,(char *)g->explanation, HALL);
+    Asc_DStringAppend(hptr,"\v", 1);
   }
   AppendGroupElements(hptr,g);
   return HELP_OK;

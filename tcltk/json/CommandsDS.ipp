@@ -1,85 +1,5 @@
 #if 0
-/*
- *  Commands.c
- *  by Kirk Abbott and Ben Allan
- *  Created: 1/94
- *  Version: $Revision: 1.62 $
- *  Version control file: $RCSfile: Commands.c,v $
- *  Date last modified: $Date: 1998/04/25 13:10:16 $
- *  Last modified by: $Author: ballan $
- *
- *  This file is part of the ASCEND Tcl/Tk interface
- *
- *  Copyright 1997, Carnegie Mellon University
- *
- *  The ASCEND Tcl/Tk interface is free software; you can redistribute
- *  it and/or modify it under the terms of the GNU General Public License as
- *  published by the Free Software Foundation; either version 2 of the
- *  License, or (at your option) any later version.
- *
- *  The ASCEND Tcl/Tk interface is distributed in hope that it will be
- *  useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-#define KILLBDAG 0
-#define REIMPLEMENT 0
-
-#include <tcl.h>
-#include <tk.h>
-
-#include <ascend/utilities/config.h>
-#include "config.h"
-#include <ascend/general/list.h>
-
-#include <ascend/compiler/instance_enum.h>
-#include <ascend/compiler/instance_name.h>
-#include <ascend/compiler/units.h>
-
-#include <ascend/linear/mtx.h>
-
-#include <ascend/system/slv_client.h>
-
-#include "HelpProc.h"
-#include "Commands.h"
-#include "LibraryProc.h"
-#include "DisplayProc.h"
-
-#include "Qlfdid.h"
-#ifndef ASCTK_QLFDID_H
-# error "ASCTK_QLFDID_H not defined in Commands.c???"
-#endif
-
-#include "SimsProc.h"
-#include "BrowserProc.h"
-#include "BrowserMethod.h"
-#include "BrowserQuery.h"
-#if KILLBDAG
-# include "interface/BrowserDag.h"
-#endif
-#include "BrowserRel_io.h"
-#include "BrowLogRel_io.h"
-#include "BrowWhen_io.h"
-#include "ProbeProc.h"
-#include "UserData.h"
-#include "SolverProc.h"
-#include "DebugProc.h"
-#include "MtxProc.h"
-#include "SlvProc.h"
-#include "EnvVarProc.h"
-#if REIMPLEMENT
-# include "interface/CodeGen.h"
-#endif
-#include "UnitsProc.h"
-#include "ScriptProc.h"
-#include "Integrators.h"
-#include "Sensitivity.h"		/* only for Asc_MtxNormsCmd */
-#include "typelex.h"
-#include "Driver.h"
+/* fixme */
 #endif
 
 #define ASCADDCOM(INTERP,cmdName,proc,group,usage,shorth,longh) \
@@ -202,15 +122,11 @@ void Asc_CreateCommands()
     "library", Asc_ExtractTypeHU,  Asc_ExtractTypeHS,  Asc_ExtractTypeHLF);
 #endif
 
-
   /* Browser Routines */
-  ASCADDCOM(interp,"qlfdid",Asc_BrowQlfdidSearchCmd,
+  ASCADDCOM(interp,"qlfdid", Asc_BrowQlfdidSearchCmd,
     "miscellaneous",
-    NULL,
-    "qlfdid     -- searches for the inst of a qualified name",
-    NULL
-    /* the stuff above should be replaced with header macros. */
-  );
+    Asc_BrowQlfdidSearchCmdHU, Asc_BrowQlfdidSearchCmdHS,
+    LHN(Asc_BrowQlfdidSearchCmdHC));
 
   Asc_HelpDefineGroup("fileio",
     "Explanation: functions that read/write files");

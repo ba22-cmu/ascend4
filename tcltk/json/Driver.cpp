@@ -2,7 +2,10 @@
 fixme	
 */
 
-#define ASC_BUILDING_INTERFACE
+//#define ASC_BUILDING_INTERFACE
+#define ASC_BUILDING_LIBASCEND
+
+#include <ascend/general/platform.h>
 
 #include <stdarg.h>
 #include <ctype.h>
