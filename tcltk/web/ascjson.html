@@ -29,6 +29,12 @@
 //			document.body.appendChild(elmt);
 //		}
 //		
+		/// call the method (must also be quoted) with all the string args.
+		/// this eliminates manually building the vtab string.
+		function asc(method, ...rest) {
+			rest.unshift(method);
+			return world[method](rest.join("\v"));
+		}
 		function run_ascend() {
 			console.log("called run_ascend")
 			if (world == null) {
@@ -36,19 +42,19 @@
 				world = new instance.ascjson();
 				console.log("joy to the world")
 			}
-			rt1 = world.libr_destroy_types("dummy");
+			rt1 = asc("libr_destroy_types");
 			console.log(rt1.e);
 			console.log(rt1.v);
 			if (rt1.e != 0)
 				return;
 			// rt2 = world.librread(["dummy", "/models/vesselPlot.a4c"].join("\v"));
-			rt2 = world.librread(["dummy", "/models/system.a4l"].join("\v"));
+			rt2 = asc( "librread", "/models/system.a4l");
 			// rt2 = world.librread(["dummy", "/models/basemodel.a4l"].join("\v"));
 			console.log(rt2.e);
 			console.log(rt2.v);
 			if (rt1.e != 0)
 				return;
-			rt2a = world.libr_query(["dummy", "-modulelist", "-mtype", "0"].join("\v"));
+			rt2a = asc("libr_query", "-modulelist", "-mtype", "0");
 			console.log(rt2a.e);
 			console.log(rt2a.v);
 			if (rt2a.e != 0)
@@ -58,7 +64,7 @@
 			for (const m of modules) {
 				console.log(m);
 			}
-			rt3 = world.libr_types_in_module(["dummy", "basemodel.a4l<0>"].join("\v"));
+			rt3 = asc("libr_types_in_module", "basemodel.a4l<0>");
 			console.log(rt3.e);
 			console.log(rt3.v);
 			if (rt1.e != 0)
@@ -68,7 +74,7 @@
 			for (const t of types) {
 				console.log(t);
 			}
-			rth = world.help(["dummy", "library"].join("\v"));
+			rth = asc( "help","library");
 			if (rth.e == 0) {
 				console.log("commands from 'help library' output are:");
 				help = rth.v.split("\v");
@@ -76,7 +82,16 @@
 					console.log(i);
 				}
 			}
-			rtcode = world.ddefine(["dummy", "cmumodel", "/codedump.txt"].join("\v"));
+			rth2 = asc("help", "help");
+			if (rth2.e == 0) {
+				console.log("'help help' output are:");
+				help = rth2.v.split("\v");
+				for (const i of help) {
+					console.log(i);
+				}
+			}
+
+			rtcode = asc("ddefine", "cmumodel", "/codedump.txt");
 			if (rtcode.e == 0) {
 				console.log("output of code is in:","/codedump.txt");
 			} else {

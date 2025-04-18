@@ -2,15 +2,20 @@
 enum vtype {
         "vtype::SVjson",
         "vtype::SVjson5",
-        "vtype::SVcstr"
+        "vtype::SVcstr",
+        "vtype::SVvtab"
 };
 */
 interface rc {
 	void rc();
+	// error code
 	readonly attribute long e;
+	// result string
 	[Const] readonly attribute DOMString v;
-	//readonly attribute vtype t;
+	// result string format enum as long
 	readonly attribute long t;
+	// name of t
+	[Const] DOMString ts();
 };
 
 // attribute sequence<DOMString> stringArray;
@@ -27,6 +32,7 @@ interface ascjson {
 
  [Const] rc librread (DOMString vargv) ;
 
+ /// return is vtab separated with implicit subgroups 4 elements long
  [Const] rc libr_moduleinfo (DOMString vargv) ;
 
  [Const] rc libr_destroy_types (DOMString vargv) ;

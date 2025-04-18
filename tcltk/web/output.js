@@ -4605,6 +4605,7 @@ var _webidl_free = Module['_webidl_free'] = createExportWrapper('webidl_free', 1
 var _webidl_malloc = Module['_webidl_malloc'] = createExportWrapper('webidl_malloc', 1);
 var _emscripten_bind_VoidPtr___destroy___0 = Module['_emscripten_bind_VoidPtr___destroy___0'] = createExportWrapper('emscripten_bind_VoidPtr___destroy___0', 1);
 var _emscripten_bind_rc_rc_0 = Module['_emscripten_bind_rc_rc_0'] = createExportWrapper('emscripten_bind_rc_rc_0', 0);
+var _emscripten_bind_rc_ts_0 = Module['_emscripten_bind_rc_ts_0'] = createExportWrapper('emscripten_bind_rc_ts_0', 1);
 var _emscripten_bind_rc_get_e_0 = Module['_emscripten_bind_rc_get_e_0'] = createExportWrapper('emscripten_bind_rc_get_e_0', 1);
 var _emscripten_bind_rc_get_v_0 = Module['_emscripten_bind_rc_get_v_0'] = createExportWrapper('emscripten_bind_rc_get_v_0', 1);
 var _emscripten_bind_rc_get_t_0 = Module['_emscripten_bind_rc_get_t_0'] = createExportWrapper('emscripten_bind_rc_get_t_0', 1);
@@ -4643,7 +4644,7 @@ var _emscripten_stack_get_end = wasmExports['emscripten_stack_get_end']
 var __emscripten_stack_restore = wasmExports['_emscripten_stack_restore']
 var __emscripten_stack_alloc = wasmExports['_emscripten_stack_alloc']
 var _emscripten_stack_get_current = wasmExports['emscripten_stack_get_current']
-var ___emscripten_embedded_file_data = Module['___emscripten_embedded_file_data'] = 423196;
+var ___emscripten_embedded_file_data = Module['___emscripten_embedded_file_data'] = 423276;
 
 // include: postamble.js
 // === Auto-generated postamble setup entry stuff ===
@@ -4978,6 +4979,12 @@ rc.prototype.constructor = rc;
 rc.prototype.__class__ = rc;
 rc.__cache__ = {};
 Module['rc'] = rc;
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+rc.prototype['ts'] = rc.prototype.ts = function() {
+  var self = this.ptr;
+  return UTF8ToString(_emscripten_bind_rc_ts_0(self));
+};
+
 /** @suppress {undefinedVars, duplicate} @this{Object} */
 rc.prototype['get_e'] = rc.prototype.get_e = function() {
   var self = this.ptr;
