@@ -1,9 +1,9 @@
 #include "StringList.h"
 #include <cstring>
-#include <rapidjson/document.h>
-#include <rapidjson/stringbuffer.h>
-#include <rapidjson/writer.h>
-#include <rapidjson/prettywriter.h>
+#include "rapidjson/document.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/prettywriter.h"
 
 //StringList::StringList(std::vector<std::string> v){}
 

@@ -280,7 +280,7 @@ ASC_DLLSPEC void Asc_SignalRecover(int force);
  *        popping an unintended handler.
  */
 
-ASC_DLLSPEC int Asc_SignalHandlerPush_impl(int signum, SigHandlerFn *func, char *name, char *file, int line);
+ASC_DLLSPEC int Asc_SignalHandlerPush_impl(int signum, SigHandlerFn *func, const char *name, const char *file, int line);
 
 #define Asc_SignalHandlerPopDefault(SIG) Asc_SignalHandlerPop_impl((SIG),Asc_SignalTrap,"Asc_SignalTrap",__FILE__,__LINE__)
 
@@ -306,7 +306,7 @@ ASC_DLLSPEC int Asc_SignalHandlerPush_impl(int signum, SigHandlerFn *func, char 
  *        only call Asc_SignalRecover() if it matches func.
  */
 
-ASC_DLLSPEC int Asc_SignalHandlerPop_impl(int signum, SigHandlerFn *func, char *name, char *file, int line);
+ASC_DLLSPEC int Asc_SignalHandlerPop_impl(int signum, SigHandlerFn *func, const char *name, const char *file, int line);
 
 /** Output the contents of the specified stack. For debugging. */
 ASC_DLLSPEC void Asc_SignalPrintStack(int signum);

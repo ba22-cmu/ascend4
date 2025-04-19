@@ -35,14 +35,14 @@
  *  </pre>
  */
 
-#ifndef ASCTK_BROWSERQUERY_H
-#define ASCTK_BROWSERQUERY_H
-
+#ifndef ASCTK_BROWSERQUERY_HPP
+#define ASCTK_BROWSERQUERY_HPP
+#if 0
 #include <ascend/compiler/dimen.h>
 #include <ascend/compiler/instance_enum.h>
+#endif
 
-extern int Asc_BrowIsRelationCmd(ClientData cdata, Tcl_Interp *interp,
-                                 int argc, CONST84 char *argv[]);
+int Asc_BrowIsRelationCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Will return 1, if the the instance in question is of relation type
  *  of is an array, of array ... of relation. The normal InstanceType
@@ -52,8 +52,7 @@ extern int Asc_BrowIsRelationCmd(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:   __brow_isrelation  ?current?search?.
  */
 
-extern int Asc_BrowIsLogRelCmd(ClientData cdata, Tcl_Interp *interp,
-                               int argc, CONST84 char *argv[]);
+int Asc_BrowIsLogRelCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Will return 1, if the the instance in question is of logical relation
  *  type of is an array, of array ... of logical relation. The normal
@@ -64,7 +63,7 @@ extern int Asc_BrowIsLogRelCmd(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:   __brow_islogrel  ?current?search?.
  */
 
-extern int Asc_BrowIsWhenCmd(ClientData cdata, Tcl_Interp *interp,
+int Asc_BrowIsWhenCmd(Asc_DString *hptr,
                              int argc, CONST84 char *argv[]);
 /**<
  *  Will return 1, if the the instance in question is of when
@@ -76,8 +75,7 @@ extern int Asc_BrowIsWhenCmd(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:   __brow_iswhen  ?current?search?.
  */
 
-extern int Asc_BrowIsInstanceInWhenCmd(ClientData cdata, Tcl_Interp *interp,
-                                       int argc, CONST84 char *argv[]);
+int Asc_BrowIsInstanceInWhenCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Will return 1, if the the instance in question may be in the list
  *  of variables or in some CASE of a WHEN Statement: boolean, integer,
@@ -86,8 +84,7 @@ extern int Asc_BrowIsInstanceInWhenCmd(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:   __brow_isinstanceinwhen  ?current?search?.
  */
 
-extern int Asc_BrowIsModelCmd(ClientData cdata, Tcl_Interp *interp,
-                              int argc, CONST84 char *argv[]);
+int Asc_BrowIsModelCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Will return 1, if the the instance in question is of model type
  *  of is an array, of array ... of model. The normal InstanceType
@@ -97,7 +94,7 @@ extern int Asc_BrowIsModelCmd(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:   __brow_ismodel  ?current?search?.
  */
 
-extern struct gl_list_t *Asc_BrowShortestPath(CONST struct Instance *i,
+struct gl_list_t *Asc_BrowShortestPath(CONST struct Instance *i,
                                               CONST struct Instance *ref,
                                               unsigned int, unsigned int);
 /**<
@@ -107,22 +104,21 @@ extern struct gl_list_t *Asc_BrowShortestPath(CONST struct Instance *i,
  *  The search is recursive on the unsigned arguments.
  */
 
-extern int Asc_BrowWriteNameRec(char *fname, CONST struct InstanceName *rec);
+int Asc_BrowWriteNameRec(char *fname, CONST struct InstanceName *rec);
 /**<
  *  Write the string in the given rec into the fname buffer in the
  *  ascend interface format. fname is assumed big enough.
  *  This call being exported as very handy elsewhere, e.g. solver. baa
  */
 
-extern int Asc_BrowWriteAtomValue(char *ftorv, CONST struct Instance *i);
+int Asc_BrowWriteAtomValue(char *ftorv, CONST struct Instance *i);
 /**<
  *  Assumes ftorv is big enough and writes some value appropriate for
  *  the instance i into the string ftorv.
  *  This should be done with a DString in the compiler.
  */
 
-extern int Asc_BrowWriteInstanceNameCmd(ClientData cdata, Tcl_Interp *interp,
-                                        int argc, CONST84 char *argv[]);
+int Asc_BrowWriteInstanceNameCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Print the instance's name to the specified file. The shortest path to
  *  root is always printed. For the purposes of interface1, root is always
@@ -133,8 +129,7 @@ extern int Asc_BrowWriteInstanceNameCmd(ClientData cdata, Tcl_Interp *interp,
  *  Registered as \"iname inst\" - no args"
  */
 
-extern int Asc_BrowCountNamesCmd(ClientData cdata, Tcl_Interp *interp,
-                                 int argc, CONST84 char *argv[]);
+int Asc_BrowCountNamesCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Returns the counts of ALIASES for all instances in the entire subtree
  *  given current or search.
@@ -156,55 +151,38 @@ extern int Asc_BrowCountNamesCmd(ClientData cdata, Tcl_Interp *interp,
  *  Registered as "count_names"
  */
 
-extern int Asc_BrowWriteAliasesCmd(ClientData cdata, Tcl_Interp *interp,
-                                   int argc, CONST84 char *argv[]);
+int Asc_BrowWriteAliasesCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
- *  Print the instance's names to the interpreter.
+ *  Print the instance's names to the hptrreter.
  *
  *  Registered as "ALIASES"
  */
 
-extern int Asc_BrowWriteISAsCmd(ClientData cdata, Tcl_Interp *interp,
-                                int argc, CONST84 char *argv[]);
+int Asc_BrowWriteISAsCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
- *  Print the instance's construction names to the interpreter.
+ *  Print the instance's construction names to the hptrreter.
  *
  *  Registered as \"isas\"
  */
 
-extern int Asc_BrowWriteCliqueCmd(ClientData cdata, Tcl_Interp *interp,
-                                  int argc, CONST84 char *argv[]);
+int Asc_BrowWriteCliqueCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Print all the instance's clique members.
  *
  *  Registered as \"cliques\"
  */
 
-extern int Asc_BrowWriteInstanceCmd(ClientData cdata, Tcl_Interp *interp,
-                                    int argc, CONST84 char *argv[]);
+int Asc_BrowWriteInstanceCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  */
 
-/**  Registered as. */
-#define Asc_BrowWriteInstanceCmdHN "brow_child_list"
-/**  Usage.
- *
- *  Print i's children in a form that we can readily stuff into the
- *  childBoxes in the Browser. Will take the symbolic name of a pointer
- *  i.e. current or search, to use as the basis of its queries. Will
- *  also accept attributes in the form of TYPE, VALUE, ATOMS
- *  to determine what form the information is returned.
- */
-#define Asc_BrowWriteInstanceCmdHU \
-  "<current,search> <all,N> [\"TYPE\",\"VALUE\"] [\"ATOMS\"] [\"PASSED\"]"
-
-extern int Asc_BrowWriteAtomChildren(Tcl_Interp *interp, CONST struct Instance *i);
+int Asc_BrowWriteAtomChildren(Asc_DString *hptr, CONST struct Instance *i);
 /**<
  *  Append the children of an atom (with values in display units) to
- *  the interp->result as list elements.
+ *  the hptr->result as list elements.
  */
 
-extern int Asc_BrowWriteDimensions(char *fdims, CONST dim_type *dimp);
+int Asc_BrowWriteDimensions(char *fdims, CONST dim_type *dimp);
 /**<
  *  Nearly the string equivalent of PrintDimen in dimen.c, except:
  *   -# this one writes in proper dimensions
@@ -213,8 +191,7 @@ extern int Asc_BrowWriteDimensions(char *fdims, CONST dim_type *dimp);
  *   -# if dimensionality is wild or none, a * overwrites the string.
  */
 
-extern int Asc_BrowIsPlotAllowedCmd(ClientData cdata, Tcl_Interp *interp,
-                                    int argc, CONST84 char *argv[]);
+int Asc_BrowIsPlotAllowedCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Will accept the current of search instance and determine if the type
  *  of the instance is 'plottable'. The current implementation makes use
@@ -224,8 +201,7 @@ extern int Asc_BrowIsPlotAllowedCmd(ClientData cdata, Tcl_Interp *interp,
  *  Registered as :  \"b_isplottable ?cur?search?.
  */
 
-extern int Asc_BrowPreparePlotFileCmd(ClientData cdata, Tcl_Interp *interp,
-                                      int argc, CONST84 char *argv[]);
+int Asc_BrowPreparePlotFileCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Will operate on the current or the search instance to produce a file
  *  that may be plotted by the existing plotting programs. Requires a
@@ -235,8 +211,7 @@ extern int Asc_BrowPreparePlotFileCmd(ClientData cdata, Tcl_Interp *interp,
  *  Registered as : \"b_prepplotfile\" inst filename type.
  */
 
-extern int Asc_BrowRefinesMeCmd(ClientData cdata, Tcl_Interp *interp,
-                                int argc, CONST84 char *argv[]);
+int Asc_BrowRefinesMeCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Will return ALL the library types that refine the current instance.
  *  If instance typedesc is out of sync with library, returns none.
@@ -245,8 +220,7 @@ extern int Asc_BrowRefinesMeCmd(ClientData cdata, Tcl_Interp *interp,
  *  Registered as : \"irefines_me\";
  */
 
-extern int Asc_BrowWriteValues(ClientData cdata, Tcl_Interp *interp,
-                               int argc, CONST84 char *argv[]);
+int Asc_BrowWriteValues(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Write out the real and boolean values of an instance tree starting
  *  at the instance indicated to a file filname. current/root refer to
@@ -262,8 +236,7 @@ extern int Asc_BrowWriteValues(ClientData cdata, Tcl_Interp *interp,
  *  be printed.
  */
 
-extern int Asc_BrowFindTypeCmd(ClientData cdata, Tcl_Interp *interp,
-                               int argc, CONST84 char *argv[]);
+int Asc_BrowFindTypeCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Implementation of find by type. More will be said later.
  *  <pre>
@@ -320,20 +293,53 @@ extern int Asc_BrowFindTypeCmd(ClientData cdata, Tcl_Interp *interp,
  *  </pre>
  */
 
-extern int Asc_BrowRelationRelopCmd(ClientData cdata, Tcl_Interp *interp,
-                                    int argc, CONST84 char *argv[]);
+int Asc_BrowRelationRelopCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Returns the a string describing the type of the relation. Valid
  *  results are:
  *  equal, notequal, less, greater, maximize, minimize.
  */
 
-extern int Asc_BrowClearVarsCmd(ClientData cdata, Tcl_Interp *interp,
-                                int argc, CONST84 char *argv[]);
+int Asc_BrowClearVarsCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Sets fixed flag of all variables to FALSE in Browser current instance,or if
  *  qlfdid given, in the qlfdid instance.
  */
 
-#endif /* ASCTK_BROWSERQUERY_H */
+private:
+int BrowWriteInstance(Asc_DString *hptr, struct Instance *i,
+                      int show_child_atoms, int show_passed_parts);
+int BrowIsRelation(struct Instance *i);
+int BrowIsLogRel(struct Instance *i);
+int BrowIsWhen(struct Instance *i);
+int BrowIsInstanceInWhen(struct Instance *i);
+int BrowIsModel(struct Instance *i);
+int BrowIsAtomicArray(struct Instance *i);
+static void CountNames(struct Instance *i);
+int BrowWriteInstSet(char *ftorv, CONST struct set_t *s);
+int BrowWriteFrac(char *fdims, struct fraction frac, CONST char *str, int *CONST p);
+int BrowWriteTypeOrValue(char *ftorv, CONST struct Instance *parent, CONST struct Instance *child, unsigned long cnum);
+int BrowWriteArrayChildren(Asc_DString *hptr, CONST struct Instance *i);
+int BrowTypeOfArrayIsShown(struct Instance *child);
+void BrowListModelChildren(Asc_DString *hptr, struct Instance *i, int atoms, int show_passed_parts);
+static void BrowWriteRBValues(struct Instance *i);
+static void BrowWriteRBValues2(struct Instance *i);
+struct Instance *Brow_MatchAttr(struct Instance *i, symchar *attr_desc);
+int Special_AttrMatch(int argc, char **argv);
+struct Instance *FilterModels(struct Instance *i, int argc, char **argv);
+struct Instance *FilterReals(struct Instance *i, int argc, char **argv);
+struct Instance *FilterBooleans(struct Instance *i, int argc, char **argv);
+struct Instance *FilterIntegers(struct Instance *i, int argc, char **argv);
+struct Instance *FilterSymbols(struct Instance *i, int argc, char **argv);
+struct Instance *FilterLogRelations(struct Instance *i, int argc, char **argv);
+struct Instance *FilterWhens(struct Instance *i, int , char **);
+struct Instance *FilterRelations(struct Instance *i, int argc, char **argv);
+struct Instance *FilterSets(struct Instance *i, int argc, char **argv);
+struct gl_list_t *Brow_FilterFindList(struct gl_list_t *list, int argc, char **argv);
+static void Brow_MatchType(struct Instance *i);
+struct gl_list_t *BrowFindTypeList(struct Instance *i, int argc, char **argv);
+int BrowLogRelRelopCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
+public:
+
+#endif /* ASCTK_BROWSERQUERY_HPP */
 

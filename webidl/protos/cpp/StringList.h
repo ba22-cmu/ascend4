@@ -6,6 +6,7 @@ class StringList {
 private:
 	std::vector<std::string> sv;
 public:
+	StringList() {}
 	StringList(std::vector<std::string> v) : sv(v) {}
 	int add(char **a);
 	// caller will need to free result.

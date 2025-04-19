@@ -1,35 +1,10 @@
-/*
- *  BrowserQuery.c
- *  by Kirk Abbott and Ben Allan
- *  Created: 1/94
- *  Version: $Revision: 1.51 $
- *  Version control file: $RCSfile: BrowserQuery.c,v $
- *  Date last modified: $Date: 2003/08/23 18:43:04 $
- *  Last modified by: $Author: ballan $
- *
- *  This file is part of the ASCEND Tcl/Tk interface
- *
- *  Copyright 1997, Carnegie Mellon University
- *
- *  The ASCEND Tcl/Tk interface is free software; you can redistribute
- *  it and/or modify it under the terms of the GNU General Public License as
- *  published by the Free Software Foundation; either version 2 of the
- *  License, or (at your option) any later version.
- *
- *  The ASCEND Tcl/Tk interface is distributed in hope that it will be
- *  useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+/* fixme
  */
 
 #define ASC_BUILDING_INTERFACE
 
 #include <math.h>
 #include <stdarg.h>
-#include <tcl.h>
 #include "config.h"
 #include <ascend/general/ascMalloc.h>
 #include <ascend/general/panic.h>
@@ -69,13 +44,13 @@
 #include <ascend/compiler/units.h>
 #include <ascend/compiler/qlfdid.h>
 #include <ascend/system/slv_types.h>
-#include "HelpProc.h"
+//#include "HelpProc.h"
 #include <ascend/compiler/plot.h>
-#include "BrowserQuery.h"
-#include "Qlfdid.h"
-#include "SimsProc.h"
-#include "BrowserProc.h"
-#include "UnitsProc.h"
+//#include "BrowserQuery.h"
+//#include "Qlfdid.h"
+//#include "SimsProc.h"
+//#include "BrowserProc.h"
+//#include "UnitsProc.h"
 #include <ascend/packages/ascFreeAllVars.h>
 
 #ifndef MAXIMUM_STRING_LENGTH
@@ -85,30 +60,30 @@
 #define BRSTRINGMALLOC \
 (char *)ascmalloc((MAXIMUM_STRING_LENGTH+1)* sizeof(char))
 
-int g_do_values = 0;
-unsigned long g_do_onechild = 0;
+static int g_do_values = 0;
+static unsigned long g_do_onechild = 0;
 
-static
-int BrowIsRelation(struct Instance *i)
+
+int ascjson::BrowIsRelation(struct Instance *i)
 {
   return ArrayIsRelation(i);
 }
 
-static
-int BrowIsLogRel(struct Instance *i)
+
+int ascjson::BrowIsLogRel(struct Instance *i)
 {
   return ArrayIsLogRel(i);
 }
 
-static
-int BrowIsWhen(struct Instance *i)
+
+int ascjson::BrowIsWhen(struct Instance *i)
 {
   return ArrayIsWhen(i);
 }
 
 
-static
-int BrowIsInstanceInWhen(struct Instance *i)
+
+int ascjson::BrowIsInstanceInWhen(struct Instance *i)
 {
   switch(InstanceKind(i)) {
     case BOOLEAN_ATOM_INST:
@@ -124,8 +99,8 @@ int BrowIsInstanceInWhen(struct Instance *i)
   }
 }
 
-static
-int BrowIsModel(struct Instance *i)
+
+int ascjson::BrowIsModel(struct Instance *i)
 {
   while((InstanceKind(i)==ARRAY_INT_INST)
         ||(InstanceKind(i)==ARRAY_ENUM_INST)) {
@@ -142,8 +117,8 @@ int BrowIsModel(struct Instance *i)
 }
 
 #ifdef THIS_IS_AN_UNUSED_FUNCTION
-static
-int BrowIsAtomicArray(struct Instance *i)
+
+int ascjson::BrowIsAtomicArray(struct Instance *i)
 {
   while((InstanceKind(i)==ARRAY_INT_INST)||(InstanceKind(i)==ARRAY_ENUM_INST)){
     if (NumberChildren(i)==0) { /* just to make sure children exist */
@@ -160,162 +135,147 @@ int BrowIsAtomicArray(struct Instance *i)
 #endif /* THIS_IS_AN_UNUSED_FUNCTION */
 
 
-int Asc_BrowIsRelationCmd(ClientData cdata, Tcl_Interp *interp,
-                          int argc, CONST84 char *argv[])
+int ascjson::Asc_BrowIsRelationCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct Instance *i;
   char buf[MAXIMUM_NUMERIC_LENGTH];  /* string to hold integer */
 
-  UNUSED_PARAMETER(cdata);
 
   if ( argc != 2 ) {
-    Tcl_SetResult(interp,
-                  "wrong # args : Usage __brow_isrelation ?cuurent?search?",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,
+                  "wrong # args : Usage __brow_isrelation ?cuurent?search?");
+    return HELP_ERROR;
   }
   if (strncmp(argv[1],"current",3)==0) {
     i = g_curinst;
   } else if (strncmp(argv[1],"search",3)==0) {
     i = g_search_inst;
   } else {
-    Tcl_SetResult(interp, "invalid args to \"__brow_isrelation\"", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "invalid args to \"__brow_isrelation\"");
+    return HELP_ERROR;
   }
   if (!i) {
-    Tcl_SetResult(interp, "0", TCL_STATIC);
-    return TCL_OK;
+    Asc_DStringSet(hptr, "0");
+    return HELP_OK;
   }
   sprintf(buf, "%d", BrowIsRelation(i));
-  Tcl_SetResult(interp, buf, TCL_VOLATILE);
-  return TCL_OK;
+  Asc_DStringSet(hptr, buf);
+  return HELP_OK;
 }
 
 
-int Asc_BrowIsLogRelCmd(ClientData cdata, Tcl_Interp *interp,
-                        int argc, CONST84 char *argv[])
+int ascjson::Asc_BrowIsLogRelCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct Instance *i;
   char buf[MAXIMUM_NUMERIC_LENGTH];   /* string to hold integer */
 
-  UNUSED_PARAMETER(cdata);
 
   if ( argc != 2 ) {
-    Tcl_SetResult(interp,
-                  "wrong # args : Usage __brow_islogrel ?current?search?",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,
+                  "wrong # args : Usage __brow_islogrel ?current?search?");
+    return HELP_ERROR;
   }
   if (strncmp(argv[1],"current",3)==0) {
     i = g_curinst;
   } else if (strncmp(argv[1],"search",3)==0) {
     i = g_search_inst;
   } else {
-    Tcl_SetResult(interp, "invalid args to \"__brow_islogrel\"", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "invalid args to \"__brow_islogrel\"");
+    return HELP_ERROR;
   }
   if (!i) {
-    Tcl_SetResult(interp, "0", TCL_STATIC);
-    return TCL_OK;
+    Asc_DStringSet(hptr, "0");
+    return HELP_OK;
   }
   sprintf(buf, "%d", BrowIsLogRel(i));
-  Tcl_SetResult(interp, buf, TCL_VOLATILE);
-  return TCL_OK;
+  Asc_DStringSet(hptr, buf);
+  return HELP_OK;
 }
 
-int Asc_BrowIsWhenCmd(ClientData cdata, Tcl_Interp *interp,
-                      int argc, CONST84 char *argv[])
+int ascjson::Asc_BrowIsWhenCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct Instance *i;
   char buf[MAXIMUM_NUMERIC_LENGTH];   /* string to hold integer */
 
-  UNUSED_PARAMETER(cdata);
 
   if ( argc != 2 ) {
-    Tcl_SetResult(interp,"wrong # args : Usage __brow_iswhen ?current?search?",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,"wrong # args : Usage __brow_iswhen ?current?search?");
+    return HELP_ERROR;
   }
   if (strncmp(argv[1],"current",3)==0) {
     i = g_curinst;
   } else if (strncmp(argv[1],"search",3)==0) {
     i = g_search_inst;
   } else {
-    Tcl_SetResult(interp, "invalid args to \"__brow_iswhen\"", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "invalid args to \"__brow_iswhen\"");
+    return HELP_ERROR;
   }
   if (!i) {
-    Tcl_SetResult(interp, "0", TCL_STATIC);
-    return TCL_OK;
+    Asc_DStringSet(hptr, "0");
+    return HELP_OK;
   }
   sprintf(buf, "%d", BrowIsWhen(i));
-  Tcl_SetResult(interp, buf, TCL_VOLATILE);
-  return TCL_OK;
+  Asc_DStringSet(hptr, buf);
+  return HELP_OK;
 }
 
 
-int Asc_BrowIsInstanceInWhenCmd(ClientData cdata, Tcl_Interp *interp,
-                            int argc, CONST84 char *argv[])
+int ascjson::Asc_BrowIsInstanceInWhenCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct Instance *i;
   char buf[MAXIMUM_NUMERIC_LENGTH];   /* string to hold integer */
 
-  UNUSED_PARAMETER(cdata);
 
   if ( argc != 2 ) {
-    Tcl_SetResult(interp,
+    Asc_DStringSet(hptr,
                   "wrong # args: "
-                  "Usage __brow_isintanceinwhen ?current?search?", TCL_STATIC);
-    return TCL_ERROR;
+                  "Usage __brow_isintanceinwhen ?current?search?");
+    return HELP_ERROR;
   }
   if (strncmp(argv[1],"current",3)==0) {
     i = g_curinst;
   } else if (strncmp(argv[1],"search",3)==0) {
     i = g_search_inst;
   } else {
-    Tcl_SetResult(interp, "invalid args to \"__brow_isinstanceinwhen\"",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "invalid args to \"__brow_isinstanceinwhen\"");
+    return HELP_ERROR;
   }
   if (!i) {
-    Tcl_SetResult(interp, "0", TCL_STATIC);
-    return TCL_OK;
+    Asc_DStringSet(hptr, "0");
+    return HELP_OK;
   }
   sprintf(buf, "%d", BrowIsInstanceInWhen(i));
-  Tcl_SetResult(interp, buf, TCL_VOLATILE);
-  return TCL_OK;
+  Asc_DStringSet(hptr, buf);
+  return HELP_OK;
 }
 
 
-int Asc_BrowIsModelCmd(ClientData cdata, Tcl_Interp *interp,
-                   int argc, CONST84 char *argv[])
+int ascjson::Asc_BrowIsModelCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct Instance *i;
   char buf[MAXIMUM_NUMERIC_LENGTH];       /* string to hold integer */
 
-  UNUSED_PARAMETER(cdata);
 
   if ( argc != 2 ) {
-    Tcl_SetResult(interp,
-                  "wrong # args : Usage __brow_ismodel ?cuurent?search?",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,
+                  "wrong # args : Usage __brow_ismodel ?cuurent?search?");
+    return HELP_ERROR;
   }
   if (strncmp(argv[1],"current",3)==0) {
     i = g_curinst;
   } else if (strncmp(argv[1],"search",3)==0) {
     i = g_search_inst;
   } else {
-    Tcl_SetResult(interp, "invalid args to \"__brow_ismodel\"", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "invalid args to \"__brow_ismodel\"");
+    return HELP_ERROR;
   }
   if (!i) {
-    Tcl_SetResult(interp, "0", TCL_STATIC);
-    return TCL_OK;
+    Asc_DStringSet(hptr, "0");
+    return HELP_OK;
   }
   sprintf(buf, "%d", BrowIsModel(i));
-  Tcl_SetResult(interp, buf, TCL_VOLATILE);
-  return TCL_OK;
+  Asc_DStringSet(hptr, buf);
+  return HELP_OK;
 }
 
 struct gl_list_t *Asc_BrowShortestPath(CONST struct Instance *i,
@@ -374,19 +334,16 @@ struct gl_list_t *Asc_BrowShortestPath(CONST struct Instance *i,
 /*
  * I am always going to use ref as NULL ; registered as \"__brow_iname\"
  */
-int Asc_BrowWriteInstanceNameCmd(ClientData cdata, Tcl_Interp *interp,
-                             int argc, CONST84 char *argv[])
+int ascjson::Asc_BrowWriteInstanceNameCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   CONST struct Instance *i, *ref;
   char *tmp;
 
-  UNUSED_PARAMETER(cdata);
 
   if ( argc > 2 ) {
-    Tcl_SetResult(interp,
-                  "wrong # args: Usage \"__brow_iname\" ?current?search?",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,
+                  "wrong # args: Usage \"__brow_iname\" ?current?search?" );
+    return HELP_ERROR;
   }
   if ( argc == 1 ) {
     i = g_curinst;
@@ -396,36 +353,33 @@ int Asc_BrowWriteInstanceNameCmd(ClientData cdata, Tcl_Interp *interp,
     } else if (strncmp(argv[1],"search",3)==0) {
       i = g_search_inst;
     } else {
-      Tcl_SetResult(interp, "Invalid args to \"__brow_iname\"", TCL_STATIC);
-      return TCL_ERROR;
+      Asc_DStringSet(hptr, "Invalid args to \"__brow_iname\"");
+      return HELP_ERROR;
     }
   }
   if (!i) {
-    Tcl_AppendResult(interp,"NULL_INSTANCE",(char *)NULL);
-    return TCL_OK;
+    Asc_DStringAppend(hptr,"NULL_INSTANCE",HALL);
+    return HELP_OK;
   }
   ref = (CONST struct Instance *)NULL;	/* at the moment ref always == NULL */
   tmp = WriteInstanceNameString(i,ref);
-  Tcl_AppendResult(interp,tmp,(char *)NULL);
+  Asc_DStringAppend(hptr,tmp,HALL);
   ascfree(tmp);
-  return TCL_OK;
+  return HELP_OK;
   /*NOTREACHED*/
 }
 
-int Asc_BrowWriteAliasesCmd(ClientData cdata, Tcl_Interp *interp,
-                        int argc, CONST84 char *argv[])
+int ascjson::Asc_BrowWriteAliasesCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct Instance *i = NULL;
   struct gl_list_t *strings;
   char *tmp;
   unsigned long c,len;
 
-  UNUSED_PARAMETER(cdata);
 
   if ( argc != 2 ) {
-    Tcl_SetResult(interp, "wrong # args : Usage \"aliases\" ?current?search?",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "wrong # args : Usage \"aliases\" ?current?search?");
+    return HELP_ERROR;
   }
   if (strncmp(argv[1],"current",3)==0) {
     i = g_curinst;
@@ -434,29 +388,28 @@ int Asc_BrowWriteAliasesCmd(ClientData cdata, Tcl_Interp *interp,
     i = g_search_inst;
   }
   if (i==NULL) {
-    Tcl_SetResult(interp,
-                  "No instance found or usage error: aliases <current,search>",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,
+                  "No instance found or usage error: aliases <current,search>");
+    return HELP_ERROR;
   }
   strings = WriteAliasStrings(i);
   len = gl_length(strings);
   if (len) {
     for(c=1;c<=len;c++) {
       tmp = (char *)gl_fetch(strings,c);
-      Tcl_AppendResult(interp,"{",(char *)NULL);
-      Tcl_AppendResult(interp,tmp,(char *)NULL);
-      Tcl_AppendResult(interp,"} ",(char *)NULL);
+      Asc_DStringAppend(hptr,"{",HALL);
+      Asc_DStringAppend(hptr,tmp,HALL);
+      Asc_DStringAppend(hptr,"} ",HALL);
       if (tmp!=NULL) {
         ascfree(tmp);
       }
     }
   } else {
-    Tcl_SetResult(interp, "aliases: Instance with no names??", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "aliases: Instance with no names??");
+    return HELP_ERROR;
   }
   gl_destroy(strings);
-  return TCL_OK;
+  return HELP_OK;
 }
 
 static
@@ -502,7 +455,7 @@ void Initgcn()
   g_cn.Dt = 0L;
 }
 
-static void CountNames(struct Instance *i)
+void ascjson::CountNames(struct Instance *i)
 {
   unsigned long isanames, aliasnames;
 
@@ -560,19 +513,16 @@ static void CountNames(struct Instance *i)
   }
 }
 
-int Asc_BrowCountNamesCmd(ClientData cdata, Tcl_Interp *interp,
-                      int argc, CONST84 char *argv[])
+int ascjson::Asc_BrowCountNamesCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct Instance *i = NULL;
   char tmp[40];
 
-  UNUSED_PARAMETER(cdata);
 
   if ( argc != 2 ) {
-    Tcl_SetResult(interp,
-                  "wrong # args : Usage \"count_names\" <current,search>",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,
+                  "wrong # args : Usage \"count_names\" <current,search>");
+    return HELP_ERROR;
   }
   if (strncmp(argv[1],"current",3)==0) {
     i = g_curinst;
@@ -581,61 +531,58 @@ int Asc_BrowCountNamesCmd(ClientData cdata, Tcl_Interp *interp,
     i = g_search_inst;
   }
   if (i==NULL) {
-    Tcl_SetResult(interp, "No instance found or usage error:"
-                  " count_names <current, search>", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "No instance found or usage error:"
+                  " count_names <current, search>");
+    return HELP_ERROR;
   }
   Initgcn();
   SilentVisitInstanceTree(i,CountNames,0,0);
-  /* write stuff to interp here */
+  /* write stuff to hptr here */
 
   sprintf(tmp,"%lu", g_cn.it);
-  Tcl_AppendResult(interp,"{INSTANCE-total: ",tmp,"}",(char *)NULL);
+  Asc_DStringAppend3(hptr,"{INSTANCE-total: ",tmp,"}",HALL);
   sprintf(tmp,"%lu", g_cn.mt);
-  Tcl_AppendResult(interp," {MODEL-total: ",tmp,"}",(char *)NULL);
+  Asc_DStringAppend3(hptr," {MODEL-total: ",tmp,"}",HALL);
   sprintf(tmp,"%lu", g_cn.ma);
-  Tcl_AppendResult(interp," {MODEL-alii: ",tmp,"}",(char *)NULL);
+  Asc_DStringAppend3(hptr," {MODEL-alii: ",tmp,"}",HALL);
   sprintf(tmp,"%lu", g_cn.mi);
-  Tcl_AppendResult(interp," {MODEL-isas: ",tmp,"}",(char *)NULL);
+  Asc_DStringAppend3(hptr," {MODEL-isas: ",tmp,"}",HALL);
   sprintf(tmp,"%lu", g_cn.At);
-  Tcl_AppendResult(interp," {ARRAY-total: ",tmp,"}",(char *)NULL);
+  Asc_DStringAppend3(hptr," {ARRAY-total: ",tmp,"}",HALL);
   sprintf(tmp,"%lu", g_cn.Aa);
-  Tcl_AppendResult(interp," {ARRAY-alii: ",tmp,"}",(char *)NULL);
+  Asc_DStringAppend3(hptr," {ARRAY-alii: ",tmp,"}",HALL);
   sprintf(tmp,"%lu", g_cn.Ai);
-  Tcl_AppendResult(interp," {ARRAY-isas: ",tmp,"}",(char *)NULL);
+  Asc_DStringAppend3(hptr," {ARRAY-isas: ",tmp,"}",HALL);
   sprintf(tmp,"%lu", g_cn.at);
-  Tcl_AppendResult(interp," {ATOM-total: ",tmp,"}",(char *)NULL);
+  Asc_DStringAppend3(hptr," {ATOM-total: ",tmp,"}",HALL);
   sprintf(tmp,"%lu", g_cn.aa);
-  Tcl_AppendResult(interp," {ATOM-alii: ",tmp,"}",(char *)NULL);
+  Asc_DStringAppend3(hptr," {ATOM-alii: ",tmp,"}",HALL);
   sprintf(tmp,"%lu", g_cn.ai);
-  Tcl_AppendResult(interp," {ATOM-isas: ",tmp,"}",(char *)NULL);
+  Asc_DStringAppend3(hptr," {ATOM-isas: ",tmp,"}",HALL);
   sprintf(tmp,"%lu", g_cn.rt);
-  Tcl_AppendResult(interp," {LRWN-total: ",tmp,"}",(char *)NULL);
+  Asc_DStringAppend3(hptr," {LRWN-total: ",tmp,"}",HALL);
   sprintf(tmp,"%lu", g_cn.ra);
-  Tcl_AppendResult(interp," {LRWN-alii: ",tmp,"}",(char *)NULL);
+  Asc_DStringAppend3(hptr," {LRWN-alii: ",tmp,"}",HALL);
   sprintf(tmp,"%lu", g_cn.ri);
-  Tcl_AppendResult(interp," {LRWN-isas: ",tmp,"}",(char *)NULL);
+  Asc_DStringAppend3(hptr," {LRWN-isas: ",tmp,"}",HALL);
   sprintf(tmp,"%lu", g_cn.Nt);
-  Tcl_AppendResult(interp," {NULL-total: ",tmp,"}",(char *)NULL);
+  Asc_DStringAppend3(hptr," {NULL-total: ",tmp,"}",HALL);
   sprintf(tmp,"%lu", g_cn.Dt);
-  Tcl_AppendResult(interp," {DUMMY-total: ",tmp,"}",(char *)NULL);
-  return TCL_OK;
+  Asc_DStringAppend3(hptr," {DUMMY-total: ",tmp,"}",HALL);
+  return HELP_OK;
 }
 
-int Asc_BrowWriteISAsCmd(ClientData cdata, Tcl_Interp *interp,
-                     int argc, CONST84 char *argv[])
+int ascjson::Asc_BrowWriteISAsCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct Instance *i = NULL;
   struct gl_list_t *strings;
   char *tmp;
   unsigned long c,len;
 
-  UNUSED_PARAMETER(cdata);
 
   if ( argc != 2 ) {
-    Tcl_SetResult(interp, "wrong # args : Usage \"isas\" <current,search>",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "wrong # args : Usage \"isas\" <current,search>");
+    return HELP_ERROR;
   }
   if (strncmp(argv[1],"current",3)==0) {
     i = g_curinst;
@@ -644,29 +591,28 @@ int Asc_BrowWriteISAsCmd(ClientData cdata, Tcl_Interp *interp,
     i = g_search_inst;
   }
   if (i==NULL) {
-    Tcl_SetResult(interp,
-                  "No instance found or usage error: isas <current, search>",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,
+                  "No instance found or usage error: isas <current, search>");
+    return HELP_ERROR;
   }
   strings = WriteISAStrings(i);
   len = gl_length(strings);
   if (len) {
     for(c=1;c<=len;c++) {
       tmp = (char *)gl_fetch(strings,c);
-      Tcl_AppendResult(interp,"{",(char *)NULL);
-      Tcl_AppendResult(interp,tmp,(char *)NULL);
-      Tcl_AppendResult(interp,"} ",(char *)NULL);
+      Asc_DStringAppend(hptr,"{",HALL);
+      Asc_DStringAppend(hptr,tmp,HALL);
+      Asc_DStringAppend(hptr,"} ",HALL);
       if (tmp!=NULL) {
         ascfree(tmp);
       }
     }
   } else {
-    Tcl_SetResult(interp, "isas: Instance with no names?", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "isas: Instance with no names?");
+    return HELP_ERROR;
   }
   gl_destroy(strings);
-  return TCL_OK;
+  return HELP_OK;
 }
 
 /*
@@ -674,39 +620,33 @@ int Asc_BrowWriteISAsCmd(ClientData cdata, Tcl_Interp *interp,
  * here either. Soooo, I am just returning the name of all the
  * instances in the clique. kaa.
  */
-int Asc_BrowWriteCliqueCmd(ClientData cdata, Tcl_Interp *interp,
-                       int argc, CONST84 char *argv[])
+int ascjson::Asc_BrowWriteCliqueCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   CONST struct Instance *i;
   CONST struct Instance *tmp;
 
-  UNUSED_PARAMETER(cdata);
-  (void)argc;     /* stop gcc whine about unused parameter */
-  (void)argv;     /* stop gcc whine about unused parameter */
-
   i = g_curinst;
   if(!i) {
-    Tcl_SetResult(interp, "NULL_INSTANCE in \"clique\"", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "NULL_INSTANCE in \"clique\"");
+    return HELP_ERROR;
   }
   tmp = i;
   do {
     char *tmpstr;
-    Tcl_AppendResult(interp,"{",(char *)NULL); /* make proper list elems */
+    Asc_DStringAppend(hptr,"{",HALL); /* make proper list elems */
     tmpstr = WriteInstanceNameString(tmp,NULL);
-    Tcl_AppendResult(interp,tmpstr,(char *)NULL);
+    Asc_DStringAppend(hptr,tmpstr,HALL);
     ascfree(tmpstr);
-    Tcl_AppendResult(interp,"} ",(char *)NULL);
+    Asc_DStringAppend(hptr,"} ",HALL);
     tmp = NextCliqueMember(tmp);
   } while(tmp != i);
-  return TCL_OK;
+  return HELP_OK;
 }
 
 /*
  *  Children List Commands.
  */
-static
-int BrowWriteInstSet(char *ftorv, CONST struct set_t *s)
+int ascjson::BrowWriteInstSet(char *ftorv, CONST struct set_t *s)
 {
   unsigned long c,len;
   int available = 0;
@@ -747,8 +687,7 @@ int BrowWriteInstSet(char *ftorv, CONST struct set_t *s)
   }
 }
 
-static
-int BrowWriteFrac(char *fdims, struct fraction frac, CONST char *str,
+int ascjson::BrowWriteFrac(char *fdims, struct fraction frac, CONST char *str,
                int *CONST p)
 {
   char sval[MAXIMUM_NUMERIC_LENGTH];
@@ -767,7 +706,7 @@ int BrowWriteFrac(char *fdims, struct fraction frac, CONST char *str,
   return 0;
 }
 
-int Asc_BrowWriteDimensions(char *fdims, CONST dim_type *dimp)
+int ascjson::Asc_BrowWriteDimensions(char *fdims, CONST dim_type *dimp)
 {
   struct fraction frac;
   int printed=0;
@@ -786,7 +725,7 @@ int Asc_BrowWriteDimensions(char *fdims, CONST dim_type *dimp)
   return 0;
 }
 
-int Asc_BrowWriteAtomValue(char *ftorv, CONST struct Instance *i)
+int ascjson::Asc_BrowWriteAtomValue(char *ftorv, CONST struct Instance *i)
 {
   CONST struct relation *rel;
   CONST struct logrelation *lrel;
@@ -855,12 +794,12 @@ int Asc_BrowWriteAtomValue(char *ftorv, CONST struct Instance *i)
   return 0;
 }
 
-int Asc_BrowWriteAtomChildren(Tcl_Interp *interp, CONST struct Instance *i)
+int ascjson::Asc_BrowWriteAtomChildren(Asc_DString *hptr, CONST struct Instance *i)
 {
   unsigned long c,len;
   unsigned long start,end;
   struct InstanceName rec;
-  CONST struct Instance *child;
+  struct Instance *child;
   enum inst_t kind;
   char *fname, *ftorv, *fdims;
   struct TypeDescription *desc;
@@ -868,11 +807,11 @@ int Asc_BrowWriteAtomChildren(Tcl_Interp *interp, CONST struct Instance *i)
   int domany=0; /* if 0, only one child is asked for and so,ignore visibility*/
 
   if (i==NULL) {
-    return TCL_ERROR;
+    return HELP_ERROR;
   }
   len = NumberChildren(i);
   if (!len) {
-    return TCL_ERROR;
+    return HELP_ERROR;
   }
   desc = InstanceTypeDesc(i);
   clist = GetChildList(desc);
@@ -909,31 +848,30 @@ int Asc_BrowWriteAtomChildren(Tcl_Interp *interp, CONST struct Instance *i)
           sprintf(&op[0]," : ");
         }
         if (ustr!=NULL) {
-          Tcl_AppendResult(interp,"{",fname,&op[0],ustr,"}"," ",(char *)NULL);
+          Asc_DStringAppend6(hptr,"{",fname,&op[0],ustr,"}"," ",HALL);
         } else {
-          Tcl_AppendResult(interp,
-                           "{",fname,&op[0],"????","}"," ",(char *)NULL);
+          Asc_DStringAppend6(hptr, "{",fname,&op[0],"????","}"," ",HALL);
         }
       } else {
         if (kind==LREL_INST) {
           char op[5] = "";
           sprintf(&op[0]," : ");
-          Tcl_AppendResult(interp,"{",fname,&op[0],ftorv,"}"," ",(char *)NULL);
+          Asc_DStringAppend6(hptr,"{",fname,&op[0],ftorv,"}"," ",HALL);
         } else {
-          Tcl_AppendResult(interp,"{",fname," = ",ftorv,"}"," ",(char *)NULL);
+          Asc_DStringAppend6(hptr,"{",fname," = ",ftorv,"}"," ",HALL);
         }
       }
     } else {
       sprintf(ftorv,"%s ",SCP(InstanceType(child)));
-      Tcl_AppendResult(interp,"{",fname," IS_A ",ftorv,"}"," ",(char *)NULL);
+      Asc_DStringAppend6(hptr,"{",fname," IS_A ",ftorv,"}"," ",HALL);
     }
     Asc_ReInitString(fname); Asc_ReInitString(ftorv); Asc_ReInitString(fdims);
   }
   ascfree(fname); ascfree(ftorv); ascfree(fdims);   /* Free the strings */
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_BrowWriteNameRec(char *fname, CONST struct InstanceName *rec)
+int ascjson::Asc_BrowWriteNameRec(char *fname, CONST struct InstanceName *rec)
 {
   switch(InstanceNameType(*rec)) {
   case IntArrayIndex:
@@ -946,7 +884,7 @@ int Asc_BrowWriteNameRec(char *fname, CONST struct InstanceName *rec)
     strcpy(fname,SCP(InstanceNameStr(*rec)));
     break;
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
 /* ftorv: string buffer, somewhat riskily assumed big enough.
@@ -954,8 +892,7 @@ int Asc_BrowWriteNameRec(char *fname, CONST struct InstanceName *rec)
  * child: the object to write the value or type of.
  * cnum: the position of the child in the parent's child list.
  */
-static
-int BrowWriteTypeOrValue(char *ftorv,
+int ascjson::BrowWriteTypeOrValue(char *ftorv,
                          CONST struct Instance *parent,
                          CONST struct Instance *child,
                          unsigned long cnum)
@@ -965,13 +902,13 @@ int BrowWriteTypeOrValue(char *ftorv,
   if (child==NULL) {
      if (parent==NULL || cnum==0) {
        sprintf(ftorv," IS_A NULL_INSTANCE");
-       return TCL_OK;
+       return HELP_OK;
      } else {
        sprintf(ftorv," IS_A NULL_INSTANCE %s",
           ( ChildDeclaration(parent,cnum)!=NULL &&
             StatWrong(ChildDeclaration(parent,cnum))
           ) ? "PERMANENTLY" : "TEMPORARILY");
-       return TCL_OK;
+       return HELP_OK;
      }
   }
   switch(InstanceKind(child)) {
@@ -981,7 +918,7 @@ int BrowWriteTypeOrValue(char *ftorv,
   case REL_INST:
     if (GetInstanceRelation(child,&reltype)==NULL) {
       sprintf(ftorv," IS_A NULL_RELATION");
-      return TCL_OK;
+      return HELP_OK;
     }
   case REAL_INST:
   case REAL_ATOM_INST:
@@ -1018,7 +955,7 @@ int BrowWriteTypeOrValue(char *ftorv,
   case LREL_INST:
     if (GetInstanceLogRel(child)==NULL) {
       sprintf(ftorv," IS_A NULL_LOGIC_RELATION");
-      return TCL_OK;
+      return HELP_OK;
     }
     if (g_do_values) {
       sprintf(tmp, "%s", "");
@@ -1048,17 +985,16 @@ int BrowWriteTypeOrValue(char *ftorv,
     break;
     /*NOTREACHED*/
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
 /*
  * Modified to consider the types with bit TYPESHOW set to zero. VRR
  */
-static
-int BrowWriteArrayChildren(Tcl_Interp *interp, CONST struct Instance *i)
+int ascjson::BrowWriteArrayChildren(Asc_DString *hptr, CONST struct Instance *i)
 {
   unsigned long c,len;
-  CONST struct Instance *child;
+  struct Instance *child;
   enum inst_t childkind;
   CONST struct TypeDescription *d;
   struct InstanceName rec;
@@ -1086,31 +1022,31 @@ int BrowWriteArrayChildren(Tcl_Interp *interp, CONST struct Instance *i)
         sprintf(&op[0]," : ");
       }
       if (ustr!=NULL) {
-        Tcl_AppendResult(interp,"{",fname,&op[0],ustr,"}"," ",(char *)NULL);
+        Asc_DStringAppend6(hptr,"{",fname,&op[0],ustr,"}"," ",HALL);
       } else {
-        Tcl_AppendResult(interp,"{",fname,&op[0],"????","}"," ",(char *)NULL);
+        Asc_DStringAppend6(hptr,"{",fname,&op[0],"????","}"," ",HALL);
       }
     } else {
         if (g_do_values && (childkind==LREL_INST)) {
           char op[5] = "";
           sprintf(&op[0]," : ");
-          Tcl_AppendResult(interp,"{",fname,&op[0],ftorv,"}"," ",(char *)NULL);
+          Asc_DStringAppend6(hptr,"{",fname,&op[0],ftorv,"}"," ",HALL);
         } else {
-          Tcl_AppendResult(interp,"{",fname,ftorv,"}"," ",(char *)NULL);
+          Asc_DStringAppend5(hptr,"{",fname,ftorv,"}"," ",HALL);
         }
       }
     Asc_ReInitString(fname);
     Asc_ReInitString(ftorv);
   }
   ascfree(fname); ascfree(ftorv);
-  return TCL_OK;
+  return HELP_OK;
 }
 
 /*
  * To find if arrays of types with TYPESHOW bit set to zero. VRR
  */
-static
-int BrowTypeOfArrayIsShown(struct Instance *child)
+
+int ascjson::BrowTypeOfArrayIsShown(struct Instance *child)
 {
   enum inst_t childkind;
   struct Instance *arraychild;
@@ -1165,8 +1101,7 @@ int BrowTypeOfArrayIsShown(struct Instance *child)
  * and ATOM invisibility and MODEL part passing (baa)
  * unless fetching specific child.
  */
-static
-void BrowListModelChildren(Tcl_Interp *interp, struct Instance *i, int atoms,
+void ascjson::BrowListModelChildren(Asc_DString *hptr, struct Instance *i, int atoms,
                            int show_passed_parts)
 {
   unsigned long c,len,start;
@@ -1265,18 +1200,18 @@ void BrowListModelChildren(Tcl_Interp *interp, struct Instance *i, int atoms,
           sprintf(&op[0]," : ");
         }
         if (ustr!=NULL) {
-          Tcl_AppendResult(interp,"{",fname,&op[0],ustr,"}"," ",(char *)NULL);
+          Asc_DStringAppend6(hptr,"{",fname,&op[0],ustr,"}"," ",HALL);
         } else {
-          Tcl_AppendResult(interp,
-                           "{",fname,&op[0],"????","}"," ",(char *)NULL);
+          Asc_DStringAppend6(hptr,
+                           "{",fname,&op[0],"????","}"," ",HALL);
         }
       } else {
         if (g_do_values && (childkind==LREL_INST)) {
           char op[5] = "\0";
           sprintf(&op[0]," : ");
-          Tcl_AppendResult(interp,"{",fname,&op[0],ftorv,"}"," ",(char *)NULL);
+          Asc_DStringAppend6(hptr,"{",fname,&op[0],ftorv,"}"," ",HALL);
         } else {
-            Tcl_AppendResult(interp,"{",fname,ftorv,"}"," ",(char *)NULL);
+            Asc_DStringAppend5(hptr,"{",fname,ftorv,"}"," ",HALL);
         }
       }
 
@@ -1297,8 +1232,7 @@ void BrowListModelChildren(Tcl_Interp *interp, struct Instance *i, int atoms,
  * of models list. BAA: if show_passed_parts != 0, instances with
  * CBF_PASSED in child list will be shown.
  */
-static
-int BrowWriteInstance(Tcl_Interp *interp, struct Instance *i,
+int ascjson::BrowWriteInstance(Asc_DString *hptr, struct Instance *i,
                       int show_child_atoms, int show_passed_parts)
 {
   enum inst_t kind;
@@ -1306,7 +1240,7 @@ int BrowWriteInstance(Tcl_Interp *interp, struct Instance *i,
 
   switch(kind=InstanceKind(i)) {
   case MODEL_INST:
-    BrowListModelChildren(interp,i,show_child_atoms,show_passed_parts);
+    BrowListModelChildren(hptr,i,show_child_atoms,show_passed_parts);
     break;
   case DUMMY_INST:
   case REAL_CONSTANT_INST:
@@ -1325,13 +1259,13 @@ int BrowWriteInstance(Tcl_Interp *interp, struct Instance *i,
   case INTEGER_ATOM_INST:
   case SET_ATOM_INST:
   case SYMBOL_ATOM_INST:
-    Asc_BrowWriteAtomChildren(interp,i);
+    Asc_BrowWriteAtomChildren(hptr,i);
     break;
   case REL_INST:
-    Asc_BrowWriteAtomChildren(interp,i);
+    Asc_BrowWriteAtomChildren(hptr,i);
     break;
   case LREL_INST:
-    Asc_BrowWriteAtomChildren(interp,i);
+    Asc_BrowWriteAtomChildren(hptr,i);
     break;
   case WHEN_INST:
     break;
@@ -1343,7 +1277,7 @@ int BrowWriteInstance(Tcl_Interp *interp, struct Instance *i,
     if (!BrowTypeOfArrayIsShown(child)) {
       break;
     }
-    BrowWriteArrayChildren(interp,i);
+    BrowWriteArrayChildren(hptr,i);
     break;
   case ARRAY_ENUM_INST:
     if (NumberChildren(i)==0) {
@@ -1353,17 +1287,16 @@ int BrowWriteInstance(Tcl_Interp *interp, struct Instance *i,
     if (!BrowTypeOfArrayIsShown(child)) {
       break;
     }
-    BrowWriteArrayChildren(interp,i);
+    BrowWriteArrayChildren(hptr,i);
     break;
   default:
-    Tcl_SetResult(interp,"Unrecognized type in BrowWriteInstance", TCL_STATIC);
+    Asc_DStringSet(hptr,"Unrecognized type in BrowWriteInstance");
     break;
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_BrowWriteInstanceCmd(ClientData cdata, Tcl_Interp *interp,
-                         int argc, CONST84 char *argv[])
+int ascjson::Asc_BrowWriteInstanceCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct Instance *i;
   unsigned long ndx;
@@ -1372,14 +1305,10 @@ int Asc_BrowWriteInstanceCmd(ClientData cdata, Tcl_Interp *interp,
   int show_child_atoms=0;
   int show_passed_parts=0;
 
-  UNUSED_PARAMETER(cdata);
-
-  ASCUSE;
-
   if (( argc < 3 ) || ( argc > 6 )) {
-    Tcl_AppendResult(interp, "Usage : ",
-                     Asc_BrowWriteInstanceCmdHU,(char *)NULL);
-    return TCL_ERROR;
+    Asc_DStringAppend(hptr, "Usage : "
+                     Asc_BrowWriteInstanceCmdHU,HALL);
+    return HELP_ERROR;
   }
   if (strncmp(argv[1],"current",3)==0) {
     /* search context */
@@ -1387,15 +1316,14 @@ int Asc_BrowWriteInstanceCmd(ClientData cdata, Tcl_Interp *interp,
   } else if (strncmp(argv[1],"search",3)==0) {
     i = g_search_inst;
   } else {
-    Tcl_SetResult(interp,
-                  "Invalid args : should be \"current\" or \"search\" ",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,
+                  "Invalid args : should be \"current\" or \"search\" ");
+    return HELP_ERROR;
   }
   if (i==NULL) {
     /* a NULL instance MUST NOT return an error !!!*/
-    Tcl_ResetResult(interp);
-    return TCL_OK;
+    Asc_DStringFree(hptr);
+    return HELP_OK;
   }
   if (strncmp(argv[2],"all",3)==0) {        /* child index or all */
     g_do_onechild = 0;
@@ -1404,9 +1332,8 @@ int Asc_BrowWriteInstanceCmd(ClientData cdata, Tcl_Interp *interp,
     if (ndx) {
       g_do_onechild = ndx;
     } else {
-      Tcl_SetResult(interp, "Invalid args : should be \"all\" or an integer",
-                    TCL_STATIC);
-      return TCL_ERROR;
+      Asc_DStringSet(hptr, "Invalid args : should be \"all\" or an integer");
+      return HELP_ERROR;
     }
   }
   for (c=3;c<argc;c++) {                   /* attributes */
@@ -1423,7 +1350,7 @@ int Asc_BrowWriteInstanceCmd(ClientData cdata, Tcl_Interp *interp,
       show_passed_parts = 1;
     }
   }
-  nok = BrowWriteInstance(interp,i,show_child_atoms,show_passed_parts);
+  nok = BrowWriteInstance(hptr,i,show_child_atoms,show_passed_parts);
   return nok;
 }
 
@@ -1434,19 +1361,16 @@ int Asc_BrowWriteInstanceCmd(ClientData cdata, Tcl_Interp *interp,
  * the type is plottable, i.e, is more refined than plot_type. Later
  * this will be made a define so that we can change it.
  */
-int Asc_BrowIsPlotAllowedCmd(ClientData cdata, Tcl_Interp *interp,
-                         int argc, CONST84 char *argv[])
+int ascjson::Asc_BrowIsPlotAllowedCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct Instance *i;
   char buf[MAXIMUM_NUMERIC_LENGTH];       /* string to hold integer */
   int result=0;         /* 0 = FALSE; 1 = TRUE */
 
-  UNUSED_PARAMETER(cdata);
 
   if ( argc != 2 ) {
-    Tcl_SetResult(interp, "wrong # args : Usage \"b_isplottable ?cur?search?",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "wrong # args : Usage \"b_isplottable ?cur?search?");
+    return HELP_ERROR;
   }
 
   if (strncmp(argv[1],"current",3)==0) {
@@ -1454,44 +1378,42 @@ int Asc_BrowIsPlotAllowedCmd(ClientData cdata, Tcl_Interp *interp,
   } else if (strncmp(argv[1],"search",3)==0) {
     i = g_search_inst;
   } else {
-    Tcl_SetResult(interp, "invalid args to b_isplottable", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "invalid args to b_isplottable");
+    return HELP_ERROR;
   }
   if (!i) {
-    Tcl_SetResult(interp, "0", TCL_STATIC);
-    return TCL_OK;
+    Asc_DStringSet(hptr, "0");
+    return HELP_OK;
   }
   result = plot_allowed(i);
   sprintf(buf, "%d", result);
-  Tcl_SetResult(interp, buf, TCL_VOLATILE);
-  return TCL_OK;
+  Asc_DStringSet(hptr, buf);
+  return HELP_OK;
 }
 
-int Asc_BrowPreparePlotFileCmd(ClientData cdata, Tcl_Interp *interp,
-                           int argc, CONST84 char *argv[])
+int ascjson::Asc_BrowPreparePlotFileCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct Instance *i;
   char *filename;
 
-  UNUSED_PARAMETER(cdata);
 
   /* We use the g_plot_type defined in plot.h */
   if (( argc < 3 ) || ( argc > 5 )) {
-    Tcl_AppendResult(interp,"wrong # args : ",
-                 "Usage \"b_prepplotfile\" inst filename type",(char *)NULL);
-    return TCL_ERROR;
+    Asc_DStringAppend(hptr,"wrong # args : "
+                 "Usage \"b_prepplotfile\" inst filename type",HALL);
+    return HELP_ERROR;
   }
   if (strncmp(argv[1],"current",3)==0) {      /* check instance context */
     i = g_curinst;
   } else if (strncmp(argv[1],"search",3)==0) {
     i = g_search_inst;
   } else {
-    Tcl_SetResult(interp, "invalid args to b_prepplotfile", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "invalid args to b_prepplotfile");
+    return HELP_ERROR;
   }
   if (!i) {
-    Tcl_SetResult(interp, "NULL Instance -- Nothing to plot", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "NULL Instance -- Nothing to plot");
+    return HELP_ERROR;
   }
   filename = QUIET(argv[2]);                         /* grab filename */
   if ( argc == 3 ) {                          /* get plot_type */
@@ -1512,34 +1434,30 @@ int Asc_BrowPreparePlotFileCmd(ClientData cdata, Tcl_Interp *interp,
    *  When you do so remember to fix the slv_interface code
    */
   plot_prepare_file(i,filename);
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_BrowRefinesMeCmd(ClientData cdata, Tcl_Interp *interp,
-                     int argc, CONST84 char *argv[])
+int ascjson::Asc_BrowRefinesMeCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct TypeDescription *desc;
   int result=0;
 
-  UNUSED_PARAMETER(cdata);
-  (void)argv;     /* stop gcc whine about unused parameter */
-
   if ( argc != 1 ) {
-    Tcl_SetResult(interp, "wrong # args to \"is_type_refined\"", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "wrong # args to \"is_type_refined\"");
+    return HELP_ERROR;
   }
   if (!g_curinst) {
-    Tcl_SetResult(interp, "is_type_refined called on null.", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "is_type_refined called on null.");
+    return HELP_ERROR;
   }
   desc = InstanceTypeDesc(g_curinst);
   result = IsTypeRefined(desc);
   if (result) {
-    Tcl_SetResult(interp, "1", TCL_STATIC);
+    Asc_DStringSet(hptr, "1");
   } else {
-    Tcl_SetResult(interp, "0", TCL_STATIC);
+    Asc_DStringSet(hptr, "0");
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
 static FILE *b_val_io_file = NULL;
@@ -1549,8 +1467,7 @@ static struct Instance *g_rbval_ref = NULL;
 /*
  * this function also needs to save symbol_atom/inst_values.
  */
-static
-void BrowWriteRBValues(struct Instance *i)
+void ascjson::BrowWriteRBValues(struct Instance *i)
 {
   char *i_name=NULL;
   if (!i) {
@@ -1589,8 +1506,7 @@ void BrowWriteRBValues(struct Instance *i)
 
 
 
-static
-void BrowWriteRBValues2(struct Instance *i)
+void ascjson::BrowWriteRBValues2(struct Instance *i)
 {
   if (!i) {
     return;
@@ -1626,21 +1542,19 @@ void BrowWriteRBValues2(struct Instance *i)
  *  is not used), slow and pretty, and is optional but defaults to slow.
  */
 
-int Asc_BrowWriteValues(ClientData cdata, Tcl_Interp *interp,
-                        int argc, CONST84 char *argv[])
+int ascjson::Asc_BrowWriteValues(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
-  CONST84 char *fname,*il;
-  struct Instance *i = NULL;		/* must init to NULL */
-  int fast_but_sloppy = 0;		/* default is original */
-  int nok = 0;
+CONST84 char *fname,*il;
+struct Instance *i = NULL;		/* must init to NULL */
+int fast_but_sloppy = 0;		/* default is original */
+int nok = 0;
 
-  UNUSED_PARAMETER(cdata);
 
-  if (argc<5|| argc>6) {
-    Tcl_AppendResult(interp,"wrong # args: Usage : \"bwritevalues\" ",
-                     "filename  acmd  current?root?search?qualified ",
-                     "dummy_name?qlfdid  <fast_slow>",(char *)NULL);
-    return TCL_ERROR;
+if (argc<5|| argc>6) {
+    Asc_DStringAppend(hptr,"wrong # args: Usage : \"bwritevalues\" "
+                     "filename  acmd  current?root?search?qualified "
+                     "dummy_name?qlfdid  <fast_slow>",HALL);
+    return HELP_ERROR;
   }
 
   fname = argv[1];
@@ -1665,16 +1579,16 @@ int Asc_BrowWriteValues(ClientData cdata, Tcl_Interp *interp,
     break;
   }
   if (!i) {				/* check instance */
-    Tcl_SetResult(interp, "bwritevalues given bad instance.", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "bwritevalues given bad instance.");
+    return HELP_ERROR;
   }
   if ( argc == 6 ) {			/* establish which function */
     fast_but_sloppy = 1;
   }
   b_val_io_file = fopen(fname,"w");	/* check file access */
   if (!b_val_io_file) {
-    Tcl_SetResult(interp,"bwritevalues: unable to open data file.",TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,"bwritevalues: unable to open data file.");
+    return HELP_ERROR;
   }
   FPRINTF(b_val_io_file,"qlfdid {");
   WriteInstanceName(b_val_io_file,i,NULL);
@@ -1692,7 +1606,7 @@ int Asc_BrowWriteValues(ClientData cdata, Tcl_Interp *interp,
   }
 
   fclose(b_val_io_file);
-  return TCL_OK;
+  return HELP_OK;
 }
 
 
@@ -1700,8 +1614,7 @@ int Asc_BrowWriteValues(ClientData cdata, Tcl_Interp *interp,
 static struct gl_list_t *g_find_type_list = NULL;
 static struct TypeDescription *g_type_desc = NULL;
 
-static
-struct Instance *Brow_MatchAttr(struct Instance *i, symchar *attr_desc)
+struct Instance *ascjson::Brow_MatchAttr(struct Instance *i, symchar *attr_desc)
 {
   unsigned long nch,pos;
   struct InstanceName rec;
@@ -1720,8 +1633,7 @@ struct Instance *Brow_MatchAttr(struct Instance *i, symchar *attr_desc)
   return NULL;
 }
 
-static
-int Special_AttrMatch(int argc, char **argv)
+int ascjson::Special_AttrMatch(int argc, char **argv)
 {
   if ( argc < 3 ) {
     return 1;
@@ -1735,13 +1647,9 @@ int Special_AttrMatch(int argc, char **argv)
   return 0;
 }
 
-static
-struct Instance *FilterModels(struct Instance *i,
+struct Instance *ascjson::FilterModels(struct Instance *i,
                               int argc, char **argv)
 {
-  (void)argc;     /* stop gcc whine about unused parameter */
-  (void)argv;     /* stop gcc whine about unused parameter */
-
   return i;
 }
 
@@ -1749,7 +1657,7 @@ struct Instance *FilterModels(struct Instance *i,
    filter find list and make the same assumptions about argv, argc
    as in Asc_BrowFindTypeCmd
 */
-static struct Instance *FilterReals(struct Instance *i,
+struct Instance *ascjson::FilterReals(struct Instance *i,
                                     int argc, char **argv)
 {
   double r_value, r_low, r_high;
@@ -1800,7 +1708,7 @@ static struct Instance *FilterReals(struct Instance *i,
   }
 }
 
-static struct Instance *FilterBooleans(struct Instance *i,
+struct Instance *ascjson::FilterBooleans(struct Instance *i,
                                        int argc, char **argv)
 {
   int b_value;
@@ -1834,7 +1742,7 @@ static struct Instance *FilterBooleans(struct Instance *i,
   }
 }
 
-static struct Instance *FilterIntegers(struct Instance *i,
+struct Instance *ascjson::FilterIntegers(struct Instance *i,
                                 int argc, char **argv)
 {
   long i_value, i_low, i_high;
@@ -1889,8 +1797,8 @@ static struct Instance *FilterIntegers(struct Instance *i,
  * this ought to check values by ptr, after calling
  * addsymbol at the top.
  */
-static
-struct Instance *FilterSymbols(struct Instance *i,
+
+struct Instance *ascjson::FilterSymbols(struct Instance *i,
                                int argc, char **argv)
 {
   char *s_value, *s_low, *s_high;
@@ -1936,7 +1844,7 @@ struct Instance *FilterSymbols(struct Instance *i,
   }
 }
 
-static struct Instance *FilterLogRelations(struct Instance *i,
+struct Instance *ascjson::FilterLogRelations(struct Instance *i,
                                  int argc, char **argv)
 {
   CONST struct logrelation *lrel;
@@ -1970,18 +1878,13 @@ static struct Instance *FilterLogRelations(struct Instance *i,
   }
 }
 
-static
-struct Instance *FilterWhens(struct Instance *i,
-                             int argc, char **argv)
-{
-  (void)argc;     /* stop gcc whine about unused parameter */
-  (void)argv;     /* stop gcc whine about unused parameter */
 
+struct Instance *ascjson::FilterWhens(struct Instance *i, int , char **)
+{
   return i;
 }
 
-static struct Instance *FilterRelations(struct Instance *i,
-                                 int argc, char **argv)
+struct Instance *ascjson::FilterRelations(struct Instance *i, int argc, char **argv)
 {
   double r_value, r_low, r_high;
   CONST struct relation *rel;
@@ -2017,7 +1920,7 @@ static struct Instance *FilterRelations(struct Instance *i,
   }
 }
 
-static struct Instance *FilterSets(struct Instance *i, int argc, char **argv)
+struct Instance *ascjson::FilterSets(struct Instance *i, int argc, char **argv)
 {
 
   if (!i) {
@@ -2044,21 +1947,21 @@ static struct Instance *FilterSets(struct Instance *i, int argc, char **argv)
 /* this code is a piece of garbage that needs to be cleaned up to reduce
  * all the strcmp that goes on, among other things. more kirkisms.
  */
-static struct gl_list_t *Brow_FilterFindList(struct gl_list_t *list,
+struct gl_list_t *ascjson::Brow_FilterFindList(struct gl_list_t *list,
                                              int argc, char **argv)
 {
   unsigned long len,c;
   struct Instance *i;
   symchar *tablename;
   struct Instance *child;
-  struct gl_list_t *new;
+  struct gl_list_t *lnew;
   int matchvalues;
 
   if (list==NULL) {
     return NULL;
   }
   len = gl_length(list);
-  new = gl_create(len);
+  lnew = gl_create(len);
   matchvalues = Special_AttrMatch(argc,argv);
 
   if ( argc == 4 ) {	/* just matching the attribute existing */
@@ -2075,10 +1978,10 @@ static struct gl_list_t *Brow_FilterFindList(struct gl_list_t *list,
       if (child!=NULL) {
         continue;   /* failed the filter, so process the next item */
       }
-      gl_append_ptr(new,(char *)i);    /* append the parent *NOT* the child */
+      gl_append_ptr(lnew,(char *)i);    /* append the parent *NOT* the child */
     }
     gl_destroy(list);
-    return new;
+    return lnew;
   } else {				/* need to match values as well */
     for (c=1;c<=len;c++) {
       i = (struct Instance *)gl_fetch(list,c);
@@ -2137,16 +2040,16 @@ static struct gl_list_t *Brow_FilterFindList(struct gl_list_t *list,
         break;
       }
       if (child!=NULL) {
-        gl_append_ptr(new,(char *)i); /* append the parent *NOT* the child */
+        gl_append_ptr(lnew,(char *)i); /* append the parent *NOT* the child */
       }
     }
     gl_destroy(list);
-    return new;
+    return lnew;
   }
 }
 
-static
-void Brow_MatchType(struct Instance *i)
+
+void ascjson::Brow_MatchType(struct Instance *i)
 {
   struct TypeDescription *desc1;
   CONST struct TypeDescription *desc2;
@@ -2164,10 +2067,8 @@ void Brow_MatchType(struct Instance *i)
   }
 }
 
-static
-struct gl_list_t *BrowFindTypeList(struct Instance *i,
-                                   int argc,
-                                   char **argv)
+
+struct gl_list_t *ascjson::BrowFindTypeList(struct Instance *i, int argc, char **argv)
 {
   struct gl_list_t *list = NULL;
 
@@ -2188,8 +2089,7 @@ struct gl_list_t *BrowFindTypeList(struct Instance *i,
  * attributes.
  *\" __brow_find_type\" current/search type attribute value lowvalue highvalue.
  */
-int Asc_BrowFindTypeCmd(ClientData cdata, Tcl_Interp *interp,
-                    int argc, CONST84 char *argv[])
+int ascjson::Asc_BrowFindTypeCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct Instance *inst;
   struct TypeDescription *desc;
@@ -2198,20 +2098,18 @@ int Asc_BrowFindTypeCmd(ClientData cdata, Tcl_Interp *interp,
   struct Instance *i=NULL;
   int j;                           /*  looping variable  */
 
-  UNUSED_PARAMETER(cdata);
 
   if ( argc < 3 ) {
-    Tcl_AppendResult(interp,"wrong # args: Usage \"__brow_find_type\" ",
-      "<current,search> type [attribute [<lowvalue,matchvalue> [highvalue]]]",
-      (char *)NULL);
-    return TCL_ERROR;
+    Asc_DStringAppend(hptr,"wrong # args: Usage \"__brow_find_type\" "
+      "<current,search> type [attribute [<lowvalue,matchvalue> [highvalue]]]", HALL);
+    return HELP_ERROR;
   }
   for (j=0;j<argc;j++) {
     FPRINTF(stderr,"%d %s\n",j,argv[j]);
     if (argv[j]==NULL) {
-      Tcl_SetResult(interp,
-                    "__brow_find_type called with empty slot", TCL_STATIC);
-      return TCL_ERROR;
+      Asc_DStringSet(hptr,
+                    "__brow_find_type called with empty slot");
+      return HELP_ERROR;
     }
   }
   if (strncmp(argv[1],"current",3)==0) {
@@ -2221,14 +2119,14 @@ int Asc_BrowFindTypeCmd(ClientData cdata, Tcl_Interp *interp,
     i = g_search_inst;
   }
   if (i==NULL) {
-    Tcl_SetResult(interp, "__brow_find_type instance is NULL !", TCL_STATIC);
+    Asc_DStringSet(hptr, "__brow_find_type instance is NULL !");
     FPRINTF(stderr,"__brow_find_type called incorrectly.\n");
-    return TCL_ERROR;
+    return HELP_ERROR;
   }
   desc = FindType(AddSymbol(argv[2]));
   if (desc==NULL) {
-    Tcl_AppendResult(interp,"Type given does not exist",(char *)NULL);
-    return TCL_ERROR;
+    Asc_DStringAppend(hptr,"Type given does not exist",HALL);
+    return HELP_ERROR;
   }
   g_type_desc = (struct TypeDescription *)desc;
   list = BrowFindTypeList(i,argc,QUIET2(argv));
@@ -2237,31 +2135,28 @@ int Asc_BrowFindTypeCmd(ClientData cdata, Tcl_Interp *interp,
     for (c=1;c<=len;c++) {
       char *tmps;
       inst = (struct Instance *)gl_fetch(list,c);
-      Tcl_AppendResult(interp,"{",(char *)NULL); /* make proper list elems */
+      Asc_DStringAppend(hptr,"{",HALL); /* make proper list elems */
       tmps = WriteInstanceNameString(inst,i); /* use i as reference or else! */
-      Tcl_AppendResult(interp,tmps,(char *)NULL);
+      Asc_DStringAppend(hptr,tmps,HALL);
       ascfree(tmps);
-      Tcl_AppendResult(interp,"} ",(char *)NULL);
+      Asc_DStringAppend(hptr,"} ",HALL);
     }
     gl_destroy(list);
     list = NULL;
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_BrowRelationRelopCmd(ClientData cdata, Tcl_Interp *interp,
-                         int argc, CONST84 char *argv[])
+int ascjson::Asc_BrowRelationRelopCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct Instance *i;
   CONST struct relation *rel;
   enum Expr_enum t, reltype;
 
-  UNUSED_PARAMETER(cdata);
 
   if ( argc != 2 ) {
-    Tcl_SetResult(interp, "wrong #args : Usage __brow_reln_relop ?cur?seach?",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "wrong #args : Usage __brow_reln_relop ?cur?seach?");
+    return HELP_ERROR;
   }
   if (strncmp(argv[1],"current",3)==0) {
     i = g_curinst;
@@ -2270,61 +2165,58 @@ int Asc_BrowRelationRelopCmd(ClientData cdata, Tcl_Interp *interp,
   }
   if (i) {
     if (InstanceKind(i)!= REL_INST) {
-      Tcl_SetResult(interp, "given instance is not a relation", TCL_STATIC);
-      return TCL_ERROR;
+      Asc_DStringSet(hptr, "given instance is not a relation");
+      return HELP_ERROR;
     }
     rel = GetInstanceRelation(i,&reltype);
     if (!rel) {
-      Tcl_SetResult(interp, "Instance has NULL relation", TCL_STATIC);
-      return TCL_ERROR;
+      Asc_DStringSet(hptr, "Instance has NULL relation");
+      return HELP_ERROR;
     }
     t = RelationRelop(rel);
     switch (t) {
     case e_equal:
-      Tcl_SetResult(interp,"equal",TCL_STATIC);
-      return TCL_OK;
+      Asc_DStringSet(hptr,"equal");
+      return HELP_OK;
     case e_notequal:
-      Tcl_SetResult(interp,"notequal",TCL_STATIC);
-      return TCL_OK;
+      Asc_DStringSet(hptr,"notequal");
+      return HELP_OK;
     case e_less:
     case e_lesseq:
-      Tcl_SetResult(interp,"less",TCL_STATIC);
-      return TCL_OK;
+      Asc_DStringSet(hptr,"less");
+      return HELP_OK;
     case e_greater:
     case e_greatereq:
-      Tcl_SetResult(interp,"greater",TCL_STATIC);
-      return TCL_OK;
+      Asc_DStringSet(hptr,"greater");
+      return HELP_OK;
     case e_maximize:
-      Tcl_SetResult(interp,"maximize",TCL_STATIC);
-      return TCL_OK;
+      Asc_DStringSet(hptr,"maximize");
+      return HELP_OK;
     case e_minimize:
-      Tcl_SetResult(interp,"minimize",TCL_STATIC);
-      return TCL_OK;
+      Asc_DStringSet(hptr,"minimize");
+      return HELP_OK;
     default:
-      Tcl_SetResult(interp, "Unknown relation type ???", TCL_STATIC);
-      return TCL_ERROR;
+      Asc_DStringSet(hptr, "Unknown relation type ???");
+      return HELP_ERROR;
     }
   } else {
-    Tcl_SetResult(interp, "Null relation instance", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "Null relation instance");
+    return HELP_ERROR;
   }
 }
 
 #ifdef THIS_IS_AN_UNUSED_FUNCTION
-static
-int BrowLogRelRelopCmd(ClientData cdata, Tcl_Interp *interp,
-                       int argc, CONST84 char *argv[])
+
+int ascjson::BrowLogRelRelopCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct Instance *i;
   CONST struct logrelation *lrel;
   enum Expr_enum t;
 
-  UNUSED_PARAMETER(cdata);
 
   if ( argc != 2 ) {
-    Tcl_SetResult(interp, "wrong #args : Usage __brow_lrel_relop ?cur?seach?",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "wrong #args : Usage __brow_lrel_relop ?cur?seach?");
+    return HELP_ERROR;
   }
   if (strncmp(argv[1],"current",3)==0) {
     i = g_curinst;
@@ -2333,45 +2225,42 @@ int BrowLogRelRelopCmd(ClientData cdata, Tcl_Interp *interp,
   }
   if (i) {
     if (InstanceKind(i)!= LREL_INST) {
-      Tcl_SetResult(interp, "given instance is not a relation", TCL_STATIC);
-      return TCL_ERROR;
+      Asc_DStringSet(hptr, "given instance is not a relation");
+      return HELP_ERROR;
     }
     lrel = GetInstanceLogRel(i);
     if (!lrel) {
-      Tcl_SetResult(interp, "Instance has NULL logical relation", TCL_STATIC);
-      return TCL_ERROR;
+      Asc_DStringSet(hptr, "Instance has NULL logical relation");
+      return HELP_ERROR;
     }
     t = LogRelRelop(lrel);
     switch (t) {
     case e_boolean_eq:
-      Tcl_SetResult(interp,"b_equal",TCL_STATIC);
-      return TCL_OK;
+      Asc_DStringSet(hptr,"b_equal");
+      return HELP_OK;
     case e_boolean_neq:
-      Tcl_SetResult(interp,"b_notequal",TCL_STATIC);
-      return TCL_OK;
+      Asc_DStringSet(hptr,"b_notequal");
+      return HELP_OK;
     default:
-      Tcl_SetResult(interp, "Unknown logical relation type ???", TCL_STATIC);
-      return TCL_ERROR;
+      Asc_DStringSet(hptr, "Unknown logical relation type ???");
+      return HELP_ERROR;
     }
   } else {
-    Tcl_SetResult(interp, "Null logical relation instance", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "Null logical relation instance");
+    return HELP_ERROR;
   }
 }
 #endif /* THIS_IS_AN_UNUSED_FUNCTION */
 
-int Asc_BrowClearVarsCmd(ClientData cdata, Tcl_Interp *interp,
-                     int argc, CONST84 char *argv[])
+int ascjson::Asc_BrowClearVarsCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   int status;
   struct Instance *i;
 
-  UNUSED_PARAMETER(cdata);
 
   if (( argc < 1 ) || ( argc > 2 )) {
-    Tcl_SetResult(interp, "wrong # args: Usage free_all_vars [qlfdid]",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "wrong # args: Usage free_all_vars [qlfdid]");
+    return HELP_ERROR;
   }
   if ( argc == 1 ) {		/* e.g., runproc clear */
     i = g_curinst;
@@ -2380,24 +2269,23 @@ int Asc_BrowClearVarsCmd(ClientData cdata, Tcl_Interp *interp,
     if (status==0) { 		/* catch inst ptr */
       i = g_search_inst;
     } else {			/* failed. bail out. */
-      Tcl_AppendResult(interp,"free_all_vars: Asc_BrowClearVarsCmd: ",
-                       "Could not find instance.",(char *)NULL);
-      return TCL_ERROR;
+      Asc_DStringAppend(hptr,"free_all_vars: Asc_BrowClearVarsCmd: "
+                       "Could not find instance.", HALL);
+      return HELP_ERROR;
     }
   }
 
   if (i==NULL) {
-    Tcl_SetResult(interp, "Instance not found", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "Instance not found");
+    return HELP_ERROR;
   }
   /* assume everything will be ok from here on out */
   if (Asc_ClearVarsInTree(i) != 0) {
     FPRINTF(stderr,"ERROR:  (BrowserQuery) \n");
     FPRINTF(stderr,"        Type solver_var not defined.\n");
     FPRINTF(stderr,"        definition needed to clear vars.\n");
-    Tcl_SetResult(interp, "ERROR: solver_var undefined. no action taken",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "ERROR: solver_var undefined. no action taken");
+    return HELP_ERROR;
   }
-  return TCL_OK;
+  return HELP_OK;
 }

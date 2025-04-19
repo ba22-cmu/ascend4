@@ -10,10 +10,10 @@
 #include "tcltk/help-data/typelex.data.h"
 #include "tcltk/help-data/SimsProc.data.h"
 #include "tcltk/help-data/Qlfdid.data.h"
+#include "tcltk/help-data/BrowserQuery.data.h"
 
 #include "BrowserMethod.json.h"
 #include "BrowserProc.json.h"
-#include "BrowserQuery.json.h"
 #include "EnvVarProc.json.h"
 #include "ProbeProc.json.h"
 #include "SlvProc.json.h"
@@ -52,8 +52,12 @@ private:
 
 	struct Instance *g_curinst; // browser current instance
 	struct Instance *g_root; // browser root instance
-	struct Instance *g_solvinst_root;    /**< solver root instance */
-	struct Instance *g_solvinst_cur;     /**< solver current instance */
+
+#include "tcltk/json/SolverGlobals.hpp"
+
+	// for unitsprocds
+	static int display_precision;
+	static char *unit_display_string;
 public:
 
 	ascjson();
@@ -650,6 +654,11 @@ private:
 #include "tcltk/json/QlfdidDS.hpp"
 	// if using a literal for the rcp function, use the HC argument to hlf_h.
 	STDHLF_H(Asc_BrowQlfdidSearchCmdHC);
+#include "tcltk/json/BrowserQueryDS.hpp"
+
+#include "tcltk/json/UnitsProcDS.hpp"
+
+
 #if 0
 	STDHLF_H();
 	STDHLF_H();

@@ -1,6 +1,5 @@
-Script started on 2025-04-09 20:50:09-06:00 [COMMAND="make" TERM="xterm-256color" TTY="/dev/pts/3" COLUMNS="97" LINES="41"]
-g++ -I. argv.cc -I../.. -c -Wall
-g++ -I. ascjson.cpp -I../..  -E -o i.ascjson.cpp
-g++ -I. ascjson.cpp -I../.. -c -Wall
+Script started on 2025-04-19 02:12:10-06:00 [COMMAND="make" TERM="xterm-256color" TTY="/dev/pts/0" COLUMNS="120" LINES="30"]
+g++ -I../.. main_json.cpp Driver.cpp ascjson.cpp argv.cc  -E > i.main_json.cpp
+g++ -I../.. -g main_json.cpp Driver.cpp ascjson.cpp argv.cc -L/home/ba22c/ascend4 -Wl,-rpath,/home/ba22c/ascend4 -lascend
 
-Script done on 2025-04-09 20:50:10-06:00 [COMMAND_EXIT_CODE="0"]
+Script done on 2025-04-19 02:12:14-06:00 [COMMAND_EXIT_CODE="0"]

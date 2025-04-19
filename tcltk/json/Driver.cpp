@@ -15,6 +15,7 @@ extern "C"{
 #include "config.h"
 #include <ascend/general/panic.h>
 #include <ascend/general/ospath.h>
+#include <ascend/compiler/dimen.h>
 #include <ascend/utilities/ascPrint.h>
 #include <ascend/utilities/error.h>
 #include <ascend/solver/solver.h>

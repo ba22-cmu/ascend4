@@ -1,3 +1,4 @@
+#if 0
 // Define a macro to concatenate tokens
 #define CONCAT(a, b) a ## b
 
@@ -7,3 +8,13 @@
 #define p "x"
 
 char * y = UNSTRINGIZE(p);
+#endif
+#include <cstdlib>
+#include <cstdio>
+
+int main()
+{
+	printf("%zu\n",sizeof(int));
+	printf("%zu\n",sizeof(long));
+	printf("%zu\n",sizeof(long long));
+}

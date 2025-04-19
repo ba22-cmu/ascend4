@@ -40,6 +40,11 @@
 #include <tcl.h>
 #include "config.h"
 
+#ifndef STR
+#define STRINGIFY(x) #x
+#define STR(x) STRINGIFY(x)
+#endif
+
 /**
  * The largest number of strings that will be used in building a long
  * help string.

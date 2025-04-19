@@ -1,5 +1,5 @@
 #include <ascend/general/platform.h>
-#include <ascend/solver/mtx.h>
+#include <ascend/linear/mtx.h>
 #include <ascend/solver/linsol.h>
 
 #ifdef __WIN32__

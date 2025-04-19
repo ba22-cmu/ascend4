@@ -60,7 +60,6 @@
 	code: we aren't going to waste time reimplementing these basic
 	functions.
 */
-ASC_DLLSPEC double cbrt(double);
 #  ifdef HAVE_ERF
 extern double erf(double);
 #  endif /* HAVE_ERF */
@@ -134,6 +133,8 @@ ASC_DLLSPEC double g_lnm_epsilon;
    (e>(double)0.0 ? g_lnm_epsilon=e : FPRINTF(ASCERR,"bad lnm eps"))
 
 
+#if _ISOC99_SOURCE || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 500 || _DEFAULT_SOURCE || _BSD_SOURCE || _SVID_SOURCE
+#else
 /**<
 	declare cbrt() and erf() since some vendors put
 	these functions in odd headers
@@ -142,6 +143,7 @@ ASC_DLLSPEC double cbrt(double);
 #ifdef HAVE_ERF
 extern double erf(double);
 #endif /* HAVE_ERF */
+#endif
 
 #ifdef NDEBUG
 # define ascnint(d) (((int) (d)>=0.0 ? floor((d) + 0.5) : -floor(0.5 - (d))))

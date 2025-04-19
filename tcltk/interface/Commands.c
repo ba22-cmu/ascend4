@@ -101,7 +101,7 @@ void Asc_CreateCommands(Tcl_Interp *interp)
     "Explanation: functions that do various system call type activities.");
 
   /* All commands should eventually look like this one */
-  ASCADDCOM(interp,Asc_HelpCmdHN,Asc_HelpCmd,
+  ASCADDCOM(interp, Asc_HelpCmdHN, Asc_HelpCmd,
    "system", Asc_HelpCmdHU, Asc_HelpCmdHS, Asc_HelpCmdHLF);
 
   ASCADDCOM(interp,Asc_EnvVarCmdHN,Asc_EnvVarCmd,

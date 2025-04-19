@@ -28,14 +28,12 @@
 #define ASC_BUILDING_INTERFACE
 
 #include <stdarg.h>
-#include <tcl.h>
 
+extern "C" {
 #include <ascend/utilities/config.h>
 #ifdef ASC_SIGNAL_TRAPS
 # include <ascend/utilities/ascSignal.h>
 #endif
-
-#include "UnitsProc.h"
 
 #include "config.h"
 #include <ascend/general/ascMalloc.h>
@@ -70,6 +68,12 @@
 #include <ascend/system/slv_client.h>
 
 #include "old_utils.h"
+
+}
+
+#include "UnitsProcDS.hpp"
+
+#if 0
 #include "HelpProc.h"
 #include "BrowserQuery.h"
 #include "BrowserProc.h"
@@ -77,6 +81,7 @@
 #include "Driver.h"
 #include "HelpProc.h"
 #include "SolverGlobals.h"
+#endif
 
 /* convenience macros */
 #define SNULL (char *)NULL
@@ -91,15 +96,15 @@ static jmp_buf g_unit_env;
 #endif
 
 
-struct Units * g_base_units[NUM_DIMENS];
-struct Units * g_SI_units[NUM_DIMENS];
+struct Units * ascjson::g_base_units[NUM_DIMENS];
+struct Units * ascjson::g_SI_units[NUM_DIMENS];
 
 /*********************INTERNALS ******************************/
 
-static int display_precision = 6;
-static char *unit_display_string = NULL;
-static int updatefundunitdim;
-static Tcl_Interp *unitsinterp;
+int ascjson::updatefundunitdim;
+char *ascjson::unit_display_string = NULL;
+int ascjson::display_precision = 6;
+static Asc_DString *unitshptr;
 #define UDS (unit_display_string)
 #define UPREC (display_precision)
 
@@ -117,36 +122,34 @@ struct DisplayUnit {
 };
 
 
-static int check_units_set(ClientData cdata, Tcl_Interp *interp,
-                          int argc, CONST84 char *argv[]) /* args ignored but needed*/
+int ascjson::check_units_set(Asc_DString *hptr, int argc, CONST84 char *argv[]) /* args ignored but needed*/
 {
   static int base_units_set;
   if (!base_units_set) {
-     Asc_UnitDefaultBaseUnits(cdata,interp,argc,argv);
+     Asc_UnitDefaultBaseUnits(hptr, argc,argv);
      base_units_set = 1;
   }
   return (base_units_set);
 }
 
-static
-int Unit_CmpDU(CONST struct DisplayUnit *du1, CONST struct DisplayUnit *du2)
+int ascjson::Unit_CmpDU(CONST struct DisplayUnit *du1, CONST struct DisplayUnit *du2)
 {
   return CmpDimen(du1->d,du2->d);
 }
 
-static int destroy_DUList() {
+int ascjson::destroy_DUList() {
   if (DUList) {
     gl_free_and_destroy(DUList);
   }
   return 0;
 }
 
-static int check_DU_set()
+int ascjson::check_DU_set()
 {
   static int duset = 0 ;
   if (!duset) { /* first time through, init the world */
     dim_type *d;
-    register unsigned long c,len = gl_length(g_dimen_list);
+    unsigned long c,len = gl_length(g_dimen_list);
     struct DisplayUnit *newDU;
     DUList = gl_create(DLSIZE);
     assert(DUList!=NULL);
@@ -164,8 +167,7 @@ static int check_DU_set()
 }
 
 /* push fundy's to bottom of list */
-static
-int Unit_CmpAtomName(CONST struct TypeDescription *d1,
+int ascjson::Unit_CmpAtomName(CONST struct TypeDescription *d1,
                      CONST struct TypeDescription *d2)
 {
   if (!d1 || !d2 || CheckFundamental(GetName(d1)) ) {
@@ -175,8 +177,7 @@ int Unit_CmpAtomName(CONST struct TypeDescription *d1,
 }
 
 /* small numbers and nulls go to the bottom (high index) of the list */
-static
-int Unit_CmpConv(CONST struct Units *u1, CONST struct Units *u2)
+int ascjson::Unit_CmpConv(CONST struct Units *u1, CONST struct Units *u2)
 {
   if (!u1 || !u2 || UnitsConvFactor(u1)<UnitsConvFactor(u2)) {
     return 1;
@@ -198,8 +199,7 @@ int Unit_CmpConv(CONST struct Units *u1, CONST struct Units *u2)
  * note that since fractional and irrational exponents are not allowed
  * on dimensioned quantities, we don't have to worry on denominator.
  */
-static
-void Unit_WriteNumer(Tcl_DString *str, struct fraction frac,
+void ascjson::Unit_WriteNumer(Asc_DString *str, struct fraction frac,
                     CONST char *baseunit, int *CONST p)
 {
   char sval[MAXIMUM_NUMERIC_LENGTH];
@@ -215,12 +215,11 @@ void Unit_WriteNumer(Tcl_DString *str, struct fraction frac,
       /* this won't parse, but shouldn't happen anyway */
       sprintf(sval,"%s^(%d/%d)*",baseunit,Numerator(frac),Denominator(frac));
     }
-    Tcl_DStringAppend(str,sval,-1);
+    Asc_DStringAppend(str,sval, HALL);
   }
 }
 
-static
-void Unit_WriteDenom(Tcl_DString *str, struct fraction frac,
+void ascjson::Unit_WriteDenom(Asc_DString *str, struct fraction frac,
                     CONST char *baseunit, int *CONST p)
 {
   char sval[MAXIMUM_NUMERIC_LENGTH];
@@ -236,22 +235,21 @@ void Unit_WriteDenom(Tcl_DString *str, struct fraction frac,
       /* this won't parse, but shouldn't happen anyway */
       sprintf(sval,"/%s^(%d/%d)",baseunit,-Numerator(frac),Denominator(frac));
     }
-    Tcl_DStringAppend(str,sval,-1);
+    Asc_DStringAppend(str,sval,HALL);
   }
 }
 
 /* return a nicely formatted units string */
-static
-char *Unit_MakeString(const dim_type *dimp, struct Units * units[NUM_DIMENS])
+char *ascjson::Unit_MakeString(const dim_type *dimp, struct Units * units[NUM_DIMENS])
 {
   struct fraction frac;
-  Tcl_DString str1, str2;
+  Asc_DString str1, str2;
   char *result;
   int printed = 0,len;
-  Tcl_DStringInit(&str1);
-  Tcl_DStringInit(&str2);
+  Asc_DStringInit(&str1);
+  Asc_DStringInit(&str2);
   if (IsWild(dimp)) {
-    Tcl_DStringAppend(&str2,"*",-1);
+    Asc_DStringAppend(&str2,"*",HALL);
   } else {
     int i;
     for( i = 0; i<NUM_DIMENS; i++ ) {
@@ -259,30 +257,29 @@ char *Unit_MakeString(const dim_type *dimp, struct Units * units[NUM_DIMENS])
        Unit_WriteNumer(&str1,frac,SCP(UnitsDescription(units[i])),&printed);
     }
     if (!printed) {
-      Tcl_DStringAppend(&str2,"1",-1);
+      Asc_DStringAppend(&str2,"1",HALL);
       printed = 1;
     } else {
       /* eat the trailing multiply */
-      Tcl_DStringAppend(&str2,
-                        Tcl_DStringValue(&str1),
-                        (strlen(Tcl_DStringValue(&str1))-1) );
+      Asc_DStringAppend(&str2,
+                        Asc_DStringValue(&str1),
+                        (strlen(Asc_DStringValue(&str1))-1) );
     }
     for( i = 0; i<NUM_DIMENS; i++ ) {
       frac = GetDimFraction(*dimp,i);
       Unit_WriteDenom(&str2,frac,SCP(UnitsDescription(units[i])),&printed);
     }
   }
-  len = strlen(Tcl_DStringValue(&str2));
+  len = strlen(Asc_DStringValue(&str2));
   result = Asc_MakeInitString(len);
-  strcpy(result, Tcl_DStringValue(&str2));
-  Tcl_DStringFree(&str1);
-  Tcl_DStringFree(&str2);
+  strcpy(result, Asc_DStringValue(&str2));
+  Asc_DStringFree(&str1);
+  Asc_DStringFree(&str2);
   return result;
 }
 
 #ifdef THIS_IS_AN_UNUSED_FUNCTION
-static
-void Unit_PrintDU(struct DisplayUnit *du)
+static void Unit_PrintDU(struct DisplayUnit *du)
 {
   if (du==NULL) {
     FPRINTF(stderr,"NULL");
@@ -296,7 +293,7 @@ void Unit_PrintDU(struct DisplayUnit *du)
  * return the DisplayUnit pointer that matches dimp.
  * create it if necessary. failing create, crash.
  */
-static struct DisplayUnit *Unit_FindOrAddDU(const dim_type *dimp)
+struct DisplayUnit *ascjson::Unit_FindOrAddDU(const dim_type *dimp)
 {
   unsigned long ndx;
   struct DisplayUnit dimpDU;
@@ -321,7 +318,7 @@ static struct DisplayUnit *Unit_FindOrAddDU(const dim_type *dimp)
  * not existing. Will not actually create a Units struct. a NULL return
  * means the unit has been defaulted in the units window.
  */
-static struct Units *Unit_DisplayUnits(const dim_type *dimp)
+struct Units *ascjson::Unit_DisplayUnits(const dim_type *dimp)
 {
   struct DisplayUnit *dimpdu;
   assert(check_DU_set());
@@ -334,7 +331,7 @@ static struct Units *Unit_DisplayUnits(const dim_type *dimp)
  * if needed using user set base units and adds to the Units hash table.
  * returns the pointer of the fund units.
  */
-static struct Units *Unit_DisplayFund(const dim_type *dimp)
+struct Units *ascjson::Unit_DisplayFund(const dim_type *dimp)
 {
   struct DisplayUnit* dimpDU;
   char *newunits = NULL;
@@ -364,7 +361,7 @@ static struct Units *Unit_DisplayFund(const dim_type *dimp)
  * we are constructing the string every time rather than expanding
  * the DisplayUnit struct.
  */
-static struct Units *Unit_DisplaySI(const dim_type *dimp)
+struct Units *ascjson::Unit_DisplaySI(const dim_type *dimp)
 {
   static unsigned long pos;
   static int ecode;
@@ -385,8 +382,7 @@ static struct Units *Unit_DisplaySI(const dim_type *dimp)
  * this function checks to see if the fundamental unit being updated
  * needs to be changed in already set displayunits.
  */
-static
-void Unit_UpdateFundUnits(struct DisplayUnit *du)
+void ascjson::Unit_UpdateFundUnits(struct DisplayUnit *du)
 {
   dim_type *d;
 
@@ -419,7 +415,7 @@ void uunconversion_trap(int sigval)
  * retval is the SI value converted from the units specified by u
  * returns 1 if unhappy, 0 otherwise.
  */
-static int Unit_UnconvertReal(double val, struct Units *u, double *retval)
+int ascjson::Unit_UnconvertReal(double val, struct Units *u, double *retval)
 {
   static int status;
   if (!u) {
@@ -455,7 +451,7 @@ void uconversion_trap(int sigval)
 /* respects any already active fp_trap
  * retval is the display value in the units specified by u
  */
-static int Unit_ConvertReal(double val, struct Units *u, double *retval)
+int ascjson::Unit_ConvertReal(double val, struct Units *u, double *retval)
 {
   static int status;
   if (!u) {
@@ -480,7 +476,8 @@ static int Unit_ConvertReal(double val, struct Units *u, double *retval)
 }
 
 /* does integer math yield errors?? */
-static int Unit_ConvertInteger(long val, struct Units *u, long *retval)
+static
+int Unit_ConvertInteger(long val, struct Units *u, long *retval)
 {
   (void)u;        /* stop gcc whine about unused parameter */
 
@@ -489,7 +486,7 @@ static int Unit_ConvertInteger(long val, struct Units *u, long *retval)
 }
 /* end any pretense of conversion error handling */
 
-static int Unit_PrintUndefined(dim_type *dimp)
+int ascjson::Unit_PrintUndefined(dim_type *dimp)
 {
   char str[MAXIMUM_NUMERIC_LENGTH];
   int len;
@@ -521,7 +518,7 @@ static int Unit_PrintUndefined(dim_type *dimp)
   return 0;
 }
 
-static int Unitless_PrintUndefined(void)
+int ascjson::Unitless_PrintUndefined(void)
 {
   UDS = Asc_MakeInitString(9);
   strcat(UDS,"UNDEFINED");
@@ -533,7 +530,7 @@ static int Unitless_PrintUndefined(void)
  * Unit_PrintXXXXX are responsible for mallocing UDS, and
  * Asc_UnitValue is responsible for destroying it.
  */
-static int Unit_PrintReal(double val, dim_type *dimp)
+int ascjson::Unit_PrintReal(double val, dim_type *dimp)
 {
   char str[MAXIMUM_NUMERIC_LENGTH];
   int len;
@@ -582,7 +579,7 @@ static int Unit_PrintReal(double val, dim_type *dimp)
  * Assumes UDS is NULL on entry. That's why it's static.
  * Call only from Asc_UnitValue.
  */
-static int Unitless_PrintReal(double val, dim_type *dimp, int si)
+int ascjson::Unitless_PrintReal(double val, dim_type *dimp, int si)
 {
   char str[MAXIMUM_NUMERIC_LENGTH];
   int len;
@@ -623,7 +620,7 @@ static int Unitless_PrintReal(double val, dim_type *dimp, int si)
  * Assumes UDS is NULL on entry. That's why it's static.
  * Call only from Asc_UnitValue.
  */
-static int Unit_PrintInteger(long val, dim_type *dimp)
+int ascjson::Unit_PrintInteger(long val, dim_type *dimp)
 {
   char str[81];
   int len;
@@ -670,8 +667,7 @@ static int Unit_PrintInteger(long val, dim_type *dimp)
 /*
  * This code at the moment is only valid for token relations.
  */
-static
-dim_type *Unit_FindRelDim(CONST struct Instance *i)
+dim_type *ascjson::Unit_FindRelDim(struct Instance *i)
 {
   int consistent;
   dim_type dim;
@@ -704,7 +700,8 @@ dim_type *Unit_FindRelDim(CONST struct Instance *i)
     Asc_Panic(2, __FUNCTION__, "Type is not a relation type in Unit_FindRelDimen.");
   }
 
-  consistent = asc_check_dimensions(reln,&dim);
+  //consistent = asc_check_dimensions(reln,&dim);
+  consistent = RelationCheckDimensions(i,&dim);
   if( !consistent ) {
     if (g_check_dimensions_noisy) {
       FPRINTF(stderr,"An inconsistency was found in ");
@@ -724,7 +721,8 @@ dim_type *Unit_FindRelDim(CONST struct Instance *i)
  * returns TRUE if the instance is NULL or is dimensionally
  * sane. integers are sane (DIMENSIONLESS).
  */
-static int IsDimInstance(CONST struct Instance *i)
+static
+int IsDimInstance(CONST struct Instance *i)
 {
   enum inst_t t;
   if (!i) {
@@ -753,7 +751,7 @@ static int IsDimInstance(CONST struct Instance *i)
  * This is the broker for access to the Unit_PrintXXXXX routines and
  * is responsible for destroying the UDS.
  */
-char *Asc_UnitValue(CONST struct Instance *i)
+char *ascjson::Asc_UnitValue(struct Instance *i)
 {
   double dval;
   dim_type *dimp = NULL;
@@ -810,7 +808,7 @@ char *Asc_UnitValue(CONST struct Instance *i)
 
 /* follows exactly the same UDS management protocol as Asc_UnitValue. see
    comments above */
-char *Asc_UnitlessValue(CONST struct Instance *i, int si)
+char *ascjson::Asc_UnitlessValue(struct Instance *i, int si)
 {
   double dval;
   dim_type *dimp = NULL;
@@ -862,7 +860,7 @@ char *Asc_UnitlessValue(CONST struct Instance *i, int si)
   return UDS;
 }
 /* follows UDS string convention as for Asc_UnitValue. */
-char *Asc_UnitString(CONST struct Instance *i, int si)
+char *ascjson::Asc_UnitString(struct Instance *i, int si)
 {
   dim_type *dimp = NULL;
   struct Units *du;
@@ -926,7 +924,7 @@ char *Asc_UnitString(CONST struct Instance *i, int si)
 }
 
 /* follows UDS string convention as for Asc_UnitValue. */
-char *Asc_UnitDimString(const dim_type *dimp, int si)
+char *ascjson::Asc_UnitDimString(const dim_type *dimp, int si)
 {
   struct Units *du;
   size_t len;
@@ -965,7 +963,7 @@ char *Asc_UnitDimString(const dim_type *dimp, int si)
 tries to convert value consistent with units given. If si is FALSE
 assumes in is value in units given and tries to convert to si.
 */
-int Asc_UnitConvert(struct Units *u, double in, double *op, int si)
+int ascjson::Asc_UnitConvert(struct Units *u, double in, double *op, int si)
 {
 
   if (u==NULL || op == NULL) {
@@ -985,7 +983,7 @@ int Asc_UnitConvert(struct Units *u, double in, double *op, int si)
     }
   }
 }
-int Asc_UnitSetRealAtomValue(CONST struct Instance *i,
+int ascjson::Asc_UnitSetRealAtomValue(CONST struct Instance *i,
                           char *vstr, char *ustr, unsigned depth)
 {
   double dval = 0;
@@ -1041,46 +1039,35 @@ int Asc_UnitSetRealAtomValue(CONST struct Instance *i,
   return 0;
 }
 
-/* assumes the tcl unitsinterp is set before entry. else does nothing.
+/* assumes the unitshptr is set before entry. else does nothing.
 */
-static
-void Unit_GetUserSet(struct DisplayUnit *du)
+void ascjson::Unit_GetUserSet(struct DisplayUnit *du)
 {
-  if (!unitsinterp) {
+  if (!unitshptr) {
     return;
   }
   if (du->u!=NULL && UnitsDescription(du->u)!=NULL) {
-    Tcl_AppendElement(unitsinterp,(char *)UnitsDescription(du->u));
+    VTcl_AppendElement(unitshptr,(char *)UnitsDescription(du->u));
   }
 }
 
 /********************* END INTERNALS ******************************/
 
-int Asc_UnitDestroyDisplayList(ClientData cdata, Tcl_Interp *interp,
-                             int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitDestroyDisplayList(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
-  UNUSED_PARAMETER(cdata);
-  (void)interp;   /* stop gcc whine about unused parameter */
-  (void)argv;     /* stop gcc whine about unused parameter */
-
   if ( argc != 1 ) {
-    return TCL_ERROR;
+    return HELP_ERROR;
   }
   destroy_DUList();
-  return TCL_OK;
+  return HELP_OK;
 }
 
 
-int Asc_UnitDefaultBaseUnits(ClientData cdata, Tcl_Interp *interp,
-                           int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitDefaultBaseUnits(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   static int SIset;
   int i;
 
-  UNUSED_PARAMETER(cdata);
-  (void)interp;   /* stop gcc whine about unused parameter */
-  (void)argc;     /* stop gcc whine about unused parameter */
-  (void)argv;     /* stop gcc whine about unused parameter */
 
   if (!SIset) {
     g_SI_units[D_MASS]=
@@ -1111,47 +1098,45 @@ int Asc_UnitDefaultBaseUnits(ClientData cdata, Tcl_Interp *interp,
   for (i = 0;i<NUM_DIMENS;i++) {
     g_base_units[i]=g_SI_units[i];
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_UnitGetBaseUnits(ClientData cdata, Tcl_Interp *interp,
+int ascjson::Asc_UnitGetBaseUnits(Asc_DString *hptr,
                         int argc, CONST84 char *argv[])
 {
   int i;
-  check_units_set(cdata, interp, argc, argv);
+  check_units_set( hptr, argc, argv);
   for (i = 0; i<NUM_DIMENS; i++) {
     if (g_base_units[i]!=NULL) {
-      Tcl_AppendElement(interp,(char *)UnitsDescription(g_base_units[i]));
+      VTcl_AppendElement(hptr,(char *)UnitsDescription(g_base_units[i]));
     } else {
-      Tcl_AppendElement(interp,(char *)"undefined!");
+      VTcl_AppendElement(hptr,(char *)"undefined!");
     }
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_UnitDump(ClientData cdata, Tcl_Interp *interp,
+int ascjson::Asc_UnitDump(Asc_DString *hptr,
               int argc, CONST84 char *argv[])
 {
-  int dev,status = TCL_OK, tmpi;
+  int dev,status = HELP_OK, tmpi;
   FILE * fp;
-
-  UNUSED_PARAMETER(cdata);
 
   if (( argc < 2 ) || ( argc > 3 )) {
     FPRINTF(stderr,"call is: u_dump <device #> \n");
-    Tcl_SetResult(interp, "u_dump <arg> expects 0,1,2 for #.", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_dump <arg> expects 0,1,2 for #.");
+    return HELP_ERROR;
   }
 
   tmpi = 3;
-  status = Tcl_GetInt(interp,argv[1],&tmpi);
+  status = JTcl_GetInt(hptr, argv[1],&tmpi);
   if (tmpi<0 || tmpi >2) {
-    status = TCL_ERROR;
+    status = HELP_ERROR;
   }
-  if (status!=TCL_OK) {
+  if (status!=HELP_OK) {
     FPRINTF(stderr,"u_dump: first arg is 0,1, or 2\n");
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "u_dump: invalid output dev #", TCL_STATIC);
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "u_dump: invalid output dev #");
     return status;
   } else {
     dev = tmpi;
@@ -1166,12 +1151,12 @@ int Asc_UnitDump(ClientData cdata, Tcl_Interp *interp,
             break;
     default : /* should never be here */
             FPRINTF(stderr,"u_dump called with strange i/o option!!\n");
-            return TCL_ERROR;
+            return HELP_ERROR;
   }
 
   if (fp==NULL) {
     char a[1024];
-    register unsigned long c;
+    unsigned long c;
     struct Units *p;
     for(c = 0;c<UNITS_HASH_SIZE;c++) {
       for(p = g_units_hash_table[c];p!=NULL;p = p->next) {
@@ -1197,38 +1182,36 @@ int Asc_UnitDump(ClientData cdata, Tcl_Interp *interp,
           ascfree(ussi);
         }
 
-        Tcl_AppendElement(interp,a);
+        VTcl_AppendElement(hptr, a);
       }
     }
   } else {
     DumpUnits(fp);
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_DimenDump(ClientData cdata, Tcl_Interp *interp,
+int ascjson::Asc_DimenDump(Asc_DString *hptr,
                int argc, CONST84 char *argv[])
 {
-  int dev,status = TCL_OK, tmpi;
+  int dev,status = HELP_OK, tmpi;
   FILE * fp;
-
-  UNUSED_PARAMETER(cdata);
 
   if ( argc != 2 ) {
     FPRINTF(stderr,"call is: u_dims <device #> \n");
-    Tcl_SetResult(interp, "u_dims <arg> expects 0,1,2 for #.", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_dims <arg> expects 0,1,2 for #.");
+    return HELP_ERROR;
   }
 
   tmpi = 3;
-  status = Tcl_GetInt(interp,argv[1],&tmpi);
+  status = JTcl_GetInt(hptr, argv[1],&tmpi);
   if (tmpi<0 || tmpi >2) {
-    status = TCL_ERROR;
+    status = HELP_ERROR;
   }
-  if (status!=TCL_OK) {
+  if (status!=HELP_OK) {
     FPRINTF(stderr,"u_dims: first arg is 0,1, or 2\n");
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "u_dims: invalid output dev #", TCL_STATIC);
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "u_dims: invalid output dev #");
     return status;
   } else {
     dev = tmpi;
@@ -1243,12 +1226,12 @@ int Asc_DimenDump(ClientData cdata, Tcl_Interp *interp,
             break;
     default : /* should never be here */
             FPRINTF(stderr,"u_dims called with strange i/o option!!\n");
-           return TCL_ERROR;
+           return HELP_ERROR;
   }
 
   if (!fp) {
     char a[1024];
-    register unsigned long c,len = gl_length(g_dimen_list);
+    unsigned long c,len = gl_length(g_dimen_list);
     dim_type *d;
     for(c = 1;c<=len;c++) {
       d = (dim_type *)gl_fetch(g_dimen_list,c);
@@ -1260,129 +1243,117 @@ int Asc_DimenDump(ClientData cdata, Tcl_Interp *interp,
       if (CmpDimen(d,Dimensionless())!=0) {
         Asc_BrowWriteDimensions(a,d);
       }
-      Tcl_AppendResult(interp," {",a,"}",SNULL);
+      Asc_DStringAppend3(hptr," {",a,"}", HALL);
     }
 
   } else {
     DumpDimens(fp);
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_DimenRelCheck(ClientData cdata, Tcl_Interp *interp,
-                   int argc, CONST84 char *argv[]) {
+int ascjson::Asc_DimenRelCheck(Asc_DString *hptr, int argc, CONST84 char *argv[]) {
   int status,tmpi;
-
-  UNUSED_PARAMETER(cdata);
 
   if ( argc != 2 ) {
     FPRINTF(stderr,"call is: u_dim_setverify <0,1>\n");
-    Tcl_SetResult(interp, "u_dim_setverify expects a number 0 or 1.",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_dim_setverify expects a number 0 or 1.");
+    return HELP_ERROR;
   }
   tmpi = 2;
-  status = Tcl_GetInt(interp,argv[1],&tmpi);
+  status = JTcl_GetInt(hptr, argv[1],&tmpi);
   if (tmpi<0 || tmpi>1) {
-    status = TCL_ERROR;
+    status = HELP_ERROR;
   }
-  if (status!=TCL_OK) {
+  if (status!=HELP_OK) {
     FPRINTF(stderr,"u_dim_setverify: value must be 0 or 1");
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "u_dim_setverify: invalid boolean given.",
-                  TCL_STATIC);
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "u_dim_setverify: invalid boolean given.");
     return status;
   }
   g_check_dimensions_noisy = tmpi;
-  return TCL_OK;
+  return HELP_OK;
 }
-int Asc_UnitBaseDimToNum(ClientData cdata, Tcl_Interp *interp,
-                        int argc, CONST84 char *argv[])
+
+int ascjson::Asc_UnitBaseDimToNum(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
-  char tmps[4];
+  char tmps[11];
   char *c;
   int i;
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc != 2 ) {
     FPRINTF(stderr,"call is: u_dim2num <M,T,L,C,Q,TMP,P,S,E,LUM> \n");
-    Tcl_SetResult(interp, "u_dim2num expects 1 argument", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_dim2num expects 1 argument");
+    return HELP_ERROR;
   }
   c = QUIET(argv[1]);
   for( i = 0; i < NUM_DIMENS && strcmp(c,DimName(i)); i++ );
   if( i == NUM_DIMENS ) {
-    Tcl_SetResult(interp, "u_dim2num called with unknown base dimension.",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_dim2num called with unknown base dimension.");
+    return HELP_ERROR;
   } else {
     sprintf(tmps,"%d",i);
   }
-  Tcl_AppendResult(interp,tmps,SNULL);
-  return TCL_OK;
+  Asc_DStringAppend(hptr,tmps, HALL);
+  return HELP_OK;
 }
 
-int Asc_UnitNumToBaseDim(ClientData cdata, Tcl_Interp *interp,
-                        int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitNumToBaseDim(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
-  int status = TCL_OK, tmpi;
-
-  UNUSED_PARAMETER(cdata);
+  int status = HELP_OK, tmpi;
 
   if ( argc != 2 ) {
     FPRINTF(stderr,"call is: u_num2dim <num> \n");
-    Tcl_SetResult(interp, "u_num2dim <arg>", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_num2dim <arg>");
+    return HELP_ERROR;
   }
   tmpi = 100;
-  status = Tcl_GetInt(interp,argv[1],&tmpi);
+  status = JTcl_GetInt(hptr, argv[1],&tmpi);
   if (tmpi<0 || tmpi>=NUM_DIMENS) {
-    status = TCL_ERROR;
+    status = HELP_ERROR;
   }
-  if (status!=TCL_OK) {
+  if (status!=HELP_OK) {
     FPRINTF(stderr,"u_num2dim: arg is in range 0 - %d\n",(NUM_DIMENS-1));
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "u_num2dim: invalid dim #", TCL_STATIC);
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "u_num2dim: invalid dim #");
     return status;
   }
-  Tcl_AppendResult(interp,DimName(tmpi),SNULL);
-  return TCL_OK;
+  Asc_DStringAppend(hptr,DimName(tmpi), HALL);
+  return HELP_OK;
 }
 
-int Asc_UnitMatchBaseDim(ClientData cdata, Tcl_Interp *interp,
-                       int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitMatchBaseDim(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
-  int status = TCL_OK;
+  int status = HELP_OK;
   int tmpi;
 
   if ( argc != 2 ) {
     FPRINTF(stderr,"call is: u_num2dim <num> \n");
-    Tcl_SetResult(interp, "u_num2dim <arg>", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_num2dim <arg>");
+    return HELP_ERROR;
   }
   tmpi = 100;
-  status = Tcl_GetInt(interp,argv[1],&tmpi);
+  status = JTcl_GetInt(hptr, argv[1],&tmpi);
   if (tmpi<0 || tmpi>=NUM_DIMENS) {
-    status = TCL_ERROR;
+    status = HELP_ERROR;
   }
-  if (status!=TCL_OK) {
+  if (status!=HELP_OK) {
     FPRINTF(stderr,"u_frombasedim: arg is in range 0 - %d\n",
                    (NUM_DIMENS-1));
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "u_frombasedim: invalid dim #", TCL_STATIC);
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "u_frombasedim: invalid dim #");
     return status;
   }
-  status = Asc_UnitNumToBaseDim(cdata,interp,argc,argv);
-  if (status ==TCL_OK) {
+  status = Asc_UnitNumToBaseDim(hptr, argc,argv);
+  if (status ==HELP_OK) {
     dim_type dim;
     struct gl_list_t *ulist = gl_create(50L);
-    register unsigned long c;
+    unsigned long c;
     struct Units *p;
 
     ClearDimensions(&dim);
-    ParseDim(&dim,Tcl_GetStringResult(interp));
-    Tcl_ResetResult(interp);
+    ParseDim(&dim,Asc_DStringValue(hptr));
+    Asc_DStringFree(hptr);
     for(c = 0;c<UNITS_HASH_SIZE;c++) {
       for(p = g_units_hash_table[c];p!=NULL;p = p->next) {
         if (CmpDimen(&dim,UnitsDimensions(p))==0) {
@@ -1391,33 +1362,30 @@ int Asc_UnitMatchBaseDim(ClientData cdata, Tcl_Interp *interp,
       }
     }
     for(c = 1;c<=gl_length(ulist);c++) {
-      Tcl_AppendElement(interp,
+      VTcl_AppendElement(hptr,
         (char *)UnitsDescription((struct Units *)gl_fetch(ulist,c)));
     }
     gl_destroy(ulist);
   } else {
-    Tcl_AppendResult(interp," called from u_frombasedim",SNULL);
+    Asc_DStringAppend(hptr," called from u_frombasedim", HALL);
   }
   return status;
 }
 
-int Asc_UnitMatchAtomDim(ClientData cdata, Tcl_Interp *interp,
-                       int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitMatchAtomDim(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct TypeDescription *desc;
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc != 2 ) {
     FPRINTF(stderr,"call is: u_fromatomdim <atom_typename> \n");
-    Tcl_SetResult(interp, "u_fromatomdim: expects atom type.", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_fromatomdim: expects atom type.");
+    return HELP_ERROR;
   }
   desc = UnitsFindType(argv[1]);
   if (desc!=NULL && GetBaseType(desc)==real_type) {
     dim_type *dim = (dim_type *)GetRealDimens(desc);
     struct gl_list_t *ulist = gl_create(50L);
-    register unsigned long c;
+    unsigned long c;
     struct Units *p;
 
     for(c = 0;c<UNITS_HASH_SIZE;c++) {
@@ -1428,43 +1396,39 @@ int Asc_UnitMatchAtomDim(ClientData cdata, Tcl_Interp *interp,
       }
     }
     for(c = 1;c<=gl_length(ulist);c++) {
-      Tcl_AppendElement(interp,
+      VTcl_AppendElement(hptr,
         (char *)UnitsDescription((struct Units *)gl_fetch(ulist,c)));
     }
     gl_destroy(ulist);
   } else {
-    Tcl_SetResult(interp, "u_fromatomdim called with bad real atom name",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_fromatomdim called with bad real atom name");
+    return HELP_ERROR;
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_UnitGetAtomList(ClientData cdata, Tcl_Interp *interp,
+int ascjson::Asc_UnitGetAtomList(Asc_DString *hptr,
                      int argc, CONST84 char *argv[])
 {
   struct gl_list_t *alist = gl_create(200L);
   struct gl_list_t *dlist = NULL;
-  register struct TypeDescription *desc, *rtdesc;
-  register dim_type *dim;
-  register unsigned long c,len;
+  struct TypeDescription *desc, *rtdesc;
+  dim_type *dim;
+  unsigned long c,len;
   char a[1024];
 
-  UNUSED_PARAMETER(cdata);
-  (void)argv;     /* stop gcc whine about unused parameter */
 
   if ( argc != 1 ) {
     FPRINTF(stderr,"call is: u_getdimatoms <no args> \n");
-    Tcl_SetResult(interp, "u_getdimatoms: unexpected arg found.", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_getdimatoms: unexpected arg found.");
+    return HELP_ERROR;
   }
   rtdesc = UnitsFindType("real");
   assert(rtdesc);
   dlist = DefinitionList();
   if (!dlist) {
-    Tcl_SetResult(interp, "u_getdimatoms found no type definitions.",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_getdimatoms found no type definitions.");
+    return HELP_ERROR;
   }
   len = gl_length(dlist);
   for(c = 1;c<=len;c++) {
@@ -1484,23 +1448,24 @@ int Asc_UnitGetAtomList(ClientData cdata, Tcl_Interp *interp,
     desc = (struct TypeDescription *)gl_fetch(alist,c);
     sprintf(a,"%s ",(char *)SCP(GetName(desc)));
     Asc_BrowWriteDimensions(a,GetRealDimens(desc));
-    Tcl_AppendElement(interp,a);
+    VTcl_AppendElement(hptr, a);
   }
   gl_destroy(alist);
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_UnitChangeBaseUnit(ClientData cdata, Tcl_Interp *interp,
+
+
+int ascjson::Asc_UnitChangeBaseUnit(Asc_DString *hptr,
                        int argc, CONST84 char *argv[])
 {
   struct Units *up = NULL;
   if ( argc != 2 ) {
     FPRINTF(stderr,"call is: u_change_baseunit <unit>\n");
-    Tcl_SetResult(interp, "u_change_baseunit wants a simple unit arg",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_change_baseunit wants a simple unit arg");
+    return HELP_ERROR;
   }
-  check_units_set(cdata,interp,argc,argv);
+  check_units_set(hptr, argc,argv);
   check_DU_set();
   up = (struct Units *)LookupUnits(argv[1]);
   if (up != NULL) {
@@ -1510,10 +1475,9 @@ int Asc_UnitChangeBaseUnit(ClientData cdata, Tcl_Interp *interp,
          && CmpDimen(UnitsDimensions(up),UnitsDimensions(g_base_units[c]))!=0);
         c++);
     if (c==(NUM_DIMENS)) {
-      Tcl_SetResult(interp,
-                    "u_change_baseunit called with non-base dimensioned unit",
-                    TCL_STATIC);
-      return TCL_ERROR;
+      Asc_DStringSet(hptr,
+                    "u_change_baseunit called with non-base dimensioned unit");
+      return HELP_ERROR;
     }
     g_base_units[c]=up;
     updatefundunitdim = -1;
@@ -1523,25 +1487,23 @@ int Asc_UnitChangeBaseUnit(ClientData cdata, Tcl_Interp *interp,
       }
     }
     gl_iterate( DUList, (void (*)(VOIDPTR))Unit_UpdateFundUnits );
-    return TCL_OK;
+    return HELP_OK;
   } else {
-    Tcl_SetResult(interp, "u_change_baseunit called with unknown unit.",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_change_baseunit called with unknown unit.");
+    return HELP_ERROR;
   }
 }
 
-int Asc_UnitSetUser(ClientData cdata, Tcl_Interp *interp,
-                int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitSetUser(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct Units *up = NULL;
   struct DisplayUnit *du;
   if ( argc != 2 ) {
     FPRINTF(stderr,"call is: u_set_user <unit>\n");
-    Tcl_SetResult(interp, "u_set_user wants a units string arg", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_set_user wants a units string arg");
+    return HELP_ERROR;
   }
-  check_units_set(cdata,interp,argc,argv);
+  check_units_set(hptr, argc,argv);
   check_DU_set();
   up = (struct Units *)LookupUnits(argv[1]);
   if (up ==NULL) {
@@ -1552,18 +1514,17 @@ int Asc_UnitSetUser(ClientData cdata, Tcl_Interp *interp,
   if (up!=NULL) {
     du = Unit_FindOrAddDU((dim_type *)UnitsDimensions(up));
     du->u = up;
-    return TCL_OK;
+    return HELP_OK;
   }
-  Tcl_SetResult(interp, "u_set_user unable to parse the units given.",
-                TCL_STATIC);
-  return TCL_ERROR;
+  Asc_DStringSet(hptr, "u_set_user unable to parse the units given.");
+  return HELP_ERROR;
 }
 
 /*
  * return all real atoms and real constants which have the units
  * given.
  */
-int Asc_UnitGetAtomsForUnit(ClientData cdata, Tcl_Interp *interp,
+int ascjson::Asc_UnitGetAtomsForUnit(Asc_DString *hptr,
                             int argc, CONST84 char *argv[])
 {
   struct TypeDescription *desc, *rtdesc, *rcdesc;
@@ -1577,10 +1538,10 @@ int Asc_UnitGetAtomsForUnit(ClientData cdata, Tcl_Interp *interp,
 
   if ( argc != 2 ) {
     FPRINTF(stderr,"call is: u_get_atoms <unit>\n");
-    Tcl_SetResult(interp, "u_get_atoms wants a units string arg", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_get_atoms wants a units string arg");
+    return HELP_ERROR;
   }
-  check_units_set(cdata,interp,argc,argv);
+  check_units_set(hptr, argc,argv);
   check_DU_set();
   up = (struct Units *)LookupUnits(argv[1]);
   if (up == NULL) {
@@ -1590,9 +1551,8 @@ int Asc_UnitGetAtomsForUnit(ClientData cdata, Tcl_Interp *interp,
     du = Unit_FindOrAddDU((dim_type *)UnitsDimensions(up));
     du->u = up;
   } else {
-    Tcl_SetResult(interp, "u_get_atoms unable to parse the units given.",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_get_atoms unable to parse the units given.");
+    return HELP_ERROR;
   }
   rtdesc = UnitsFindType("real");
   rcdesc = UnitsFindType("real_constant");
@@ -1600,9 +1560,8 @@ int Asc_UnitGetAtomsForUnit(ClientData cdata, Tcl_Interp *interp,
   assert(rcdesc);
   dlist = DefinitionList();
   if (!dlist) {
-    Tcl_SetResult(interp, "u_get_atoms found no type definitions.",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_get_atoms found no type definitions.");
+    return HELP_ERROR;
   }
   len = gl_length(dlist);
   alist = gl_create(len);
@@ -1630,81 +1589,73 @@ int Asc_UnitGetAtomsForUnit(ClientData cdata, Tcl_Interp *interp,
   len = gl_length(alist);
   for(c = 1;c<=len;c++) {
     desc = (struct TypeDescription *)gl_fetch(alist,c);
-    Tcl_AppendElement(interp,(char *)SCP(GetName(desc)));
+    VTcl_AppendElement(hptr,(char *)SCP(GetName(desc)));
   }
   gl_destroy(alist);
 
   len = gl_length(blist);
   for(c = 1;c<=len;c++) {
     desc = (struct TypeDescription *)gl_fetch(blist,c);
-    Tcl_AppendElement(interp,(char *)SCP(GetName(desc)));
+    VTcl_AppendElement(hptr,(char *)SCP(GetName(desc)));
   }
   gl_destroy(blist);
-  return TCL_OK;
+  return HELP_OK;
 }
 
 
-int Asc_UnitGetPrec(ClientData cdata, Tcl_Interp *interp,
+int ascjson::Asc_UnitGetPrec(Asc_DString *hptr,
                  int argc, CONST84 char *argv[])
 {
   char buf[MAXIMUM_NUMERIC_LENGTH];   /* string to hold integer */
-  UNUSED_PARAMETER(cdata);
-  (void)argv;     /* stop gcc whine about unused parameter */
 
   if ( argc != 1 ) {
     FPRINTF(stderr,"call is: u_getprec <no args>\n");
-    Tcl_SetResult(interp, "u_getprec expects no arguments.", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_getprec expects no arguments.");
+    return HELP_ERROR;
   }
   sprintf(buf,"%d",UPREC);
-  Tcl_SetResult(interp, buf, TCL_VOLATILE);
-  return TCL_OK;
+  Asc_DStringSet(hptr, buf);
+  return HELP_OK;
 }
 
-int Asc_UnitGetCPrec()
+int ascjson::Asc_UnitGetCPrec()
 {
   return UPREC;
 }
 
-int Asc_UnitSetPrec(ClientData cdata, Tcl_Interp *interp,
-                 int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitSetPrec(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   int status,tmpi;
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc != 2 ) {
     FPRINTF(stderr,"call is: u_setprec <number>\n");
-    Tcl_SetResult(interp, "u_setprec expects a number 4 to 16.", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_setprec expects a number 4 to 16.");
+    return HELP_ERROR;
   }
   tmpi = 100;
-  status = Tcl_GetInt(interp,argv[1],&tmpi);
+  status = JTcl_GetInt(hptr, argv[1],&tmpi);
   if (tmpi<4 || tmpi>16) {
-    status = TCL_ERROR;
+    status = HELP_ERROR;
   }
-  if (status!=TCL_OK) {
+  if (status!=HELP_OK) {
     FPRINTF(stderr,"u_setprec: Precision must be in range 4 - 16");
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "u_setprec: invalid precision specified.",
-                  TCL_STATIC);
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "u_setprec: invalid precision specified.");
     return status;
   }
   UPREC = tmpi;
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_UnitGetUnits(ClientData cdata, Tcl_Interp *interp,
+int ascjson::Asc_UnitGetUnits(Asc_DString *hptr,
                   int argc, CONST84 char *argv[])
 {
   struct TypeDescription *desc;
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc != 2 ) {
     FPRINTF(stderr,"call is: u_get_units <atom_typename> \n");
-    Tcl_SetResult(interp, "u_get_units: expects atom type.", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_get_units: expects atom type.");
+    return HELP_ERROR;
   }
   desc = UnitsFindType(argv[1]);
   if (desc!=NULL && GetBaseType(desc)==real_type) {
@@ -1712,46 +1663,40 @@ int Asc_UnitGetUnits(ClientData cdata, Tcl_Interp *interp,
     struct DisplayUnit *du;
     assert(dim!=NULL);
     if (IsWild(dim) || CmpDimen(dim,Dimensionless())==0 ) {
-      return TCL_OK;
+      return HELP_OK;
     }
     du = Unit_FindOrAddDU(dim);
     if (du->u!=NULL) {
-      Tcl_AppendResult(interp,UnitsDescription(du->u),SNULL);
-      return TCL_OK;
+      Asc_DStringAppend(hptr,SCP(UnitsDescription(du->u)), HALL);
+      return HELP_OK;
     }
     if (du->fu!=NULL) {
-      Tcl_AppendResult(interp,UnitsDescription(du->fu),SNULL);
-      return TCL_OK;
+      Asc_DStringAppend(hptr,SCP(UnitsDescription(du->fu)), HALL);
+      return HELP_OK;
     } else {
       struct Units *u = Unit_DisplayFund(dim);
       if (!u) {
-        Tcl_SetResult(interp,
-                      "u_get_units: unable to define fundamental units!",
-                      TCL_STATIC);
-        return TCL_ERROR;
+        Asc_DStringSet(hptr, "u_get_units: unable to define fundamental units!");
+        return HELP_ERROR;
       } else {
-        Tcl_AppendResult(interp,UnitsDescription(u),SNULL);
-        return TCL_OK;
+        Asc_DStringAppend(hptr,SCP(UnitsDescription(u)), HALL);
+       	return HELP_OK;
       }
     }
   } else {
-    Tcl_SetResult(interp, "u_get_units called with bad real atom name",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_get_units called with bad real atom name");
+    return HELP_ERROR;
   }
 }
 
-int Asc_UnitGetUser(ClientData cdata, Tcl_Interp *interp,
-                 int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitGetUser(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct TypeDescription *desc;
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc != 2 ) {
     FPRINTF(stderr,"call is: u_get_user <atom_typename> \n");
-    Tcl_SetResult(interp, "u_get_user: expects atom type.", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_get_user: expects atom type.");
+    return HELP_ERROR;
   }
   desc = UnitsFindType(argv[1]);
   if (desc!=NULL && GetBaseType(desc)==real_type) {
@@ -1759,49 +1704,42 @@ int Asc_UnitGetUser(ClientData cdata, Tcl_Interp *interp,
     struct Units *u;
     assert(dim!=NULL);
     if (IsWild(dim) || CmpDimen(dim,Dimensionless())==0 ) {
-      return TCL_OK;
+      return HELP_OK;
     }
     u = Unit_DisplayUnits(dim);
     if (u!=NULL) {
-      Tcl_AppendResult(interp,UnitsDescription(u),SNULL);
+      Asc_DStringAppend(hptr,SCP(UnitsDescription(u)), HALL);
     } else {
-      Tcl_SetResult(interp, "default", TCL_STATIC);
+      Asc_DStringSet(hptr, "default");
     }
-    return TCL_OK;
+    return HELP_OK;
   } else {
-    Tcl_SetResult(interp, "u_get_user called with bad real atom name",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_get_user called with bad real atom name");
+    return HELP_ERROR;
   }
 }
 
-int Asc_UnitGetList(ClientData cdata, Tcl_Interp *interp,
-                 int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitGetList(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
-  UNUSED_PARAMETER(cdata);
-  (void)argv;     /* stop gcc whine about unused parameter */
 
   if ( argc != 1 ) {
     FPRINTF(stderr,"call is: u_get_list <no args> \n");
-    Tcl_SetResult(interp, "u_get_list: expects no arguments.", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_get_list: expects no arguments.");
+    return HELP_ERROR;
   }
   check_DU_set();
-  unitsinterp = interp;
+  unitshptr = hptr;
   gl_iterate(DUList,(void (*)(VOIDPTR))Unit_GetUserSet);
-  return TCL_OK;
+  return HELP_OK;
 }
-int Asc_UnitClearUser(ClientData cdata, Tcl_Interp *interp,
-                   int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitClearUser(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct TypeDescription *desc;
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc != 2 ) {
     FPRINTF(stderr,"call is: u_clear_user <atom_typename> \n");
-    Tcl_SetResult(interp, "u_clear_user: expects atom type.", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_clear_user: expects atom type.");
+    return HELP_ERROR;
   }
   desc = UnitsFindType(argv[1]);
   if (desc!=NULL && GetBaseType(desc)==real_type) {
@@ -1809,231 +1747,205 @@ int Asc_UnitClearUser(ClientData cdata, Tcl_Interp *interp,
     struct DisplayUnit *du;
     assert(dim!=NULL);
     if (IsWild(dim) || CmpDimen(dim,Dimensionless())==0 ) {
-      return TCL_OK;
+      return HELP_OK;
     }
     du = Unit_FindOrAddDU(dim);
     du->u = (struct Units *)NULL;
-    return TCL_OK;
+    return HELP_OK;
   } else {
-    Tcl_SetResult(interp, "u_clear_user called with bad real atom name",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_clear_user called with bad real atom name");
+    return HELP_ERROR;
   }
 }
 
-int Asc_UnitGetVal(ClientData cdata, Tcl_Interp *interp,
-                int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitGetVal(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct Instance *i;
   int status;
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc != 2 ) {
-    Tcl_SetResult(interp, "u_getval expected <qlfdid>", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_getval expected <qlfdid>");
+    return HELP_ERROR;
   }
   status = Asc_QlfdidSearch3(argv[1],0);
   if (status ==0) {
     i = g_search_inst;
   } else {
-    Tcl_AppendResult(interp,"u_getval: QlfdidSearchCmd error",
-                     argv[1], " not found.",SNULL);
-    return TCL_ERROR;
+    Asc_DStringAppend3(hptr,"u_getval: QlfdidSearchCmd error",
+                     argv[1], " not found.", HALL);
+    return HELP_ERROR;
   }
   if (IsDimInstance(i)) {
-    Tcl_AppendElement(interp,Asc_UnitValue(i));
+    VTcl_AppendElement(hptr,Asc_UnitValue(i));
   } else {
-    Tcl_SetResult(interp, "u_getval called on undimensioned object.",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_getval called on undimensioned object.");
+    return HELP_ERROR;
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_UnitBrowGetVal(ClientData cdata, Tcl_Interp *interp,
-                    int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitBrowGetVal(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct Instance *i;
-  UNUSED_PARAMETER(cdata);
-  (void)argv;     /* stop gcc whine about unused parameter */
-
-  ASCUSE;
 
   if ( argc > 2 ) {
-    Tcl_SetResult(interp, "u_browgetval [search]", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_browgetval [search]");
+    return HELP_ERROR;
   }
   if (argc==2) {
     if (strncmp(argv[1],"search",3)!=0) {
-      Tcl_AppendResult(interp, "Error: ",argv[0]," incorrect argument",
-                       argv[1],(char *) NULL);
-      return TCL_ERROR;
+      Asc_DStringAppend4(hptr, "Error: ",argv[0]," incorrect argument",
+                       argv[1],HALL);
+      return HELP_ERROR;
     }
     i = g_search_inst;
   } else {
     i = g_curinst;
   }
   if (IsDimInstance(i)) {
-    Tcl_AppendElement(interp,Asc_UnitValue(i));
+    VTcl_AppendElement(hptr,Asc_UnitValue(i));
   } else {
-    Tcl_SetResult(interp, "u_browgetval called on undimensioned object.",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_browgetval called on undimensioned object.");
+    return HELP_ERROR;
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_UnitSlvGetRelVal(ClientData cdata, Tcl_Interp *interp,
-                      int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitSlvGetRelVal(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct rel_relation **rp;
   int32 maxrel,relnum;
-  int status = TCL_OK;
-
-  UNUSED_PARAMETER(cdata);
+  int status = HELP_OK;
 
   if ( argc != 2 ) {
-    Tcl_AppendElement(interp,"u_slvgetrelval expects solver relation index.");
-    return TCL_ERROR;
+    VTcl_AppendElement(hptr,"u_slvgetrelval expects solver relation index.");
+    return HELP_ERROR;
   }
   if (g_solvsys_cur==NULL) {
     FPRINTF(stderr,"u_slvgetrelval called with NULL pointer\n");
-    Tcl_AppendElement(interp,"u_slvgetrelval called without slv_system");
-    return TCL_ERROR;
+    VTcl_AppendElement(hptr,"u_slvgetrelval called without slv_system");
+    return HELP_ERROR;
   }
   rp = slv_get_solvers_rel_list(g_solvsys_cur);
   if (!rp) {
     FPRINTF(stderr,  "NULL relation list found in u_slvgetrelval\n");
-    Tcl_AppendElement(interp,"u_slvgetrelval called with null rellist");
-    return TCL_ERROR;
+    VTcl_AppendElement(hptr,"u_slvgetrelval called with null rellist");
+    return HELP_ERROR;
   }
   maxrel = (int32)slv_get_num_solvers_rels(g_solvsys_cur);
-  status = Tcl_GetInt(interp,argv[1],&relnum);
-  if (relnum>=maxrel||status==TCL_ERROR) {
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "u_slvgetrelval: equation requested does not exist",
-                  TCL_STATIC);
+  status = JTcl_GetInt(hptr, argv[1],&relnum);
+  if (relnum>=maxrel||status==HELP_ERROR) {
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "u_slvgetrelval: equation requested does not exist");
     FPRINTF(stderr,"u_slvgetrelval: relation index invalid.\n");
-    return TCL_ERROR;
+    return HELP_ERROR;
   }
-  if ( IsDimInstance( rel_instance(rp[relnum]) ) ) {
-    Tcl_AppendResult(interp,Asc_UnitValue(rel_instance(rp[relnum])),SNULL);
+  if ( IsDimInstance( T2I(rel_instance(rp[relnum])) ) ) {
+    Asc_DStringAppend(hptr,Asc_UnitValue(T2I(rel_instance(rp[relnum]))), HALL);
   } else {
-    Tcl_SetResult(interp, "u_slvgetrelval called on wierd object.",TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_slvgetrelval called on wierd object.");
+    return HELP_ERROR;
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_UnitSlvGetVarVal(ClientData cdata, Tcl_Interp *interp,
-                      int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitSlvGetVarVal(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct var_variable **vp;
   int32 maxvar,varnum;
-  int status = TCL_OK;
-
-  UNUSED_PARAMETER(cdata);
+  int status = HELP_OK;
 
   if ( argc != 2 ) {
-    Tcl_AppendElement(interp,"u_slvgetvarval expects solver variable index.");
-    return TCL_ERROR;
+    VTcl_AppendElement(hptr,"u_slvgetvarval expects solver variable index.");
+    return HELP_ERROR;
   }
   if (g_solvsys_cur==NULL) {
     FPRINTF(stderr,"u_slvgetvarval called with NULL pointer\n");
-    Tcl_AppendElement(interp,"u_slvgetvarval called without slv_system");
-    return TCL_ERROR;
+    VTcl_AppendElement(hptr,"u_slvgetvarval called without slv_system");
+    return HELP_ERROR;
   }
   vp = slv_get_solvers_var_list(g_solvsys_cur);
   if (!vp) {
     FPRINTF(stderr,  "NULL variable list found in u_slvgetvarval\n");
-    Tcl_AppendElement(interp,"u_slvgetvarval called with null varlist");
-    return TCL_ERROR;
+    VTcl_AppendElement(hptr,"u_slvgetvarval called with null varlist");
+    return HELP_ERROR;
   }
   maxvar = (int32)slv_get_num_solvers_vars(g_solvsys_cur);
-  status = Tcl_GetInt(interp,argv[1],&varnum);
-  if (varnum>=maxvar||status ==TCL_ERROR) {
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "u_slvgetvarval: variable requested does not exist",
-                  TCL_STATIC);
+  status = JTcl_GetInt(hptr, argv[1],&varnum);
+  if (varnum>=maxvar||status ==HELP_ERROR) {
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "u_slvgetvarval: variable requested does not exist");
     FPRINTF(stderr,"u_slvgetvarval: variable index invalid.\n");
-    return TCL_ERROR;
+    return HELP_ERROR;
   }
-  if (IsDimInstance(var_instance(vp[varnum]))) {
-    Tcl_AppendResult(interp,Asc_UnitValue(var_instance(vp[varnum])),SNULL);
+  if (IsDimInstance(T2I(var_instance(vp[varnum])))) {
+    Asc_DStringAppend(hptr,Asc_UnitValue(T2I(var_instance(vp[varnum]))), HALL);
   } else {
-    Tcl_SetResult(interp, "u_slvgetrelval called on wierd object.",TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_slvgetrelval called on wierd object.");
+    return HELP_ERROR;
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_UnitSlvGetObjVal(ClientData cdata, Tcl_Interp *interp,
+int ascjson::Asc_UnitSlvGetObjVal(Asc_DString *hptr,
                       int argc, CONST84 char *argv[])
 {
   struct rel_relation **rp;
   int32 maxobj,objnum;
-  int status = TCL_OK;
-
-  UNUSED_PARAMETER(cdata);
+  int status = HELP_OK;
 
   if ( argc != 2 ) {
-    Tcl_AppendElement(interp,"u_slvgetobjval expects solver objective index.");
-    return TCL_ERROR;
+    VTcl_AppendElement(hptr,"u_slvgetobjval expects solver objective index.");
+    return HELP_ERROR;
   }
   if (g_solvsys_cur==NULL) {
     FPRINTF(stderr,"u_slvgetobjval called with NULL pointer\n");
-    Tcl_AppendElement(interp,"u_slvgetobjval called without slv_system");
-    return TCL_ERROR;
+    VTcl_AppendElement(hptr,"u_slvgetobjval called without slv_system");
+    return HELP_ERROR;
   }
   rp = slv_get_solvers_obj_list(g_solvsys_cur);
   if (!rp) {
     FPRINTF(stderr,  "NULL objective list found in u_slvgetobjval\n");
-    Tcl_AppendElement(interp,"u_slvgetobjval called with null objlist");
-    return TCL_ERROR;
+    VTcl_AppendElement(hptr,"u_slvgetobjval called with null objlist");
+    return HELP_ERROR;
   }
   maxobj = (int32)slv_get_num_solvers_objs(g_solvsys_cur);
-  status = Tcl_GetInt(interp,argv[1],&objnum);
-  if (objnum>=maxobj||status==TCL_ERROR) {
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "u_slvgetobjval: objective requested does not exist",
-                  TCL_STATIC);
+  status = JTcl_GetInt(hptr, argv[1],&objnum);
+  if (objnum>=maxobj||status==HELP_ERROR) {
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "u_slvgetobjval: objective requested does not exist");
     FPRINTF(stderr,"u_slvgetobjval: objective index invalid.\n");
-    return TCL_ERROR;
+    return HELP_ERROR;
   }
-  if (  IsDimInstance( rel_instance(rp[objnum]) )  ) {
-    Tcl_AppendResult(interp,Asc_UnitValue(rel_instance(rp[objnum])),SNULL);
+  if (  IsDimInstance( T2I(rel_instance(rp[objnum]) ))  ) {
+    Asc_DStringAppend(hptr,Asc_UnitValue(T2I(rel_instance(rp[objnum]))), HALL);
   } else {
-    Tcl_SetResult(interp, "u_slvgetobjval called on wierd object.",TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_slvgetobjval called on wierd object.");
+    return HELP_ERROR;
   }
-  return TCL_OK;
+  return HELP_OK;
 
 
 
 /* OLD CODE HERE TO END
   if ( argc != 2 ) {
-    Tcl_SetResult(interp, "u_slvgetobjval takes no args.", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "u_slvgetobjval takes no args.");
+    return HELP_ERROR;
   } */
   /* write code here when exprdim available */
-/*  return TCL_OK; */
+/*  return HELP_OK; */
 }
 
 
 #define LONGHELP(b,ms) ((b)?ms:"")
-int Asc_UnitHelpList(ClientData cdata, Tcl_Interp *interp,
-                   int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitHelpList(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   boolean detail = 1;
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc > 2 ) {
     FPRINTF(stderr,"call is: uhelp [s,l] \n");
-    Tcl_SetResult(interp, "Too many args to uhelp. Want 0 or 1 args",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "Too many args to uhelp. Want 0 or 1 args");
+    return HELP_ERROR;
   }
   if ( argc == 2 ) {
     if (argv[1][0]=='s') {
@@ -2107,65 +2019,65 @@ int Asc_UnitHelpList(ClientData cdata, Tcl_Interp *interp,
     tmps = (char *)ascmalloc((MAXIMUM_NUMERIC_LENGTH+1)*sizeof(char));
 
     sprintf(tmps,"u_destroy_list");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"u_setSIdef");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"u_getbasedef");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"u_dump");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"u_dims");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"u_dim_setverify");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
 
     sprintf(tmps,"u_num2dim");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"u_dim2num");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"u_frombasedim");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"u_fromatomdim");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
 
     sprintf(tmps,"u_getdimatoms");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"u_get_atoms");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"u_change_baseunit");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"u_getprec");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"u_setprec");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
 
     sprintf(tmps,"u_get_units");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"u_set_user");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"u_get_user");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"u_get_list");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"u_clear_user");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
 
     sprintf(tmps,"u_getval");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"u_browgetval");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
 
     sprintf(tmps,"u_slvgetrelval");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"u_slvgetvarval");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"u_slvgetobjval");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
 
     sprintf(tmps,"uhelp");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     ascfree(tmps);
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 

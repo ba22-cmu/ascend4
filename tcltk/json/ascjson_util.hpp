@@ -82,4 +82,37 @@ int JTcl_GetLong(void *i, const char* str, long *lptr);
         FREE_ARGV; \
         return getc(__func__)
 
+#define Asc_DStringAppend2(hptr,a,b,HALL) \
+	Asc_DStringAppend(hptr,a,HALL); \
+	Asc_DStringAppend(hptr,b,HALL)
+
+#define Asc_DStringAppend3(hptr,a,b,c,HALL) \
+	Asc_DStringAppend(hptr,a,HALL); \
+	Asc_DStringAppend(hptr,b,HALL); \
+	Asc_DStringAppend(hptr,c,HALL);
+
+#define Asc_DStringAppend4(hptr,a,b,c,d,HALL) \
+	Asc_DStringAppend(hptr,a,HALL); \
+	Asc_DStringAppend(hptr,b,HALL); \
+	Asc_DStringAppend(hptr,c,HALL); \
+	Asc_DStringAppend(hptr,d,HALL)
+
+#define Asc_DStringAppend5(hptr,a,b,c,d,e,HALL) \
+	Asc_DStringAppend(hptr,a,HALL); \
+	Asc_DStringAppend(hptr,b,HALL); \
+	Asc_DStringAppend(hptr,c,HALL); \
+	Asc_DStringAppend(hptr,d,HALL); \
+	Asc_DStringAppend(hptr,e,HALL)
+
+#define Asc_DStringAppend6(hptr,a,b,c,d,e,f,HALL) \
+	Asc_DStringAppend(hptr,a,HALL); \
+	Asc_DStringAppend(hptr,b,HALL); \
+	Asc_DStringAppend(hptr,c,HALL); \
+	Asc_DStringAppend(hptr,d,HALL); \
+	Asc_DStringAppend(hptr,e,HALL); \
+	Asc_DStringAppend(hptr,f,HALL)
+
+// cast slvbackendtoken to instance
+#define T2I(t) ((struct Instance *)t)
+
 #endif // ascjson_util_h

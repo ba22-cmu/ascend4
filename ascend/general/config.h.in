@@ -92,7 +92,7 @@ typedef unsigned long long asc_intptr_t;
 	Whether to do use testing malloc. Required for some of the CUnit
 	tests to work fully.
 */
-@MALLOC_DEBUG@
+// @MALLOC_DEBUG@
 
 /*
 	Whether the dmalloc library was detected. Should permit much reduced

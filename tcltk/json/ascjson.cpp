@@ -66,17 +66,50 @@ extern "C" {
 #include <ascend/compiler/library.h>
 #include <ascend/compiler/prototype.h>
 #include <ascend/compiler/proc.h>
+#include <ascend/compiler/parentchild.h>
+#include <ascend/compiler/setinstval.h>
 #include <ascend/compiler/nameio.h>
 #include <ascend/compiler/parser.h>
 #include <ascend/system/slv_types.h>
 
+#include <ascend/compiler/visitinst.h>
+#include <ascend/compiler/visitlink.h>
+#include <ascend/compiler/plot.h>
+#include <ascend/compiler/logrel_util.h>
 #include <ascend/compiler/instance_name.h>
+#include <ascend/compiler/dimen.h>
 #include <ascend/compiler/units.h>
+#include <ascend/compiler/mathinst.h>
+#include <ascend/compiler/atomvalue.h>
+
+
+#include <ascend/compiler/instance_enum.h>
+#include <ascend/compiler/cmpfunc.h>
+#include <ascend/compiler/dimen_io.h>
+#include <ascend/compiler/child.h>
+#include <ascend/compiler/type_desc.h>
+#include <ascend/compiler/module.h>
+#include <ascend/compiler/library.h>
+#include <ascend/compiler/symtab.h>
+#include <ascend/compiler/instance_io.h>
+#include <ascend/compiler/atomvalue.h>
+#include <ascend/compiler/instquery.h>
+#include <ascend/compiler/expr_types.h>
+#include <ascend/compiler/mathinst.h>
+#include <ascend/compiler/instance_name.h>
+#include <ascend/compiler/find.h>
+#include <ascend/compiler/rel_blackbox.h>
+#include <ascend/compiler/vlist.h>
+#include <ascend/compiler/relation.h>
+#include <ascend/compiler/functype.h>
+#include <ascend/compiler/safe.h>
+#include <ascend/compiler/relation_util.h>
 
 #include <ascend/linear/mtx.h>
 #include <ascend/system/slv_types.h>
 #include <ascend/system/slv_client.h>
 #include <ascend/solver/solver.h>
+#include <ascend/packages/ascFreeAllVars.h>
 }
 
 #include "ascjson.hpp"
@@ -158,6 +191,10 @@ static void cFinal()
 
 ascjson::ascjson()
 {
+
+	// unitsprocds
+	unit_display_string = NULL;
+	display_precision = 6;
 
 	banner();
 	cInit();
@@ -1410,6 +1447,8 @@ rcp ascjson::Asc_HelpCmdHC (const char *vargv)
 #include "tcltk/json/typelex_no_lex.ipp"
 #include "tcltk/json/SimsProcDS.ipp"
 #include "tcltk/json/QlfdidDS.ipp"
+#include "tcltk/json/BrowserQueryDS.ipp"
+#include "tcltk/json/UnitsProcDS.ipp"
 #include "tcltk/json/all_call.ipp"
 
 /// utils

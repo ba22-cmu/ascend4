@@ -1,3 +1,5 @@
+#ifndef simsprocds_hpp
+#define simsprocds_hpp
 int Asc_SimsQueryCmdDS(  Asc_DString *hptr, int argc, CONST84 char *argv[]);
 int Asc_SimsUniqueNameCmdDS(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 int Asc_SimsCreateInstanceCmdDS( Asc_DString *hptr, int argc, CONST84 char *argv[]);
@@ -11,3 +13,4 @@ int Asc_BrowShowPendingsDS(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 int Asc_BrowWritePendingsSTDOUTDS(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 int Asc_SimListPendingDS( Asc_DString *hptr, int argc, CONST84 char *argv[]);
 int Asc_SimBinTokenSetOptionsDS( Asc_DString *hptr, int argc, CONST84 char **argv);
+#endif
