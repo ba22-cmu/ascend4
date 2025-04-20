@@ -135,11 +135,15 @@ int AscDriver(int argc, CONST char **argv)
 	ascjson	*world = new ascjson();
 	world->config("foo");
 
-	const char *libdestroy = Asc_LibrDestroyTypesCmdHN;
+	const char *libdestroy = "a\v" Asc_LibrDestroyTypesCmdHN;
 	auto r1 = world->Asc_LibrDestroyTypesCmdHC(libdestroy);
 	printf("%d\n", r1->e);
 
+#ifdef NOWEB
 	const char *read_file = "librread\v/models/basemodel.a4l";
+#else
+	const char *read_file = "librread\v../../webmodels/basemodel.a4l";
+#endif
 	auto r2 = world->Asc_LibrReadCmdHC(read_file);
 	printf("%d\n", r2->e);
 	printf("%s\n", r2->v);
@@ -151,8 +155,11 @@ int AscDriver(int argc, CONST char **argv)
 	printf("%s\n", r3->v);
 	// should return testcmumodel cmumodel your_site_models catch_Word_model as a vtab list
 	
-	int count = world->call_all_force_link();
-	printf("force count was: %d", count);
+	//int count = world->call_all_force_link();
+	//printf("force count was: %d", count);
+	
+	delete world;
+
 	return 0;
 }
 }

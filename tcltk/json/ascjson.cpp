@@ -24,94 +24,6 @@
 #define KILLBDAG 0
 #define REIMPLEMENT 0
 
-extern "C" {
-#include <ascend/utilities/config.h>
-#include <ascend/utilities/ascSignal.h>
-#include <ascend/utilities/ascEnvVar.h>
-#include "config.h"
-#include <ascend/general/ascMalloc.h>
-#include <ascend/general/dstring.h>
-#include <ascend/general/list.h>
-#include <ascend/general/panic.h>
-
-#include <ascend/compiler/ascCompiler.h>
-#include <ascend/compiler/symtab.h>
-#include <ascend/compiler/braced.h>
-#include <ascend/compiler/notate.h>
-#include <ascend/compiler/expr_types.h>
-#include <ascend/compiler/syntax.h>
-#include <ascend/compiler/module.h>
-#include <ascend/compiler/instance_enum.h>
-#include <ascend/compiler/dump.h>
-#include <ascend/compiler/stattypes.h>
-#include <ascend/compiler/simlist.h>
-#include <ascend/compiler/copyinst.h>
-#include <ascend/compiler/instquery.h>
-#include <ascend/compiler/instantiate.h>
-#include <ascend/compiler/qlfdid.h>
-#include <ascend/compiler/pending.h>
-#include <ascend/compiler/check.h>
-#include <ascend/compiler/statement.h>
-#include <ascend/compiler/statio.h>
-#include <ascend/compiler/bintoken.h>
-#include <ascend/compiler/instance_io.h>
-#include <ascend/compiler/destroyinst.h>
-#include <ascend/general/tm_time.h>
-#include <ascend/compiler/slist.h>
-#include <ascend/compiler/child.h>
-#include <ascend/compiler/childio.h>
-#include <ascend/compiler/type_desc.h>
-#include <ascend/compiler/typedef.h>
-#include <ascend/compiler/extfunc.h>
-#include <ascend/compiler/library.h>
-#include <ascend/compiler/prototype.h>
-#include <ascend/compiler/proc.h>
-#include <ascend/compiler/parentchild.h>
-#include <ascend/compiler/setinstval.h>
-#include <ascend/compiler/nameio.h>
-#include <ascend/compiler/parser.h>
-#include <ascend/system/slv_types.h>
-
-#include <ascend/compiler/visitinst.h>
-#include <ascend/compiler/visitlink.h>
-#include <ascend/compiler/plot.h>
-#include <ascend/compiler/logrel_util.h>
-#include <ascend/compiler/instance_name.h>
-#include <ascend/compiler/dimen.h>
-#include <ascend/compiler/units.h>
-#include <ascend/compiler/mathinst.h>
-#include <ascend/compiler/atomvalue.h>
-
-
-#include <ascend/compiler/instance_enum.h>
-#include <ascend/compiler/cmpfunc.h>
-#include <ascend/compiler/dimen_io.h>
-#include <ascend/compiler/child.h>
-#include <ascend/compiler/type_desc.h>
-#include <ascend/compiler/module.h>
-#include <ascend/compiler/library.h>
-#include <ascend/compiler/symtab.h>
-#include <ascend/compiler/instance_io.h>
-#include <ascend/compiler/atomvalue.h>
-#include <ascend/compiler/instquery.h>
-#include <ascend/compiler/expr_types.h>
-#include <ascend/compiler/mathinst.h>
-#include <ascend/compiler/instance_name.h>
-#include <ascend/compiler/find.h>
-#include <ascend/compiler/rel_blackbox.h>
-#include <ascend/compiler/vlist.h>
-#include <ascend/compiler/relation.h>
-#include <ascend/compiler/functype.h>
-#include <ascend/compiler/safe.h>
-#include <ascend/compiler/relation_util.h>
-
-#include <ascend/linear/mtx.h>
-#include <ascend/system/slv_types.h>
-#include <ascend/system/slv_client.h>
-#include <ascend/solver/solver.h>
-#include <ascend/packages/ascFreeAllVars.h>
-}
-
 #include "ascjson.hpp"
 
 #include <string>
@@ -162,8 +74,9 @@ int g_interface_simplify_relations = 0;
 
 static void initEnv() {
 	Asc_AppendPath("ASCENDLIBRARY","/models");
-	const char * e = Asc_GetEnv("ASCENDLIBRARY");
+	char * e = Asc_GetEnv("ASCENDLIBRARY");
 	printf("ascgetenv(ASCENDLIBRARY) returns %s\n", e);
+	free(e);
 }
 
 static void cInit()
@@ -183,7 +96,6 @@ static void cInit()
 
 static void cFinal()
 {
-//  Asc_UnitValue(NULL); fixme. need unitproc.ipp
 //  Asc_SolvMemoryCleanup(); fixme need solverproc.ipp
   Asc_CompilerDestroy();
   // Asc_DestroyEnvironment(); fixme need utilities/ascenvvar.ipp
@@ -193,8 +105,11 @@ ascjson::ascjson()
 {
 
 	// unitsprocds
+	bad = false;
 	unit_display_string = NULL;
 	display_precision = 6;
+	g_root = NULL;
+	g_curinst = NULL;
 
 	banner();
 	cInit();
@@ -209,11 +124,11 @@ ascjson::ascjson()
 ascjson::~ascjson()
 {
 	Asc_HelpDestroy();
+	Asc_UnitValueDS(NULL);
 	cFinal();
 	for ( auto i : m ) {
 		delete i.second;
 	}
-	// delete iterate clear m
 }
 
 int ascjson::config( const char *argv )
@@ -282,7 +197,32 @@ rcp ascjson::Asc_LibrModuleInfoCmdHC (const char *vargv)
 
 rcp ascjson::Asc_LibrDestroyTypesCmdHC (const char *vargv) 
 {
+#if 1
+	{
+ if (bad) { setc(__func__, SVcstr, " badness detected. restart needed.", -1);
+	 return getc(__func__);
+ }
+ int argc; char **argv; 
+ int err = toArgv(vargv, "\v", &argc, &argv);
+ if (err) 
+	 setc(__func__, SVcstr, " vargv failed", -err);
+ Asc_DString hds; 
+ Asc_DStringInit(&hds);
+ if (Asc_HelpCheckDS(&hds, argc, argv) != 0) {
+	 setc(__func__, SVcstr, ((&hds)->string), 0);
+	 Asc_DStringFree(&hds); 
+	 return getc(__func__);
+ } else 
+	 Asc_DStringFree(&hds);
+ err = Asc_LibrDestroyTypesCmdDS(&hds, argc, argv); 
+ setc(__func__, (err ? SVcstr : SVcstr), ((&hds)->string), err); 
+ Asc_DStringFree(&hds);
+ freeArgv(argv);
+ return getc(__func__);
+	}
+#else
 	wrap_dstring(Asc_LibrDestroyTypesCmdDS, SVcstr);
+#endif
 }
 
 rcp ascjson::Asc_LibrHideTypeCmdHC (const char *vargv) 
@@ -319,26 +259,25 @@ rcp ascjson::qlfdid (const char *vargv)
 
 rcp ascjson::bgetproc (const char *vargv) 
 {
-	unimplemented;
-	// Asc_BrowWriteProcedure
+	wrap_dstring( Asc_BrowWriteProcedure , SVcstr);
 }
 
 rcp ascjson::Asc_BrowInitializeCmdHC (const char *vargv) 
 {
-	unimplemented;
-	// Asc_BrowInitializeCmd
+	wrap_dstring( Asc_BrowInitializeCmd, SVcstr);
 }
 
 rcp ascjson::brow_assign (const char *vargv) 
 {
-	unimplemented;
-	// Asc_BrowRunAssignmentCmd
+	wrap_dstring( Asc_BrowRunAssignmentCmd , SVcstr);
 }
+
+//	wrap_dstring( 
+// 			, SVcstr);
 
 rcp ascjson::qassgn3 (const char *vargv) 
 {
-	unimplemented;
-	// Asc_BrowRunAssignQlfdidCmd3
+	wrap_dstring( Asc_BrowRunAssignQlfdidCmd3 , SVcstr);
 }
 
 rcp ascjson::x__brow_iname (const char *vargv) 
@@ -569,26 +508,22 @@ rcp ascjson::simlistpending (const char *vargv)
 
 rcp ascjson::ddefine (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DispDefineCmd
+	wrap_dstring(Asc_DispDefineCmd, SVcstr);
 }
 
 rcp ascjson::ddiffdefine (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DispDiffDefineCmd
+	wrap_dstring(Asc_DispDiffDefineCmd, SVcstr);
 }
 
 rcp ascjson::disp (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DispQueryCmd
+	wrap_dstring(Asc_DispQueryCmd, SVcstr);
 }
 
 rcp ascjson::hier (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DispHierarchyCmd
+	wrap_dstring(Asc_DispHierarchyCmd, SVcstr);
 }
 
 rcp ascjson::file_by_type (const char *vargv) 
@@ -599,44 +534,38 @@ rcp ascjson::file_by_type (const char *vargv)
 
 rcp ascjson::dchild (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DispChildOneCmd
+	wrap_dstring(Asc_DispChildOneCmd, SVcstr);
 }
 
 rcp ascjson::drefines_me (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DispRefinesMeCmd
+	wrap_dstring(Asc_DispRefinesMeCmd, SVcstr);
 }
 
 rcp ascjson::drefines_meall (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DispRefinesMeCmd cd=1
+	wrap_dstring(Asc_DispRefinesMeCmd, SVcstr);
+	// Asc_DispRefinesMeCmd  -all
 }
 
 rcp ascjson::drefinement_tree (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DispRefinesMeTreeCmd
+	wrap_dstring(Asc_DispRefinesMeTreeCmd, SVcstr);
 }
 
 rcp ascjson::dgetparts (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DispTypePartsCmd
+	wrap_dstring(Asc_DispTypePartsCmd, SVcstr);
 }
 
 rcp ascjson::disroot_type (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DispIsRootTypeCmd
+	wrap_dstring(Asc_DispIsRootTypeCmd, SVcstr);
 }
 
 rcp ascjson::Asc_ProbeCmdHC (const char *vargv) 
 {
-	unimplemented;
-	// Asc_ProbeCmd
+	wrap_dstring(Asc_ProbeCmd, SVcstr);
 }
 
 rcp ascjson::x__var_analyze (const char *vargv) 
@@ -1249,158 +1178,132 @@ rcp ascjson::mtxhelp (const char *vargv)
 
 rcp ascjson::u_destroy_units (const char *vargv) 
 {
-	unimplemented;
-	// Asc_UnitDestroyDisplayList
+	wrap_dstring(Asc_UnitDestroyDisplayListDS, SVcstr);
 }
 
 rcp ascjson::u_setSIdef (const char *vargv) 
 {
-	unimplemented;
-	// Asc_UnitDefaultBaseUnits
+	wrap_dstring(Asc_UnitDefaultBaseUnitsDS, SVcstr);
 }
 
 rcp ascjson::u_getbasedef (const char *vargv) 
 {
-	unimplemented;
-	// Asc_UnitGetBaseUnits
+	wrap_dstring(Asc_UnitGetBaseUnitsDS, SVcstr);
 }
 
 rcp ascjson::u_dump (const char *vargv) 
 {
-	unimplemented;
-	// Asc_UnitDump
+	wrap_dstring(Asc_UnitDumpDS, SVcstr);
 }
 
 rcp ascjson::u_dims (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DimenDump
+	wrap_dstring(Asc_DimenDumpDS, SVcstr);
 }
 
 rcp ascjson::u_dim_setverify (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DimenRelCheck
+	wrap_dstring(Asc_DimenRelCheckDS, SVcstr);
 }
 
 rcp ascjson::u_dim2num (const char *vargv) 
 {
-	unimplemented;
-	// Asc_UnitBaseDimToNum
+	wrap_dstring(Asc_UnitBaseDimToNumDS, SVcstr);
 }
 
 rcp ascjson::u_num2dim (const char *vargv) 
 {
-	unimplemented;
-	// Asc_UnitNumToBaseDim
+	wrap_dstring(Asc_UnitNumToBaseDimDS, SVcstr);
 }
 
 rcp ascjson::u_frombasedim (const char *vargv) 
 {
-	unimplemented;
-	// Asc_UnitMatchBaseDim
+	wrap_dstring(Asc_UnitMatchBaseDimDS, SVcstr);
 }
 
 rcp ascjson::u_fromatomdim (const char *vargv) 
 {
-	unimplemented;
-	// Asc_UnitMatchAtomDim
+	wrap_dstring(Asc_UnitMatchAtomDimDS, SVcstr);
 }
 
 rcp ascjson::u_getdimatoms (const char *vargv) 
 {
-	unimplemented;
-	// Asc_UnitGetAtomList
+	wrap_dstring(Asc_UnitGetAtomListDS, SVcstr);
 }
 
 rcp ascjson::u_change_baseunit (const char *vargv) 
 {
-	unimplemented;
-	// Asc_UnitChangeBaseUnit
+	wrap_dstring(Asc_UnitChangeBaseUnitDS, SVcstr);
 }
 
 rcp ascjson::u_getprec (const char *vargv) 
 {
-	unimplemented;
-	// Asc_UnitGetPrec
+	wrap_dstring(Asc_UnitGetPrecDS, SVcstr);
 }
 
 rcp ascjson::u_setprec (const char *vargv) 
 {
-	unimplemented;
-	// Asc_UnitSetPrec
+	wrap_dstring(Asc_UnitSetPrecDS, SVcstr);
 }
 
 rcp ascjson::u_get_atoms (const char *vargv) 
 {
-	unimplemented;
-	// Asc_UnitGetAtomsForUnit
+	wrap_dstring(Asc_UnitGetAtomsForUnitDS, SVcstr);
 }
 
 rcp ascjson::u_get_units (const char *vargv) 
 {
-	unimplemented;
-	// Asc_UnitGetUnits
+	wrap_dstring(Asc_UnitGetUnitsDS, SVcstr);
 }
 
 rcp ascjson::u_set_user (const char *vargv) 
 {
-	unimplemented;
-	// Asc_UnitSetUser
+	wrap_dstring(Asc_UnitSetUserDS, SVcstr);
 }
 
 rcp ascjson::u_get_user (const char *vargv) 
 {
-	unimplemented;
-	// Asc_UnitGetUser
+	wrap_dstring(Asc_UnitGetUserDS, SVcstr);
 }
 
 rcp ascjson::u_get_list (const char *vargv) 
 {
-	unimplemented;
-	// Asc_UnitGetList
+	wrap_dstring(Asc_UnitGetListDS, SVcstr);
 }
 
 rcp ascjson::u_clear_user (const char *vargv) 
 {
-	unimplemented;
-	// Asc_UnitClearUser
+	wrap_dstring(Asc_UnitClearUserDS, SVcstr);
 }
 
 rcp ascjson::u_getval (const char *vargv) 
 {
-	unimplemented;
-	// Asc_UnitGetVal
+	wrap_dstring(Asc_UnitGetValDS, SVcstr);
 }
 
 rcp ascjson::u_browgetval (const char *vargv) 
 {
-	unimplemented;
-	// Asc_UnitBrowGetVal
+	wrap_dstring(Asc_UnitBrowGetValDS, SVcstr);
 }
 
 rcp ascjson::u_slvgetrelval (const char *vargv) 
 {
-	unimplemented;
-	// Asc_UnitSlvGetRelVal
+	wrap_dstring(Asc_UnitSlvGetRelValDS, SVcstr);
 }
 
 rcp ascjson::u_slvgetvarval (const char *vargv) 
 {
-	unimplemented;
-	// Asc_UnitSlvGetVarVal
+	wrap_dstring(Asc_UnitSlvGetVarValDS, SVcstr);
 }
 
 rcp ascjson::u_slvgetobjval (const char *vargv) 
 {
-	unimplemented;
-	// Asc_UnitSlvGetObjVal
+	wrap_dstring(Asc_UnitSlvGetObjValDS, SVcstr);
 }
 
 rcp ascjson::uhelp (const char *vargv) 
 {
-	unimplemented;
-	// Asc_UnitHelpList
+	wrap_dstring(Asc_UnitHelpListDS, SVcstr);
 }
 
 rcp ascjson::srefine (const char *vargv) 
@@ -1448,7 +1351,11 @@ rcp ascjson::Asc_HelpCmdHC (const char *vargv)
 #include "tcltk/json/SimsProcDS.ipp"
 #include "tcltk/json/QlfdidDS.ipp"
 #include "tcltk/json/BrowserQueryDS.ipp"
+#include "tcltk/json/BrowserMethod.ipp"
+#include "tcltk/json/BrowserProc.ipp"
 #include "tcltk/json/UnitsProcDS.ipp"
+#include "tcltk/json/DisplayProc.ipp"
+#include "tcltk/json/ProbeProc.ipp"
 #include "tcltk/json/all_call.ipp"
 
 /// utils

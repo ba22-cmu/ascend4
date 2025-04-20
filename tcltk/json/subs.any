@@ -1,0 +1,25 @@
+#! /bin/bash
+cat $1 | \
+sed -e 's/Tcl_Interp .interp/Asc_DString *hptr/g' \
+ -e 's/Tcl_GetInt/JTcl_GetInt/g' \
+ -e 's/Tcl_ExprLong/JTcl_GetLong/g' \
+ -e 's/interp/hptr/g' \
+ -e 's/ClientData cdata, //g' \
+ -e 's/cdata, //g' \
+ -e 's/TCL_OK/HELP_OK/g' \
+ -e 's/TCL_ERROR/HELP_ERROR/g' \
+ -e 's/Asc_HelpGetLong/Asc_HelpGetLongDS/g' \
+ -e 's/Asc_HelpGetUsage/Asc_HelpGetUsageDS/g' \
+ -e 's/Asc_HelpGetShort/Asc_HelpGetShortDS/g' \
+ -e 's/Asc_HelpCommandList/Asc_HelpCommandListDS/g' \
+ -e 's/Asc_HelpCommandsByGroups/Asc_HelpCommandsByGroupsDS/g' \
+ -e 's/Asc_HelpCommandsGroups/Asc_HelpCommandsGroups/g' \
+ -e 's/Tcl_AppendResult/Asc_DStringAppend/g' \
+ -e 's/Tcl_SetResult/Asc_DStringSet/g' \
+ -e 's/, TCL_VOLATILE//g' \
+ -e 's/,TCL_VOLATILE//g' \
+ -e 's/, TCL_STATIC//g' \
+ -e 's/,TCL_STATIC//g' \
+ -e 's/Asc_HelpGetShort/Asc_HelpGetShortDS/g' \
+ -e 's/Tcl_ResetResult/Asc_DStringFree/g' \
+ -e 's/r,a/r, a/g' > new.$1

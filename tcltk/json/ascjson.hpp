@@ -11,13 +11,12 @@
 #include "tcltk/help-data/SimsProc.data.h"
 #include "tcltk/help-data/Qlfdid.data.h"
 #include "tcltk/help-data/BrowserQuery.data.h"
-
-#include "BrowserMethod.json.h"
-#include "BrowserProc.json.h"
-#include "EnvVarProc.json.h"
-#include "ProbeProc.json.h"
-#include "SlvProc.json.h"
-#include "SolverProc.json.h"
+#include "tcltk/help-data/BrowserMethod.data.h"
+#include "tcltk/help-data/BrowserProc.data.h"
+#include "tcltk/help-data/ProbeProc.data.h"
+#include "tcltk/help-data/EnvVarProc.data.h"
+#include "tcltk/help-data/SlvProc.data.h"
+#include "tcltk/help-data/SolverProc.data.h"
 #include <string>
 #include <map>
 
@@ -50,8 +49,11 @@ private:
 	rcp getc(const char *func);
 	bool bad;
 
-	struct Instance *g_curinst; // browser current instance
-	struct Instance *g_root; // browser root instance
+	// from browserproc.hpp
+	static unsigned long g_depth;
+	static struct Instance *g_curinst; // browser current instance
+	static struct Instance *g_root; // browser root instance
+	static struct Instance *g_instlist[MAXIMUM_INST_DEPTH];
 
 #include "tcltk/json/SolverGlobals.hpp"
 
@@ -649,12 +651,33 @@ private:
 	STDHLF_H(Asc_BrowShowPendings);
 	STDHLF_H(Asc_BrowWritePendingsSTDOUT);
 	STDHLF_H(Asc_SimListPending);
-	//STDHLF_H(Asc_SimBinTokenSetOptions);
 
 #include "tcltk/json/QlfdidDS.hpp"
 	// if using a literal for the rcp function, use the HC argument to hlf_h.
 	STDHLF_H(Asc_BrowQlfdidSearchCmdHC);
 #include "tcltk/json/BrowserQueryDS.hpp"
+#include "tcltk/json/BrowserMethod.hpp"
+#include "tcltk/json/BrowserProc.hpp"
+#include "tcltk/json/DisplayProc.hpp"
+#include "tcltk/json/ProbeProc.hpp"
+
+	STDHLF_H(Asc_BrowRootInitCmd);
+	STDHLF_H(Asc_BrowRootCmd);
+	STDHLF_H(Asc_BrowRootBackupCmd);
+	STDHLF_H(Asc_BrowRootNCmd);
+	STDHLF_H(Asc_BrowTransferCmd);
+	STDHLF_H(Asc_BrowSimListCmd);
+	STDHLF_H(Asc_BrowSimTypeCmd);
+	STDHLF_H(Asc_BrowInstStatCmd);
+	STDHLF_H(Asc_BrowInstListCmd);
+	STDHLF_H(Asc_BrowPrintCmd);
+	STDHLF_H(Asc_BrowInstQueryCmd);
+	STDHLF_H(Asc_BrowRunInitializeCmd);
+	STDHLF_H(Asc_BrowInstanceMergeCmd);
+	STDHLF_H(Asc_BrowInstanceRefineCmd);
+	STDHLF_H(Asc_BrowMakeAlikeCmd);
+	STDHLF_H(Asc_BrowAnonTypesCmd);
+
 
 #include "tcltk/json/UnitsProcDS.hpp"
 

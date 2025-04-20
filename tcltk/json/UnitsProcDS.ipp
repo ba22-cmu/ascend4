@@ -29,6 +29,7 @@
 
 #include <stdarg.h>
 
+#if 0
 extern "C" {
 #include <ascend/utilities/config.h>
 #ifdef ASC_SIGNAL_TRAPS
@@ -73,7 +74,6 @@ extern "C" {
 
 #include "UnitsProcDS.hpp"
 
-#if 0
 #include "HelpProc.h"
 #include "BrowserQuery.h"
 #include "BrowserProc.h"
@@ -126,7 +126,7 @@ int ascjson::check_units_set(Asc_DString *hptr, int argc, CONST84 char *argv[]) 
 {
   static int base_units_set;
   if (!base_units_set) {
-     Asc_UnitDefaultBaseUnits(hptr, argc,argv);
+     Asc_UnitDefaultBaseUnitsDS(hptr, argc,argv);
      base_units_set = 1;
   }
   return (base_units_set);
@@ -751,7 +751,7 @@ int IsDimInstance(CONST struct Instance *i)
  * This is the broker for access to the Unit_PrintXXXXX routines and
  * is responsible for destroying the UDS.
  */
-char *ascjson::Asc_UnitValue(struct Instance *i)
+char *ascjson::Asc_UnitValueDS(struct Instance *i)
 {
   double dval;
   dim_type *dimp = NULL;
@@ -808,7 +808,7 @@ char *ascjson::Asc_UnitValue(struct Instance *i)
 
 /* follows exactly the same UDS management protocol as Asc_UnitValue. see
    comments above */
-char *ascjson::Asc_UnitlessValue(struct Instance *i, int si)
+char *ascjson::Asc_UnitlessValueDS(struct Instance *i, int si)
 {
   double dval;
   dim_type *dimp = NULL;
@@ -860,7 +860,7 @@ char *ascjson::Asc_UnitlessValue(struct Instance *i, int si)
   return UDS;
 }
 /* follows UDS string convention as for Asc_UnitValue. */
-char *ascjson::Asc_UnitString(struct Instance *i, int si)
+char *ascjson::Asc_UnitStringDS(struct Instance *i, int si)
 {
   dim_type *dimp = NULL;
   struct Units *du;
@@ -924,7 +924,7 @@ char *ascjson::Asc_UnitString(struct Instance *i, int si)
 }
 
 /* follows UDS string convention as for Asc_UnitValue. */
-char *ascjson::Asc_UnitDimString(const dim_type *dimp, int si)
+char *ascjson::Asc_UnitDimStringDS(const dim_type *dimp, int si)
 {
   struct Units *du;
   size_t len;
@@ -963,7 +963,7 @@ char *ascjson::Asc_UnitDimString(const dim_type *dimp, int si)
 tries to convert value consistent with units given. If si is FALSE
 assumes in is value in units given and tries to convert to si.
 */
-int ascjson::Asc_UnitConvert(struct Units *u, double in, double *op, int si)
+int ascjson::Asc_UnitConvertDS(struct Units *u, double in, double *op, int si)
 {
 
   if (u==NULL || op == NULL) {
@@ -983,7 +983,8 @@ int ascjson::Asc_UnitConvert(struct Units *u, double in, double *op, int si)
     }
   }
 }
-int ascjson::Asc_UnitSetRealAtomValue(CONST struct Instance *i,
+
+int ascjson::Asc_UnitSetRealAtomValueDS(CONST struct Instance *i,
                           char *vstr, char *ustr, unsigned depth)
 {
   double dval = 0;
@@ -1041,7 +1042,7 @@ int ascjson::Asc_UnitSetRealAtomValue(CONST struct Instance *i,
 
 /* assumes the unitshptr is set before entry. else does nothing.
 */
-void ascjson::Unit_GetUserSet(struct DisplayUnit *du)
+void ascjson::Unit_GetUserSetDS(struct DisplayUnit *du)
 {
   if (!unitshptr) {
     return;
@@ -1053,7 +1054,7 @@ void ascjson::Unit_GetUserSet(struct DisplayUnit *du)
 
 /********************* END INTERNALS ******************************/
 
-int ascjson::Asc_UnitDestroyDisplayList(Asc_DString *hptr, int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitDestroyDisplayListDS(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   if ( argc != 1 ) {
     return HELP_ERROR;
@@ -1063,7 +1064,7 @@ int ascjson::Asc_UnitDestroyDisplayList(Asc_DString *hptr, int argc, CONST84 cha
 }
 
 
-int ascjson::Asc_UnitDefaultBaseUnits(Asc_DString *hptr, int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitDefaultBaseUnitsDS(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   static int SIset;
   int i;
@@ -1101,7 +1102,7 @@ int ascjson::Asc_UnitDefaultBaseUnits(Asc_DString *hptr, int argc, CONST84 char 
   return HELP_OK;
 }
 
-int ascjson::Asc_UnitGetBaseUnits(Asc_DString *hptr,
+int ascjson::Asc_UnitGetBaseUnitsDS(Asc_DString *hptr,
                         int argc, CONST84 char *argv[])
 {
   int i;
@@ -1116,7 +1117,7 @@ int ascjson::Asc_UnitGetBaseUnits(Asc_DString *hptr,
   return HELP_OK;
 }
 
-int ascjson::Asc_UnitDump(Asc_DString *hptr,
+int ascjson::Asc_UnitDumpDS(Asc_DString *hptr,
               int argc, CONST84 char *argv[])
 {
   int dev,status = HELP_OK, tmpi;
@@ -1191,7 +1192,7 @@ int ascjson::Asc_UnitDump(Asc_DString *hptr,
   return HELP_OK;
 }
 
-int ascjson::Asc_DimenDump(Asc_DString *hptr,
+int ascjson::Asc_DimenDumpDS(Asc_DString *hptr,
                int argc, CONST84 char *argv[])
 {
   int dev,status = HELP_OK, tmpi;
@@ -1252,7 +1253,7 @@ int ascjson::Asc_DimenDump(Asc_DString *hptr,
   return HELP_OK;
 }
 
-int ascjson::Asc_DimenRelCheck(Asc_DString *hptr, int argc, CONST84 char *argv[]) {
+int ascjson::Asc_DimenRelCheckDS(Asc_DString *hptr, int argc, CONST84 char *argv[]) {
   int status,tmpi;
 
   if ( argc != 2 ) {
@@ -1275,7 +1276,7 @@ int ascjson::Asc_DimenRelCheck(Asc_DString *hptr, int argc, CONST84 char *argv[]
   return HELP_OK;
 }
 
-int ascjson::Asc_UnitBaseDimToNum(Asc_DString *hptr, int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitBaseDimToNumDS(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   char tmps[11];
   char *c;
@@ -1298,7 +1299,7 @@ int ascjson::Asc_UnitBaseDimToNum(Asc_DString *hptr, int argc, CONST84 char *arg
   return HELP_OK;
 }
 
-int ascjson::Asc_UnitNumToBaseDim(Asc_DString *hptr, int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitNumToBaseDimDS(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   int status = HELP_OK, tmpi;
 
@@ -1322,7 +1323,7 @@ int ascjson::Asc_UnitNumToBaseDim(Asc_DString *hptr, int argc, CONST84 char *arg
   return HELP_OK;
 }
 
-int ascjson::Asc_UnitMatchBaseDim(Asc_DString *hptr, int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitMatchBaseDimDS(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   int status = HELP_OK;
   int tmpi;
@@ -1344,7 +1345,7 @@ int ascjson::Asc_UnitMatchBaseDim(Asc_DString *hptr, int argc, CONST84 char *arg
     Asc_DStringSet(hptr, "u_frombasedim: invalid dim #");
     return status;
   }
-  status = Asc_UnitNumToBaseDim(hptr, argc,argv);
+  status = Asc_UnitNumToBaseDimDS(hptr, argc,argv);
   if (status ==HELP_OK) {
     dim_type dim;
     struct gl_list_t *ulist = gl_create(50L);
@@ -1372,7 +1373,7 @@ int ascjson::Asc_UnitMatchBaseDim(Asc_DString *hptr, int argc, CONST84 char *arg
   return status;
 }
 
-int ascjson::Asc_UnitMatchAtomDim(Asc_DString *hptr, int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitMatchAtomDimDS(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct TypeDescription *desc;
 
@@ -1407,7 +1408,7 @@ int ascjson::Asc_UnitMatchAtomDim(Asc_DString *hptr, int argc, CONST84 char *arg
   return HELP_OK;
 }
 
-int ascjson::Asc_UnitGetAtomList(Asc_DString *hptr,
+int ascjson::Asc_UnitGetAtomListDS(Asc_DString *hptr,
                      int argc, CONST84 char *argv[])
 {
   struct gl_list_t *alist = gl_create(200L);
@@ -1456,7 +1457,7 @@ int ascjson::Asc_UnitGetAtomList(Asc_DString *hptr,
 
 
 
-int ascjson::Asc_UnitChangeBaseUnit(Asc_DString *hptr,
+int ascjson::Asc_UnitChangeBaseUnitDS(Asc_DString *hptr,
                        int argc, CONST84 char *argv[])
 {
   struct Units *up = NULL;
@@ -1494,7 +1495,7 @@ int ascjson::Asc_UnitChangeBaseUnit(Asc_DString *hptr,
   }
 }
 
-int ascjson::Asc_UnitSetUser(Asc_DString *hptr, int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitSetUserDS(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct Units *up = NULL;
   struct DisplayUnit *du;
@@ -1524,7 +1525,7 @@ int ascjson::Asc_UnitSetUser(Asc_DString *hptr, int argc, CONST84 char *argv[])
  * return all real atoms and real constants which have the units
  * given.
  */
-int ascjson::Asc_UnitGetAtomsForUnit(Asc_DString *hptr,
+int ascjson::Asc_UnitGetAtomsForUnitDS(Asc_DString *hptr,
                             int argc, CONST84 char *argv[])
 {
   struct TypeDescription *desc, *rtdesc, *rcdesc;
@@ -1603,7 +1604,7 @@ int ascjson::Asc_UnitGetAtomsForUnit(Asc_DString *hptr,
 }
 
 
-int ascjson::Asc_UnitGetPrec(Asc_DString *hptr,
+int ascjson::Asc_UnitGetPrecDS(Asc_DString *hptr,
                  int argc, CONST84 char *argv[])
 {
   char buf[MAXIMUM_NUMERIC_LENGTH];   /* string to hold integer */
@@ -1618,12 +1619,12 @@ int ascjson::Asc_UnitGetPrec(Asc_DString *hptr,
   return HELP_OK;
 }
 
-int ascjson::Asc_UnitGetCPrec()
+int ascjson::Asc_UnitGetCPrecDS()
 {
   return UPREC;
 }
 
-int ascjson::Asc_UnitSetPrec(Asc_DString *hptr, int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitSetPrecDS(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   int status,tmpi;
 
@@ -1647,7 +1648,7 @@ int ascjson::Asc_UnitSetPrec(Asc_DString *hptr, int argc, CONST84 char *argv[])
   return HELP_OK;
 }
 
-int ascjson::Asc_UnitGetUnits(Asc_DString *hptr,
+int ascjson::Asc_UnitGetUnitsDS(Asc_DString *hptr,
                   int argc, CONST84 char *argv[])
 {
   struct TypeDescription *desc;
@@ -1689,7 +1690,7 @@ int ascjson::Asc_UnitGetUnits(Asc_DString *hptr,
   }
 }
 
-int ascjson::Asc_UnitGetUser(Asc_DString *hptr, int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitGetUserDS(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct TypeDescription *desc;
 
@@ -1719,7 +1720,7 @@ int ascjson::Asc_UnitGetUser(Asc_DString *hptr, int argc, CONST84 char *argv[])
   }
 }
 
-int ascjson::Asc_UnitGetList(Asc_DString *hptr, int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitGetListDS(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
 
   if ( argc != 1 ) {
@@ -1729,10 +1730,10 @@ int ascjson::Asc_UnitGetList(Asc_DString *hptr, int argc, CONST84 char *argv[])
   }
   check_DU_set();
   unitshptr = hptr;
-  gl_iterate(DUList,(void (*)(VOIDPTR))Unit_GetUserSet);
+  gl_iterate(DUList,(void (*)(VOIDPTR))Unit_GetUserSetDS);
   return HELP_OK;
 }
-int ascjson::Asc_UnitClearUser(Asc_DString *hptr, int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitClearUserDS(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct TypeDescription *desc;
 
@@ -1758,7 +1759,7 @@ int ascjson::Asc_UnitClearUser(Asc_DString *hptr, int argc, CONST84 char *argv[]
   }
 }
 
-int ascjson::Asc_UnitGetVal(Asc_DString *hptr, int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitGetValDS(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct Instance *i;
   int status;
@@ -1776,7 +1777,7 @@ int ascjson::Asc_UnitGetVal(Asc_DString *hptr, int argc, CONST84 char *argv[])
     return HELP_ERROR;
   }
   if (IsDimInstance(i)) {
-    VTcl_AppendElement(hptr,Asc_UnitValue(i));
+    VTcl_AppendElement(hptr,Asc_UnitValueDS(i));
   } else {
     Asc_DStringSet(hptr, "u_getval called on undimensioned object.");
     return HELP_ERROR;
@@ -1784,7 +1785,7 @@ int ascjson::Asc_UnitGetVal(Asc_DString *hptr, int argc, CONST84 char *argv[])
   return HELP_OK;
 }
 
-int ascjson::Asc_UnitBrowGetVal(Asc_DString *hptr, int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitBrowGetValDS(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct Instance *i;
 
@@ -1803,7 +1804,7 @@ int ascjson::Asc_UnitBrowGetVal(Asc_DString *hptr, int argc, CONST84 char *argv[
     i = g_curinst;
   }
   if (IsDimInstance(i)) {
-    VTcl_AppendElement(hptr,Asc_UnitValue(i));
+    VTcl_AppendElement(hptr,Asc_UnitValueDS(i));
   } else {
     Asc_DStringSet(hptr, "u_browgetval called on undimensioned object.");
     return HELP_ERROR;
@@ -1811,7 +1812,7 @@ int ascjson::Asc_UnitBrowGetVal(Asc_DString *hptr, int argc, CONST84 char *argv[
   return HELP_OK;
 }
 
-int ascjson::Asc_UnitSlvGetRelVal(Asc_DString *hptr, int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitSlvGetRelValDS(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct rel_relation **rp;
   int32 maxrel,relnum;
@@ -1841,7 +1842,7 @@ int ascjson::Asc_UnitSlvGetRelVal(Asc_DString *hptr, int argc, CONST84 char *arg
     return HELP_ERROR;
   }
   if ( IsDimInstance( T2I(rel_instance(rp[relnum])) ) ) {
-    Asc_DStringAppend(hptr,Asc_UnitValue(T2I(rel_instance(rp[relnum]))), HALL);
+    Asc_DStringAppend(hptr,Asc_UnitValueDS(T2I(rel_instance(rp[relnum]))), HALL);
   } else {
     Asc_DStringSet(hptr, "u_slvgetrelval called on wierd object.");
     return HELP_ERROR;
@@ -1849,7 +1850,7 @@ int ascjson::Asc_UnitSlvGetRelVal(Asc_DString *hptr, int argc, CONST84 char *arg
   return HELP_OK;
 }
 
-int ascjson::Asc_UnitSlvGetVarVal(Asc_DString *hptr, int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitSlvGetVarValDS(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct var_variable **vp;
   int32 maxvar,varnum;
@@ -1879,7 +1880,7 @@ int ascjson::Asc_UnitSlvGetVarVal(Asc_DString *hptr, int argc, CONST84 char *arg
     return HELP_ERROR;
   }
   if (IsDimInstance(T2I(var_instance(vp[varnum])))) {
-    Asc_DStringAppend(hptr,Asc_UnitValue(T2I(var_instance(vp[varnum]))), HALL);
+    Asc_DStringAppend(hptr,Asc_UnitValueDS(T2I(var_instance(vp[varnum]))), HALL);
   } else {
     Asc_DStringSet(hptr, "u_slvgetrelval called on wierd object.");
     return HELP_ERROR;
@@ -1887,7 +1888,7 @@ int ascjson::Asc_UnitSlvGetVarVal(Asc_DString *hptr, int argc, CONST84 char *arg
   return HELP_OK;
 }
 
-int ascjson::Asc_UnitSlvGetObjVal(Asc_DString *hptr,
+int ascjson::Asc_UnitSlvGetObjValDS(Asc_DString *hptr,
                       int argc, CONST84 char *argv[])
 {
   struct rel_relation **rp;
@@ -1918,7 +1919,7 @@ int ascjson::Asc_UnitSlvGetObjVal(Asc_DString *hptr,
     return HELP_ERROR;
   }
   if (  IsDimInstance( T2I(rel_instance(rp[objnum]) ))  ) {
-    Asc_DStringAppend(hptr,Asc_UnitValue(T2I(rel_instance(rp[objnum]))), HALL);
+    Asc_DStringAppend(hptr,Asc_UnitValueDS(T2I(rel_instance(rp[objnum]))), HALL);
   } else {
     Asc_DStringSet(hptr, "u_slvgetobjval called on wierd object.");
     return HELP_ERROR;
@@ -1938,7 +1939,7 @@ int ascjson::Asc_UnitSlvGetObjVal(Asc_DString *hptr,
 
 
 #define LONGHELP(b,ms) ((b)?ms:"")
-int ascjson::Asc_UnitHelpList(Asc_DString *hptr, int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitHelpListDS(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   boolean detail = 1;
 

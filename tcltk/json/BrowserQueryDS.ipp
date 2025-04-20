@@ -738,7 +738,7 @@ int ascjson::Asc_BrowWriteAtomValue(char *ftorv, CONST struct Instance *i)
     if (!rel) {
       return 1;
     } else {
-      sprintf(ftorv,"%.*g",Asc_UnitGetCPrec(),
+      sprintf(ftorv,"%.*g",Asc_UnitGetCPrecDS(),
               RelationResidual(rel));
       return 0;
     }
@@ -842,7 +842,7 @@ int ascjson::Asc_BrowWriteAtomChildren(Asc_DString *hptr, CONST struct Instance 
           (kind==REAL_ATOM_INST)||
           (kind==REAL_CONSTANT_INST)||
           (kind==REL_INST)) {
-        char * ustr = Asc_UnitValue(child);
+        char * ustr = Asc_UnitValueDS(child);
         char op[5] = " = ";
         if (kind==REL_INST) {
           sprintf(&op[0]," : ");
@@ -1016,7 +1016,7 @@ int ascjson::BrowWriteArrayChildren(Asc_DString *hptr, CONST struct Instance *i)
                         (childkind==REAL_ATOM_INST)||
                         (childkind==REAL_CONSTANT_INST)||
                         (childkind==REL_INST))) {
-      char * ustr = Asc_UnitValue(child);
+      char * ustr = Asc_UnitValueDS(child);
       char op[5] = " = ";
       if (childkind==REL_INST) {
         sprintf(&op[0]," : ");
@@ -1194,7 +1194,7 @@ void ascjson::BrowListModelChildren(Asc_DString *hptr, struct Instance *i, int a
                            (childkind==REL_INST)
                          )
           ) {
-        char * ustr = Asc_UnitValue(child);
+        char * ustr = Asc_UnitValueDS(child);
         char op[5] = " = \0";
         if (childkind==REL_INST) {
           sprintf(&op[0]," : ");
