@@ -111,7 +111,7 @@ extern void ProcWriteExtError(struct procFrame *fm,
  * unwinding the stack.
  */
 extern void ProcWriteStackCheck(struct procFrame *fm,
-                                struct Name *class,
+                                struct Name *class_name,
                                 struct Name *name);
 
 /**

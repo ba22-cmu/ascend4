@@ -128,8 +128,8 @@ static int f_fenv_stack_top = -1;
 #endif
 
 static void initstack(int sig);
-static int pop_trap(int signum, SigHandlerFn *tp, char *name, char *file, int line);
-static int push_trap(int signum, SigHandlerFn *func, char *name, char *file, int line);
+static int pop_trap(int signum, SigHandlerFn *tp, const char *name, const char *file, int line);
+static int push_trap(int signum, SigHandlerFn *func, const char *name, const char *file, int line);
 static void reset_trap(int signum);
 
 #ifdef HAVE_C99FPE
@@ -250,8 +250,8 @@ void Asc_SignalRecover(int force){
 	@return 0 on success, -2 if func is NULL, -1 if unsupported signal is given,
 	-3 if 'signal' returns SIG_ERR.
 */
-int Asc_SignalHandlerPush_impl(int signum, SigHandlerFn *func, char *name
-	, char *file, int line
+int Asc_SignalHandlerPush_impl(int signum, SigHandlerFn *func, const char *name
+	, const char *file, int line
 ){
   int err;
   if (func == NULL) {
@@ -297,8 +297,8 @@ one (and still not sure this fixes things on Windows, anyway). More work require
 }
 
 
-int Asc_SignalHandlerPop_impl(int signum, SigHandlerFn *tp, char *name
-	, char *file, int line
+int Asc_SignalHandlerPop_impl(int signum, SigHandlerFn *tp, const char *name
+	, const char *file, int line
 ){
   int err;
   MSG("(%s:%d) Popping signal stack for signal %s (%d) (expecting top to be %p '%s')",file,line,SIGNAME(signum),signum,tp,name);
@@ -532,7 +532,7 @@ static void reset_trap(int signum){
 /**
 	Append a pointer to the list given, if the list is not full.
 */
-static int push_trap(int signum, SigHandlerFn *func, char *name, char *file, int line){
+static int push_trap(int signum, SigHandlerFn *func, const char *name, const char *file, int line){
 	if(!f_traps){
 		ERROR_REPORTER_HERE(ASC_PROG_ERR,"Signal handler list f_traps not initialised");
 		return -1;
@@ -571,7 +571,7 @@ static int push_trap(int signum, SigHandlerFn *func, char *name, char *file, int
 
 	Any non-zero return code leaves the stack as it was.
 */
-static int pop_trap(int signum, SigHandlerFn *func, char *name, char *file, int line){
+static int pop_trap(int signum, SigHandlerFn *func, const char *name, const char *file, int line){
 	int err = 0;
 	if(!f_traps){
 		ERROR_REPORTER_HERE(ASC_PROG_ERR,"Signal handler list f_traps not initialised");
