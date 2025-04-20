@@ -14,6 +14,7 @@ CHDRS = $(CSRCS_ALL)
 RTSRCS = ../json/rt.cc rt_glue_wrapper.cc
 RTHDRS = ../json/rt.hpp
 
+CFLAGS=-DYY_NO_UNPUT
 EXP=-sEXPORT_KEEPALIVE
 EXP=-sEXPORT_ALL
 EXP=-sEXPORTED_FUNCTIONS=@./nm_glue.txt -sEXPORTED_FUNCTIONS=_AscDriver
@@ -32,7 +33,7 @@ RTPOST= --extern-post-js rt_post.js
 RTPOST=
 
 lib: $(CXXSRCS) $(CXXHDRS) $(CSRCS) $(CHDRS) web_glue.js ascjson_glue_wrapper.cc
-	$(EM) -I../.. -I. $(EXP) $(CXXSRCS) $(CSRCS) \
+	$(EM) -I../.. -I. $(CFLAGS) $(EXP) $(CXXSRCS) $(CSRCS) \
 		-DMODULE_DEBUG \
 		ascjson_glue_wrapper.cc \
 		--post-js web_glue.js \
