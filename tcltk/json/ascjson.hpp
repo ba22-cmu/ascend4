@@ -658,6 +658,7 @@ private:
 #include "tcltk/json/BrowserQueryDS.hpp"
 #include "tcltk/json/BrowserMethod.hpp"
 #include "tcltk/json/BrowserProc.hpp"
+#include "tcltk/json/BrowserRel_io.hpp"
 #include "tcltk/json/DisplayProc.hpp"
 #include "tcltk/json/ProbeProc.hpp"
 

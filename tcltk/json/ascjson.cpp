@@ -300,20 +300,17 @@ rcp ascjson::x__brow_ismodel (const char *vargv)
 
 rcp ascjson::bgetrels (const char *vargv) 
 {
-	unimplemented;
-	// Asc_BrowWriteRelListCmd
+	wrap_dstring( Asc_BrowWriteRelListCmd, SVcstr);
 }
 
 rcp ascjson::bgetrelspf (const char *vargv) 
 {
-	unimplemented;
-	// Asc_BrowWriteRelListPostfixCmd
+	wrap_dstring( Asc_BrowWriteRelListPostfixCmd, SVcstr);
 }
 
 rcp ascjson::x__brow_relsforatom (const char *vargv) 
 {
-	unimplemented;
-	// Asc_BrowWriteRelsForAtomCmd
+	wrap_dstring( Asc_BrowWriteRelsForAtomCmd, SVcstr);
 }
 
 rcp ascjson::x__brow_islogrel (const char *vargv) 
@@ -342,8 +339,7 @@ rcp ascjson::x__brow_logrelsforatom (const char *vargv)
 
 rcp ascjson::bgetcondrels (const char *vargv) 
 {
-	unimplemented;
-	// Asc_BrowWriteCondRelListCmd
+	wrap_dstring( Asc_BrowWriteCondRelListCmd, SVcstr);
 }
 
 rcp ascjson::bgetcondlogrels (const char *vargv) 
@@ -1352,6 +1348,7 @@ rcp ascjson::Asc_HelpCmdHC (const char *vargv)
 #include "tcltk/json/QlfdidDS.ipp"
 #include "tcltk/json/BrowserQueryDS.ipp"
 #include "tcltk/json/BrowserMethod.ipp"
+#include "tcltk/json/BrowserRel_io.ipp"
 #include "tcltk/json/BrowserProc.ipp"
 #include "tcltk/json/UnitsProcDS.ipp"
 #include "tcltk/json/DisplayProc.ipp"

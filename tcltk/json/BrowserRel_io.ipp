@@ -26,7 +26,7 @@
  */
 
 #define ASC_BUILDING_INTERFACE
-
+#if 0
 #include <tcl.h>
 #include "config.h"
 #include <ascend/general/ascMalloc.h>
@@ -59,8 +59,8 @@
 #include "Qlfdid.h"
 #include "BrowserProc.h"
 #include "BrowserQuery.h"
+#endif
 
-/* a horde of redundant code deleted. */
 /**************************************************************************/
 static struct gl_list_t *g_brow_rellist = NULL;
 static struct gl_list_t *g_brow_condrellist = NULL;
@@ -91,22 +91,19 @@ void BrowGetRelations(struct Instance *i)
   }
 }
 
-/* This functions sends to the interpreter  the list of  relations
+/* This functions sends to the hptrreter  the list of  relations
  * and then the list of conditional relations if required
  */
-int Asc_BrowWriteRelListCmd(ClientData cdata, Tcl_Interp *interp,
-                        int argc, CONST84 char *argv[])
+int ascjson::Asc_BrowWriteRelListCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct Instance *i, *rel_inst;
   unsigned long len, c;
   int save=0;
 
-  UNUSED_PARAMETER(cdata);
-
   if (( argc < 2 ) || ( argc > 3 )) {
-    Tcl_AppendResult(interp,"wrong # args : ",
-                     "Usage \"bgetrels\" ?cur?search? save",(char *)NULL);
-    return TCL_ERROR;
+    Asc_DStringAppend(hptr,"wrong # args : "
+	     "Usage \"bgetrels\" ?cur?search? save",HALL);
+    return HELP_ERROR;
   }
 
   if (strncmp(argv[1],"current",3)==0) {
@@ -114,8 +111,8 @@ int Asc_BrowWriteRelListCmd(ClientData cdata, Tcl_Interp *interp,
   } else if (strncmp(argv[1],"search",3)==0) {
     i = g_search_inst;
   } else {
-    Tcl_SetResult(interp, "invalid args to  \"bgetrels\"", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "invalid args to  \"bgetrels\"");
+    return HELP_ERROR;
   }
 
   if (argc==3) {
@@ -125,7 +122,7 @@ int Asc_BrowWriteRelListCmd(ClientData cdata, Tcl_Interp *interp,
   }
 
   if (!i) {
-    return TCL_ERROR;
+    return HELP_ERROR;
   }
   if (!g_brow_rellist) {
     g_brow_rellist = gl_create(40L);
@@ -141,26 +138,25 @@ int Asc_BrowWriteRelListCmd(ClientData cdata, Tcl_Interp *interp,
   for (c=1;c<=len;c++) { /* the "{ }" is for making proper list elems */
     char *tmp;
     rel_inst = (struct Instance *)gl_fetch(g_brow_rellist,c);
-    Tcl_AppendResult(interp,"{",(char *)NULL);
+    Asc_DStringAppend(hptr,"{",1);
     tmp = WriteRelationString(rel_inst,NULL,NULL,NULL,relio_ascend,NULL);
-    Tcl_AppendResult(interp,tmp,(char *)NULL);
+    Asc_DStringAppend(hptr,tmp,HALL);
     ascfree(tmp);
-    Tcl_AppendResult(interp,"} ",(char *)NULL);
+    Asc_DStringAppend(hptr,"} ",2);
   }
 
   /* conditional relations. Only if required */
   len = gl_length(g_brow_condrellist);
   if (len) {
-    Tcl_AppendResult(interp,"{The following Relations are Conditional: } ",
-                     (char *)NULL);
+    Asc_DStringAppend(hptr,"{The following Relations are Conditional: } ", HALL);
     for (c=1;c<=len;c++) { /* the "{ }" is for making proper list elems */
       char *tmp;
       rel_inst = (struct Instance *)gl_fetch(g_brow_condrellist,c);
-      Tcl_AppendResult(interp,"{",(char *)NULL);
+      Asc_DStringAppend(hptr,"{",1);
       tmp = WriteRelationString(rel_inst,NULL,NULL,NULL,relio_ascend,NULL);
-      Tcl_AppendResult(interp,tmp,(char *)NULL);
+      Asc_DStringAppend(hptr,tmp,HALL);
       ascfree(tmp);
-      Tcl_AppendResult(interp,"} ",(char *)NULL);
+      Asc_DStringAppend(hptr,"} ",2);
     }
   }
   if (!save) {
@@ -169,25 +165,22 @@ int Asc_BrowWriteRelListCmd(ClientData cdata, Tcl_Interp *interp,
     gl_destroy(g_brow_condrellist);
     g_brow_condrellist=NULL;
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
 
 /* This function is particular for conditional relations */
 
-int Asc_BrowWriteCondRelListCmd(ClientData cdata, Tcl_Interp *interp,
-                            int argc, CONST84 char *argv[])
+int ascjson::Asc_BrowWriteCondRelListCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct Instance *i, *rel_inst;
   unsigned long len, c;
   int save=0;
 
-  UNUSED_PARAMETER(cdata);
-
   if (( argc < 2 ) || ( argc > 3 )) {
-    Tcl_AppendResult(interp,"wrong # args : ",
-                     "Usage \"bgetcondrels\" ?cur?search? save",(char *)NULL);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,"wrong # args : "
+	     "Usage \"bgetcondrels\" ?cur?search? save");
+    return HELP_ERROR;
   }
 
   if (strncmp(argv[1],"current",3)==0) {
@@ -195,8 +188,8 @@ int Asc_BrowWriteCondRelListCmd(ClientData cdata, Tcl_Interp *interp,
   } else if (strncmp(argv[1],"search",3)==0) {
     i = g_search_inst;
   } else {
-    Tcl_SetResult(interp, "invalid args to  \"bgetcondrels\"", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "invalid args to  \"bgetcondrels\"");
+    return HELP_ERROR;
   }
 
   if (argc==3) {
@@ -205,7 +198,7 @@ int Asc_BrowWriteCondRelListCmd(ClientData cdata, Tcl_Interp *interp,
     }
   }
   if (!i) {
-    return TCL_ERROR;
+    return HELP_ERROR;
   }
 
   if (!g_brow_rellist) {
@@ -222,11 +215,11 @@ int Asc_BrowWriteCondRelListCmd(ClientData cdata, Tcl_Interp *interp,
     for (c=1;c<=len;c++) {
       char *tmp;
       rel_inst = (struct Instance *)gl_fetch(g_brow_condrellist,c);
-      Tcl_AppendResult(interp,"{",(char *)NULL);
+      Asc_DStringAppend(hptr,"{",1);
       tmp = WriteRelationString(rel_inst,NULL,NULL,NULL,relio_ascend,NULL);
-      Tcl_AppendResult(interp,tmp,(char *)NULL);
+      Asc_DStringAppend(hptr,tmp,HALL);
       ascfree(tmp);
-      Tcl_AppendResult(interp,"} ",(char *)NULL);
+      Asc_DStringAppend(hptr,"} ",2);
     }
   }
   if (!save) {
@@ -235,11 +228,11 @@ int Asc_BrowWriteCondRelListCmd(ClientData cdata, Tcl_Interp *interp,
     gl_destroy(g_brow_condrellist);
     g_brow_condrellist=NULL;
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
 
-int Asc_BrowWriteRelListPostfixCmd(ClientData cdata, Tcl_Interp *interp,
+int ascjson::Asc_BrowWriteRelListPostfixCmd(Asc_DString *hptr,
                                int argc, CONST84 char *argv[])
 {
   struct Instance *i, *rel_inst;
@@ -247,12 +240,10 @@ int Asc_BrowWriteRelListPostfixCmd(ClientData cdata, Tcl_Interp *interp,
   unsigned long len, c;
   int save=0;
 
-  UNUSED_PARAMETER(cdata);
-
   if (( argc < 2 ) || ( argc > 3 )) {
-    Tcl_AppendResult(interp,"wrong # args : ",
-                     "Usage \"bmake_rels\" ?cur?search? save",(char *)NULL);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,"wrong # args : "
+	     "Usage \"bmake_rels\" ?cur?search? save");
+    return HELP_ERROR;
   }
 
   if (strncmp(argv[1],"current",3)==0) {
@@ -260,8 +251,8 @@ int Asc_BrowWriteRelListPostfixCmd(ClientData cdata, Tcl_Interp *interp,
   } else if (strncmp(argv[1],"search",3)==0) {
     i = g_search_inst;
   } else {
-    Tcl_SetResult(interp, "invalid args to  \"bmake_rels\"", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "invalid args to  \"bmake_rels\"");
+    return HELP_ERROR;
   }
 
   if (argc==3) {
@@ -271,7 +262,7 @@ int Asc_BrowWriteRelListPostfixCmd(ClientData cdata, Tcl_Interp *interp,
   }
 
   if (!i) {
-    return TCL_ERROR;
+    return HELP_ERROR;
   }
 
 
@@ -293,11 +284,11 @@ int Asc_BrowWriteRelListPostfixCmd(ClientData cdata, Tcl_Interp *interp,
       FPRINTF(stderr,"relation type not yet supported\n");
       continue;
     }
-    Tcl_AppendResult(interp,"{",(char *)NULL);
+    Asc_DStringAppend(hptr,"{",1);
     tmp = WriteRelationPostfixString(rel_inst,NULL);
-    Tcl_AppendResult(interp,tmp,(char *)NULL);
+    Asc_DStringAppend(hptr,tmp,HALL);
     ascfree(tmp);
-    Tcl_AppendResult(interp,"} ",(char *)NULL);
+    Asc_DStringAppend(hptr,"} ",2);
   }
   if (!save) {
     gl_destroy(g_brow_rellist);
@@ -305,56 +296,53 @@ int Asc_BrowWriteRelListPostfixCmd(ClientData cdata, Tcl_Interp *interp,
     gl_destroy(g_brow_condrellist);
     g_brow_condrellist=NULL;
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
 
 
-int Asc_BrowWriteRelsForAtomCmd(ClientData cdata,Tcl_Interp *interp,
-                            int argc, CONST84 char *argv[])
+int ascjson::Asc_BrowWriteRelsForAtomCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   CONST struct relation *rel;
   struct Instance *i, *rel_inst;
   unsigned long nrels, c;
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc != 2 ) {
-    Tcl_AppendResult(interp,"wrong # args : ",
-                     "Usage :__brow_relsforatom ?cur?search?",(char *)NULL);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,"wrong # args : "
+	     "Usage :__brow_relsforatom ?cur?search?");
+    return HELP_ERROR;
   }
   if (strncmp(argv[1],"current",3)==0) {
     i = g_curinst;
   } else if (strncmp(argv[1],"search",3)==0) {
     i = g_search_inst;
   } else {
-    Tcl_SetResult(interp, "invalid args to \"__brow_relsforatom\"",TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "invalid args to \"__brow_relsforatom\"");
+    return HELP_ERROR;
   }
   if (!i) {
-    return TCL_ERROR;
+    return HELP_ERROR;
   }
   if ( (InstanceKind(i) != REAL_ATOM_INST)
        && (InstanceKind(i)!= REAL_CONSTANT_INST) ) {
     /* We may soon do booleans also */
-    Tcl_AppendResult(interp,"At the moment only real atoms ",
-                     "are allowed in relations",(char *)NULL);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,"At the moment only real atoms "
+                     "are allowed in relations");
+    return HELP_ERROR;
   }
   nrels = RelationsCount(i);
   for (c=1;c<=nrels;c++) { /* the "{ }" is for making proper list elems */
     char *tmp;
     rel_inst = RelationsForAtom(i,c);
     rel = GetInstanceRelationOnly(rel_inst);
-    Tcl_AppendResult(interp,"{",(char *)NULL);
+    Asc_DStringAppend(hptr,"{",1);
     tmp = WriteRelationString(rel_inst,NULL,NULL,NULL,relio_ascend,NULL);
-    Tcl_AppendResult(interp,tmp,(char *)NULL);
+    Asc_DStringAppend(hptr,tmp,HALL);
     ascfree(tmp);
     if (RelationIsCond(rel)) {
-      Tcl_AppendResult(interp,"    Conditional Relation",(char *)NULL);
+      Asc_DStringAppend(hptr,"    Conditional Relation",HALL);
     }
-    Tcl_AppendResult(interp,"} ",(char *)NULL);
+    Asc_DStringAppend(hptr,"} ", 2);
   }
-  return TCL_OK;
+  return HELP_OK;
 }

@@ -230,6 +230,7 @@ extern "C" {
 #include <ascend/compiler/logrel_util.h>
 #include <ascend/compiler/vlist.h>
 #include <ascend/compiler/relation.h>
+#include <ascend/compiler/relation_io.h>
 #include <ascend/compiler/functype.h>
 #include <ascend/compiler/safe.h>
 #include <ascend/compiler/relation_util.h>
