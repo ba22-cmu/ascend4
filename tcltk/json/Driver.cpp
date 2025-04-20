@@ -139,11 +139,9 @@ int AscDriver(int argc, CONST char **argv)
 	auto r1 = world->Asc_LibrDestroyTypesCmdHC(libdestroy);
 	printf("%d\n", r1->e);
 
-#ifdef NOWEB
-	const char *read_file = "librread\v/models/basemodel.a4l";
-#else
-	const char *read_file = "librread\v../../webmodels/basemodel.a4l";
-#endif
+	// next line depends on ASCEND_LIBRARY env var defaulted right in ascjson.cpp
+	// or there being something in user env that overrides it.
+	const char *read_file = "librread\vbasemodel.a4l";
 	auto r2 = world->Asc_LibrReadCmdHC(read_file);
 	printf("%d\n", r2->e);
 	printf("%s\n", r2->v);

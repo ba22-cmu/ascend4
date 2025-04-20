@@ -304,6 +304,8 @@ public:
 
 	rcp Asc_SolveMonitorCmdHC (const char *vargv) ;
 
+	rcp SolveMonitor (const char *vargv) ;
+
 	rcp dbg_get_blk_of_var (const char *vargv) ;
 
 	rcp dbg_get_blk_of_eqn (const char *vargv) ;
@@ -636,6 +638,9 @@ private:
 	STDHLF_H(Asc_ProbeCmd);
 	STDHLF_H(Asc_SolvGetObjNumCmd);
 	STDHLF_H(Asc_SolveMonitorCmd);
+	// this next one has multiple instances managed by argv0, eventually.
+	STDHLF_H(SolveMonitor);
+
 	STDHLF_H(Asc_SimBinTokenSetOptionsHC);
 
 #include "tcltk/json/SimsProcDS.hpp"
@@ -679,9 +684,10 @@ private:
 	STDHLF_H(Asc_BrowMakeAlikeCmd);
 	STDHLF_H(Asc_BrowAnonTypesCmd);
 
-
 #include "tcltk/json/UnitsProcDS.hpp"
-
+#include "tcltk/json/SlvProc.hpp"
+#include "tcltk/json/SolverProc.hpp"
+#include "tcltk/json/ScriptProc.hpp"
 
 #if 0
 	STDHLF_H();

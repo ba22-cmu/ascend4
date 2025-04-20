@@ -47,12 +47,12 @@
  * This is bad.
  * The storage of these variables is in SolverProc.c.
  */
-int g_solvinst_ndx;
-int g_solvinst_limit;
-slv_system_t g_browsys_cur;
-slv_system_t g_solvsys_cur;
-struct Instance *g_solvinst_root;    /**< solver root instance */
-struct Instance *g_solvinst_cur;     /**< solver current instance */
+static int g_solvinst_ndx;
+static int g_solvinst_limit;
+static slv_system_t g_browsys_cur;
+static slv_system_t g_solvsys_cur;
+static struct Instance *g_solvinst_root;    /**< solver root instance */
+static struct Instance *g_solvinst_cur;     /**< solver current instance */
 
 #endif  /* SolverGlobals_hpp */
 

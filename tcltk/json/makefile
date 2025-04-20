@@ -1,6 +1,6 @@
 SRC=main_json.cpp Driver.cpp ascjson.cpp argv.cc
 
-CXXFLAGS= -I../.. -g -Wall -O0 -DYY_NO_UNPUT -DNOWEB
+CXXFLAGS= -I../.. -g -Wall -O0 -DYY_NO_UNPUT 
 OBJS=Driver.o ascjson.o argv.o
 
 prog: Driver.o ascjson.o argv.o

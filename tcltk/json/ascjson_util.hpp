@@ -59,11 +59,19 @@ struct jcache;
 	Asc_DStringAppend(a, b, HALL); \
 	Asc_DStringAppend(a, "\v", 1)
 
+/// split str on vtab and return data in *argvP. call must free *argvP.
+int VTcl_SplitList(void *i, const char *str, int *argcP, char ***argvP);
+
 int JTcl_GetInt(void *i, const char* str, int *iptr);
 int JTcl_GetLong(void *i, const char* str, long *lptr);
+/* convert any string starting t,T,y,Y,nonzero decimal digit to true, else false. */
+int JTcl_GetBool(void *i, const char* str, int *lptr);
+int JTcl_GetDouble(void *i, const char* str, double *lptr);
 	
+#define Tcl_GetDouble JTcl_GetDouble
 #define Tcl_GetInt JTcl_GetInt
 #define Tcl_ExprLong JTcl_GetLong
+#define Tcl_ExprBoolean JTcl_GetBool
 #define Tcl_ResetResult Asc_DStringFree
 #define TCL_VOLATILE
 #define TCL_STATIC
@@ -247,6 +255,11 @@ extern "C" {
 #include <ascend/system/slv_stdcalls.h>
 #include <ascend/solver/solver.h>
 #include <ascend/packages/ascFreeAllVars.h>
+
+#include <ascend/system/slv_server.h>   /* KHACK: not sure if this should be here */
+#include <ascend/system/system.h>
+#include <ascend/system/cond_config.h>
+#include <ascend/solver/slv_interface.h>
 }
 
 #endif // ascjson_util_h

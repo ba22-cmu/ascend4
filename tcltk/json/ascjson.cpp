@@ -73,7 +73,7 @@ void AscTrap(int sig)
 int g_interface_simplify_relations = 0;
 
 static void initEnv() {
-	Asc_AppendPath("ASCENDLIBRARY","/models");
+	Asc_AppendPath("ASCENDLIBRARY","/models:../../models");
 	char * e = Asc_GetEnv("ASCENDLIBRARY");
 	printf("ascgetenv(ASCENDLIBRARY) returns %s\n", e);
 	free(e);
@@ -566,14 +566,12 @@ rcp ascjson::Asc_ProbeCmdHC (const char *vargv)
 
 rcp ascjson::x__var_analyze (const char *vargv) 
 {
-	unimplemented;
-	// Asc_VarAnalyzeCmd
+	wrap_dstring( Asc_VarAnalyzeCmd, SVcstr);
 }
 
 rcp ascjson::x__rel_analyze (const char *vargv) 
 {
-	unimplemented;
-	// Asc_RelAnalyzeCmd
+	wrap_dstring( Asc_RelAnalyzeCmd, SVcstr);
 }
 
 rcp ascjson::x__userdata_init (const char *vargv) 
@@ -861,8 +859,7 @@ rcp ascjson::slv_far_from_nominals (const char *vargv)
 
 rcp ascjson::Asc_SolveMonitorCmdHC (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolveMonitorCmd
+	wrap_dstring( Asc_SolveMonitorCmd , SVcstr);
 }
 
 rcp ascjson::dbg_get_blk_of_var (const char *vargv) 
@@ -1353,18 +1350,29 @@ rcp ascjson::Asc_HelpCmdHC (const char *vargv)
 #include "tcltk/json/UnitsProcDS.ipp"
 #include "tcltk/json/DisplayProc.ipp"
 #include "tcltk/json/ProbeProc.ipp"
+#include "tcltk/json/SlvProc.ipp"
+#include "tcltk/json/SolverProc.ipp"
+#include "tcltk/json/ScriptProc.ipp"
 #include "tcltk/json/all_call.ipp"
 
 /// utils
+int VTcl_SplitList(void *i, const char *str, int *argcP, char ***argvP)
+{
+	return HELP_ERROR; // fixme
+}
 
 int JTcl_GetInt(void *i, const char* str, int *iptr)
 {
+	if (!str || !iptr)
+		return HELP_ERROR;
         *iptr = atoi(str);
 	return HELP_OK;
 }
 
 int JTcl_GetLong(void *i, const char* str, long *lptr)
 {
+	if (!str || !lptr)
+		return HELP_ERROR;
         assert(sizeof(long) <= sizeof(void*));
 	char *end = NULL;
         *lptr = strtol(str, &end, 0);
@@ -1373,3 +1381,40 @@ int JTcl_GetLong(void *i, const char* str, long *lptr)
 	return HELP_OK;
 }
 
+int JTcl_GetDouble(void *i, const char* str, double *lptr)
+{
+	if (!str || !lptr)
+		return HELP_ERROR;
+	char *end = NULL;
+        *lptr = strtod(str, &end);
+	if (end != NULL)
+		return HELP_ERROR;
+	return HELP_OK;
+}
+
+int JTcl_GetBool(void *i, const char* str, int *lptr)
+{
+	if (!str || !lptr)
+		return HELP_ERROR;
+	*lptr = 0;
+	switch (str[0]) {
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
+		case 't':
+		case 'T':
+		case 'Y':
+		case 'y':
+			*lptr = 1;
+			break;
+		default:
+			break;
+	}
+	return HELP_OK;
+}

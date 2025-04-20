@@ -27,68 +27,6 @@
 
 #define ASC_BUILDING_INTERFACE
 
-#if 0
-#include <stdarg.h>
-#include <time.h>
-#include <tcl.h>
-#include "config.h"
-#include <ascend/general/panic.h>
-#include <ascend/general/ascMalloc.h>
-#include <ascend/general/tm_time.h>
-#include <ascend/general/list.h>
-#include <ascend/general/dstring.h>
-
-#include <ascend/compiler/instance_enum.h>
-#include <ascend/compiler/cmpfunc.h>
-#include <ascend/compiler/check.h>
-#include <ascend/compiler/expr_types.h>
-#include <ascend/compiler/setinstval.h>
-#include <ascend/compiler/find.h>
-#include <ascend/compiler/functype.h>
-#include <ascend/compiler/safe.h>
-#include <ascend/compiler/rel_blackbox.h>
-#include <ascend/compiler/vlist.h>
-#include <ascend/compiler/relation.h>
-#include <ascend/compiler/relation_util.h>
-#include <ascend/compiler/logical_relation.h>
-#include <ascend/compiler/logrelation.h>
-#include <ascend/compiler/logrel_util.h>
-#include <ascend/compiler/symtab.h>
-#include <ascend/compiler/instance_io.h>
-#include <ascend/compiler/instance_name.h>
-#include <ascend/compiler/instquery.h>
-#include <ascend/compiler/parentchild.h>
-#include <ascend/compiler/atomvalue.h>
-#include <ascend/compiler/mathinst.h>
-#include <ascend/compiler/mergeinst.h>
-#include <ascend/compiler/child.h>
-#include <ascend/compiler/type_desc.h>
-#include <ascend/compiler/refineinst.h>
-#include <ascend/compiler/stattypes.h>
-#include <ascend/compiler/instantiate.h>
-#include <ascend/compiler/module.h>
-#include <ascend/compiler/library.h>
-#include <ascend/compiler/simlist.h>
-#include <ascend/compiler/anontype.h>
-#include <ascend/compiler/qlfdid.h>
-
-#include <ascend/system/slv_types.h>
-
-#include "HelpProc.h"
-#include "BrowserProc.h"
-#include "Qlfdid.h"
-#include "UnitsProc.h"
-#include "SimsProc.h"
-#include "Commands.h"
-#include "Driver.h"
-
-#ifndef MAXIMUM_STRING_LENGTH
-#define MAXIMUM_STRING_LENGTH 1024
-#endif
-//#define MAXIMUM_INST_DEPTH 40
-
-#endif
-
 unsigned long ascjson::g_depth = 0;      /* depth of the instance query list */
 struct Instance *ascjson::g_instlist[MAXIMUM_INST_DEPTH] = {0};
 struct Instance *ascjson::g_root = NULL;         /* root instance */

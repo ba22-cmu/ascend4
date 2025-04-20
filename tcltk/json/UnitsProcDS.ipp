@@ -29,60 +29,6 @@
 
 #include <stdarg.h>
 
-#if 0
-extern "C" {
-#include <ascend/utilities/config.h>
-#ifdef ASC_SIGNAL_TRAPS
-# include <ascend/utilities/ascSignal.h>
-#endif
-
-#include "config.h"
-#include <ascend/general/ascMalloc.h>
-#include <ascend/general/panic.h>
-#include <ascend/general/list.h>
-#include <ascend/general/dstring.h>
-
-#include <ascend/compiler/instance_enum.h>
-#include <ascend/compiler/cmpfunc.h>
-#include <ascend/compiler/dimen_io.h>
-#include <ascend/compiler/child.h>
-#include <ascend/compiler/type_desc.h>
-#include <ascend/compiler/module.h>
-#include <ascend/compiler/library.h>
-#include <ascend/compiler/symtab.h>
-#include <ascend/compiler/instance_io.h>
-#include <ascend/compiler/atomvalue.h>
-#include <ascend/compiler/instquery.h>
-#include <ascend/compiler/expr_types.h>
-#include <ascend/compiler/mathinst.h>
-#include <ascend/compiler/instance_name.h>
-#include <ascend/compiler/find.h>
-#include <ascend/compiler/rel_blackbox.h>
-#include <ascend/compiler/vlist.h>
-#include <ascend/compiler/relation.h>
-#include <ascend/compiler/functype.h>
-#include <ascend/compiler/safe.h>
-#include <ascend/compiler/relation_util.h>
-
-#include <ascend/linear/mtx.h>
-
-#include <ascend/system/slv_client.h>
-
-#include "old_utils.h"
-
-}
-
-#include "UnitsProcDS.hpp"
-
-#include "HelpProc.h"
-#include "BrowserQuery.h"
-#include "BrowserProc.h"
-#include "Qlfdid.h"
-#include "Driver.h"
-#include "HelpProc.h"
-#include "SolverGlobals.h"
-#endif
-
 /* convenience macros */
 #define SNULL (char *)NULL
 #define UnitsFindType(s) FindType(AddSymbol(s))
