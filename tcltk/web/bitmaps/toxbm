@@ -1,0 +1,6 @@
+#! /bin/bash
+for i in *.xbm; do
+	j=$(echo $i |sed -e 's/xbm/pbm/')
+	echo $i
+	xbmtopbm $i > $j
+done
