@@ -78,7 +78,7 @@ extern char *asc_make_dimensions(CONST dim_type *dim);
  *  is created and returned.  The string should be destroyed when
  *  no longer in use.
  *
- * @deprecated No longer supported.
+ * @deprecated No longer supported. Use WriteDimensionString from dimen_io.
  */
 
 extern int asc_check_dimensions(CONST struct relation *rel, dim_type *dimens);
@@ -101,7 +101,7 @@ extern int asc_check_dimensions(CONST struct relation *rel, dim_type *dimens);
  *
  *  THIS ONLY WORKS ON e_token relations and later for e_opcode
  *  relations. rel is assumed to be valid when called. !!!
- * @deprecated No longer supported.
+ * @deprecated No longer supported. Use RelationCheckDimensions.
  */
 
 #endif  /* _OLD_UTILS_H */

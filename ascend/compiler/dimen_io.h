@@ -47,7 +47,7 @@
 
 /**
 	Write the human readable and parser edible string form of the
-	dimen given.
+	dimen given. Caller should free the result.
 	
 	FIXME this function does not correctly output things like fractional powers,
 	which affects reporting of dimensionality errors (as of Dec 2023). Integer
