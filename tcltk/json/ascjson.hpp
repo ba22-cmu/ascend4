@@ -384,6 +384,7 @@ public:
 
 	rcp dbghelp (const char *vargv) ;
 
+#ifdef REDO_INTEGRATORS
 	rcp integrate_setup (const char *vargv) ;
 
 	rcp integrate_cleanup (const char *vargv) ;
@@ -401,6 +402,7 @@ public:
 	rcp integrate_set_samples (const char *vargv) ;
 
 	rcp integrate_able (const char *vargv) ;
+#endif
 
 	rcp x__mtx_norms (const char *vargv) ;
 
@@ -688,6 +690,8 @@ private:
 #include "tcltk/json/SlvProc.hpp"
 #include "tcltk/json/SolverProc.hpp"
 #include "tcltk/json/ScriptProc.hpp"
+//#include "tcltk/json/Integrators.hpp"
+#include "tcltk/json/DebugProc.hpp"
 
 #if 0
 	STDHLF_H();

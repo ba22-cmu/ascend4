@@ -156,7 +156,7 @@ interface ascjson {
  [Const] rc dgetparts (DOMString vargv) ;
 
  [Const] rc disroot_type (DOMString vargv) ;
-/*
+/* userdata and probe bits
  [Const] rc x__probe (DOMString vargv) ;
 
  [Const] rc x__var_analyze (DOMString vargv) ;
@@ -174,7 +174,7 @@ interface ascjson {
  [Const] rc x__userdata_restore (DOMString vargv) ;
 
  [Const] rc x__userdata_query (DOMString vargv) ;
-
+*/
  [Const] rc x__userdata_print (DOMString vargv) ;
 
  [Const] rc get_model_children (DOMString vargv) ;
@@ -337,6 +337,7 @@ interface ascjson {
 
  [Const] rc dbghelp (DOMString vargv) ;
 
+/* redo_integrator
  [Const] rc integrate_setup (DOMString vargv) ;
 
  [Const] rc integrate_cleanup (DOMString vargv) ;
@@ -354,12 +355,14 @@ interface ascjson {
  [Const] rc integrate_set_samples (DOMString vargv) ;
 
  [Const] rc integrate_able (DOMString vargv) ;
-
+*/
+/* mtx
  [Const] rc x__mtx_norms (DOMString vargv) ;
 
  [Const] rc mtx_gui_plot_incidence (DOMString vargv) ;
 
  [Const] rc mtxhelp (DOMString vargv) ;
+*/
 
  [Const] rc u_destroy_units (DOMString vargv) ;
 
@@ -416,7 +419,7 @@ interface ascjson {
  [Const] rc srefine (DOMString vargv) ;
 
  [Const] rc smerge (DOMString vargv) ;
-
+/*
  [Const] rc ascloadwin (DOMString vargv) ;
 */
  [Const] rc gnutext (DOMString vargv) ;

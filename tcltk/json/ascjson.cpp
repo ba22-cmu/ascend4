@@ -618,243 +618,203 @@ rcp ascjson::x__userdata_print (const char *vargv)
 
 rcp ascjson::get_model_children (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvGetModKids
+	wrap_dstring( Asc_SolvGetModKids , SVcstr);
 }
 
 rcp ascjson::slv_checksim (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvIncompleteSim
+	wrap_dstring( Asc_SolvIncompleteSim , SVcstr);
 }
 
 rcp ascjson::slv_checksys (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvCheckSys
+	wrap_dstring( Asc_SolvCheckSys , SVcstr);
 }
 
 rcp ascjson::slv_get_obj_list (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvGetObjList
+	wrap_dstring( Asc_SolvGetObjList , SVcstr);
 }
 
 rcp ascjson::slv_set_obj_by_num (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvSetObjByNum
+	wrap_dstring( Asc_SolvSetObjByNum , SVcstr);
 }
 
 rcp ascjson::Asc_SolvGetObjNumCmdHC (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvGetObjNumCmd
+	wrap_dstring( Asc_SolvGetObjNumCmd , SVcstr);
 }
 #if 1
 rcp ascjson::slv_get_parms (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvGetSlvParms
+	wrap_dstring( Asc_SolvGetSlvParms , SVcstr);
 }
 
 rcp ascjson::set_slv_parms (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvSetSlvParms
+	wrap_dstring( Asc_SolvSetSlvParms , SVcstr);
 }
 #endif
 
 rcp ascjson::set_slv_parmsnew (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvSetSlvParmsNew
+	wrap_dstring( Asc_SolvSetSlvParmsNew , SVcstr);
 }
 
 rcp ascjson::slv_get_parmsnew (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvGetSlvParmsNew
+	wrap_dstring( Asc_SolvGetSlvParmsNew , SVcstr);
 }
 
 rcp ascjson::slv_get_insttype (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvGetInstType
+	wrap_dstring( Asc_SolvGetInstType , SVcstr);
 }
 
 rcp ascjson::slv_get_cost_page (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvGetSlvCostPage
+	wrap_dstring( Asc_SolvGetSlvCostPage , SVcstr);
 }
 
 rcp ascjson::slv_get_stat_page (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvGetSlvStatPage
+	wrap_dstring( Asc_SolvGetSlvStatPage , SVcstr);
 }
 
 rcp ascjson::slv_get_objval (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvGetObjectiveVal
+	wrap_dstring( Asc_SolvGetObjectiveVal , SVcstr);
 }
 
 rcp ascjson::slv_get_instname (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvGetInstName
+	wrap_dstring( Asc_SolvGetInstName , SVcstr);
 }
 
 rcp ascjson::slv_get_pathname (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvGetPathName
+	wrap_dstring( Asc_SolvGetPathName , SVcstr);
 }
 
 rcp ascjson::slv_get_vr (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvGetVRCounts
+	wrap_dstring( Asc_SolvGetVRCounts , SVcstr);
 }
 
 rcp ascjson::slvdump (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvSlvDumpInt
+	wrap_dstring( Asc_SolvSlvDumpInt , SVcstr);
 }
 
 rcp ascjson::slv_presolve (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvSlvPresolve
+	wrap_dstring( Asc_SolvSlvPresolve , SVcstr);
 }
 
 rcp ascjson::slv_reanalyze (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvReanalyze
+	wrap_dstring( Asc_SolvReanalyze , SVcstr);
 }
 
 rcp ascjson::slv_check_and_reanalyze (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvCheckAndReanalyze
+	wrap_dstring( Asc_SolvCheckAndReanalyze , SVcstr);
 }
 
 rcp ascjson::slv_set_independent (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvMakeIndependent
+	wrap_dstring( Asc_SolvMakeIndependent , SVcstr);
 }
 
 rcp ascjson::slv_resolve (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvSlvResolve
+	wrap_dstring( Asc_SolvSlvResolve , SVcstr);
 }
 
 rcp ascjson::slv_solve (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvSlvSolve
+	wrap_dstring( Asc_SolvSlvSolve , SVcstr);
 }
 
 rcp ascjson::slv_iterate (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvSlvIterate
+	wrap_dstring( Asc_SolvSlvIterate , SVcstr);
 }
 
 rcp ascjson::slv_available (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvAvailSolver
+	wrap_dstring( Asc_SolvAvailSolver , SVcstr);
 }
 
 rcp ascjson::slv_number (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvSolverNum
+	wrap_dstring( Asc_SolvSolverNum , SVcstr);
 }
 
 rcp ascjson::slv_name (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvSolverName
+	wrap_dstring( Asc_SolvSolverName , SVcstr);
 }
 
 rcp ascjson::slv_linsol_names (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvLinsolNames
+	wrap_dstring( Asc_SolvLinsolNames , SVcstr);
 }
 
 rcp ascjson::slv_eligible_solver (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvEligSolver
+	wrap_dstring( Asc_SolvEligSolver , SVcstr);
 }
 
 rcp ascjson::slv_select_solver (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvSelectSolver
+	wrap_dstring( Asc_SolvSelectSolver , SVcstr);
 }
 
 rcp ascjson::slv_get_solver (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvGetSelectedSolver
+	wrap_dstring( Asc_SolvGetSelectedSolver , SVcstr);
 }
 
 rcp ascjson::slv_flush_solver (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvFlushSolver
+	wrap_dstring( Asc_SolvFlushSolver , SVcstr);
 }
 
 rcp ascjson::slv_import_qlfdid (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvImportQlfdid
+	wrap_dstring( Asc_SolvImportQlfdid , SVcstr);
 }
 
 rcp ascjson::slv_lnmget (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvGetLnmEpsilon
+	wrap_dstring( Asc_SolvGetLnmEpsilon , SVcstr);
 }
 
 rcp ascjson::slv_lnmset (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvSetLnmEpsilon
+	wrap_dstring( Asc_SolvSetLnmEpsilon , SVcstr);
 }
 
 rcp ascjson::slv_set_haltflag (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvSetCHaltFlag
+	wrap_dstring( Asc_SolvSetCHaltFlag , SVcstr);
 }
 
 rcp ascjson::slvhelp (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvHelpList
+	wrap_dstring( Asc_SolvHelpList , SVcstr);
 }
 
 rcp ascjson::slv_near_bounds (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvNearBounds
+	wrap_dstring( Asc_SolvNearBounds , SVcstr);
 }
 
 rcp ascjson::slv_far_from_nominals (const char *vargv) 
 {
-	unimplemented;
-	// Asc_SolvFarFromNominal
+	wrap_dstring( Asc_SolvFarFromNominal , SVcstr);
 }
 
 rcp ascjson::Asc_SolveMonitorCmdHC (const char *vargv) 
@@ -864,293 +824,255 @@ rcp ascjson::Asc_SolveMonitorCmdHC (const char *vargv)
 
 rcp ascjson::dbg_get_blk_of_var (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuGetBlkOfVar
+	wrap_dstring( Asc_DebuGetBlkOfVar , SVcstr);
 }
 
 rcp ascjson::dbg_get_blk_of_eqn (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuGetBlkOfEqn
+	wrap_dstring( Asc_DebuGetBlkOfEqn , SVcstr);
 }
 
 rcp ascjson::dbg_get_blk_coords (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuGetBlkCoords
+	wrap_dstring( Asc_DebuGetBlkCoords , SVcstr);
 }
 
 rcp ascjson::dbg_get_eqn_of_var (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuGetEqnOfVar
+	wrap_dstring( Asc_DebuGetEqnOfVar , SVcstr);
 }
 
 rcp ascjson::dbg_get_varpartition (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuGetVarPartition
+	wrap_dstring( Asc_DebuGetVarPartition , SVcstr);
 }
 
 rcp ascjson::dbg_get_eqnpartition (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuGetEqnPartition
+	wrap_dstring( Asc_DebuGetEqnPartition , SVcstr);
 }
 
 rcp ascjson::dbg_list_rels (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuListRels
+	wrap_dstring( Asc_DebuListRels , SVcstr);
 }
 
 rcp ascjson::dbg_list_vars (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuListVars
+	wrap_dstring( Asc_DebuListVars , SVcstr);
 }
 
 rcp ascjson::dbg_write_var (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuWriteVar
+	wrap_dstring( Asc_DebuWriteVar , SVcstr);
 }
 
 rcp ascjson::dbg_write_unattvar (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuWriteUnattachedVar
+	wrap_dstring( Asc_DebuWriteUnattachedVar , SVcstr);
 }
 
 rcp ascjson::brow_write_var (const char *vargv) 
 {
 	unimplemented;
-	// Asc_DebuWriteVar cd=1
+	// wrap_dstring( Asc_DebuWriteVar cd=1 , SVcstr);
 }
 
 
 rcp ascjson::dbg_write_rel (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuWriteRel cd=NULL
+	wrap_dstring( Asc_DebuWriteRel , SVcstr);
 }
 
 rcp ascjson::brow_write_rel (const char *vargv) 
 {
 	unimplemented;
-	// Asc_DebuWriteRel cd=1
+	// wrap_dstring( Asc_DebuWriteRel cd=1 , SVcstr);
 }
 
 rcp ascjson::dbg_write_obj (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuWriteObj cd=NULL
+	wrap_dstring( Asc_DebuWriteObj , SVcstr);
 }
 
 rcp ascjson::brow_write_obj (const char *vargv) 
 {
 	unimplemented;
-	// Asc_DebuWriteObj cd=1
+	// wrap_dstring( Asc_DebuWriteObj cd=1 , SVcstr);
 }
 
 rcp ascjson::dbg_write_varattr (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuWriteVarAttr cd=NULL
+	wrap_dstring( Asc_DebuWriteVarAttr , SVcstr);
 }
 
 rcp ascjson::dbg_write_qlfattr (const char *vargv) 
 {
 	unimplemented;
-	// Asc_DebuWriteVarAttr cd=1
+	// wrap_dstring( Asc_DebuWriteVarAttr cd=1 , SVcstr);
 }
 
 rcp ascjson::dbg_rel_included (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuRelIncluded
+	wrap_dstring( Asc_DebuRelIncluded , SVcstr);
 }
 
 rcp ascjson::dbg_var_fixed (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuVarFixed
+	wrap_dstring( Asc_DebuVarFixed , SVcstr);
 }
 
 rcp ascjson::dbg_get_incidence (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuGetIncidence
+	wrap_dstring( Asc_DebuGetIncidence , SVcstr);
 }
 
 rcp ascjson::dbg_get_order (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuGetOrder
+	wrap_dstring( Asc_DebuGetOrder , SVcstr);
 }
 
 rcp ascjson::dbg_write_incidence (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuWriteIncidence
+	wrap_dstring( Asc_DebuWriteIncidence , SVcstr);
 }
 
 rcp ascjson::dbg_find_eligible (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuFindEligible
+	wrap_dstring( Asc_DebuFindEligible , SVcstr);
 }
 
 rcp ascjson::brow_find_eligible (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuInstEligible
+	wrap_dstring( Asc_DebuInstEligible , SVcstr);
 }
 
 rcp ascjson::dbg_consistency_analysis (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuConsistencyAnalysis
+	wrap_dstring( Asc_DebuConsistencyAnalysis , SVcstr);
 }
 
 rcp ascjson::dbg_global_eligible (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuFindGlobalEligible
+	wrap_dstring( Asc_DebuFindGlobalEligible , SVcstr);
 }
 
 rcp ascjson::dbg_find_activerels (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuFindActive
+	wrap_dstring( Asc_DebuFindActive , SVcstr);
 }
 
 rcp ascjson::brow_find_activerels (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuInstActive
+	wrap_dstring( Asc_DebuInstActive , SVcstr);
 }
 
 rcp ascjson::dbg_struct_singular (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuStructSing
+	wrap_dstring( Asc_DebuStructSing , SVcstr);
 }
 
 rcp ascjson::dbg_num_block_singular (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuNumBlockSing
+	wrap_dstring( Asc_DebuNumBlockSing , SVcstr);
 }
 
 rcp ascjson::var_free2nom (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuVarFree2Nom
+	wrap_dstring( Asc_DebuVarFree2Nom , SVcstr);
 }
 
 rcp ascjson::var_nom2free (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuVarNom2Free
+	wrap_dstring( Asc_DebuVarNom2Free , SVcstr);
 }
 
 rcp ascjson::dbg_calc_relnoms (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuCalcRelNominals
+	wrap_dstring( Asc_DebuCalcRelNominals , SVcstr);
 }
 
 rcp ascjson::dbg_check_rels (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuCheckRelFp
+	wrap_dstring( Asc_DebuCheckRelFp , SVcstr);
 }
 
 rcp ascjson::dbg_write_slv0_xsys (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuWriteSystem cd=NULL
+	wrap_dstring( Asc_DebuWriteSystem , SVcstr);
 }
 
 rcp ascjson::dbg_write_slv0_sys (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuWriteSystem cd=1
+	unimplemented; //cdata
+	// wrap_dstring( Asc_DebuWriteSystem cd=1 , SVcstr);
 }
 
 rcp ascjson::dbg_mtxwriteplot (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuMtxWritePlotCmd cd=1
+	unimplemented; //cdata
+	//wrap_dstring( Asc_DebuMtxWritePlotCmd cd=1 , SVcstr);
 }
 
 rcp ascjson::dbg_calc_jacobian (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuMtxCalcJacobianCmd cd=1
+	unimplemented; //cdata
+	// wrap_dstring( Asc_DebuMtxCalcJacobianCmd cd=1 , SVcstr);
 }
 
 rcp ascjson::dbghelp (const char *vargv) 
 {
-	unimplemented;
-	// Asc_DebuHelpList
+	wrap_dstring( Asc_DebuHelpList , SVcstr);
 }
 
+#if 0 
+// we need to recreate the Integrators file using the
+// object model in ascend/integrators.
 rcp ascjson::integrate_setup (const char *vargv) 
 {
-	unimplemented;
-	// Asc_IntegSetupCmd
+	wrap_dstring( Asc_IntegSetupCmd , SVcstr);
 }
 
 rcp ascjson::integrate_cleanup (const char *vargv) 
 {
-	unimplemented;
-	// Asc_IntegCleanupCmd
+	wrap_dstring( Asc_IntegCleanupCmd , SVcstr);
 }
 
 rcp ascjson::integrate_set_y_file (const char *vargv) 
 {
-	unimplemented;
-	// Asc_IntegSetYFileCmd
+	wrap_dstring( Asc_IntegSetYFileCmd , SVcstr);
 }
 
 rcp ascjson::integrate_set_obs_file (const char *vargv) 
 {
-	unimplemented;
-	// Asc_IntegSetObsFileCmd
+	wrap_dstring( Asc_IntegSetObsFileCmd , SVcstr);
 }
 
 rcp ascjson::integrate_logunits (const char *vargv) 
 {
-	unimplemented;
-	// Asc_IntegSetFileUnitsCmd
+	wrap_dstring( Asc_IntegSetFileUnitsCmd , SVcstr);
 }
 
 rcp ascjson::integrate_logformat (const char *vargv) 
 {
-	unimplemented;
-	// Asc_IntegSetFileFormatCmd
+	wrap_dstring( Asc_IntegSetFileFormatCmd , SVcstr);
 }
 
 rcp ascjson::integrate_get_samples (const char *vargv) 
 {
-	unimplemented;
-	// Asc_IntegGetXSamplesCmd
+	wrap_dstring( Asc_IntegGetXSamplesCmd , SVcstr);
 }
 
 rcp ascjson::integrate_set_samples (const char *vargv) 
 {
-	unimplemented;
-	// Asc_IntegSetXSamplesCmd
+	wrap_dstring( Asc_IntegSetXSamplesCmd , SVcstr);
 }
 
 rcp ascjson::integrate_able (const char *vargv) 
 {
-	unimplemented;
-	// Asc_IntegInstIntegrableCmd
+	wrap_dstring( Asc_IntegInstIntegrableCmd , SVcstr);
 }
-
+#endif // integrators
 rcp ascjson::x__mtx_norms (const char *vargv) 
 {
 	unimplemented;
@@ -1301,14 +1223,12 @@ rcp ascjson::uhelp (const char *vargv)
 
 rcp ascjson::srefine (const char *vargv) 
 {
-	unimplemented;
-	// Asc_ScriptRefineCmd
+	wrap_dstring( Asc_ScriptRefineCmd , SVcstr);
 }
 
 rcp ascjson::smerge (const char *vargv) 
 {
-	unimplemented;
-	// Asc_ScriptMergeCmd
+	wrap_dstring( Asc_ScriptMergeCmd , SVcstr);
 }
 
 #if 0
@@ -1353,6 +1273,8 @@ rcp ascjson::Asc_HelpCmdHC (const char *vargv)
 #include "tcltk/json/SlvProc.ipp"
 #include "tcltk/json/SolverProc.ipp"
 #include "tcltk/json/ScriptProc.ipp"
+#include "tcltk/json/DebugProc.ipp"
+//#include "tcltk/json/Integrators.ipp"
 #include "tcltk/json/all_call.ipp"
 
 /// utils

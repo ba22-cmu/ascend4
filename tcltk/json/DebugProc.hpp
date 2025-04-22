@@ -25,21 +25,10 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/** @file
- *  Debugging Routines
- *  <pre>
- *  To include this header, you must include the following:
- *      #include "tcl.h"
- *      #include "utilities/ascConfig.h"
- *      #include "interface/DebugProc.h"
- *  </pre>
- */
+#ifndef ASCTK_DEBUGPROC_HPP
+#define ASCTK_DEBUGPROC_HPP
 
-#ifndef ASCTK_DEBUGPROC_H
-#define ASCTK_DEBUGPROC_H
-
-extern int Asc_DebuGetBlkOfVar(ClientData cdata, Tcl_Interp *interp,
-                               int argc, CONST84 char *argv[]);
+int Asc_DebuGetBlkOfVar(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Get the block number for a variable.
  *  Returns "none" if var is not in a partition (not assigned included).
@@ -51,8 +40,7 @@ extern int Asc_DebuGetBlkOfVar(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:  dbg_get_blk_of_var varindex
  */
 
-extern int Asc_DebuGetBlkOfEqn(ClientData cdata, Tcl_Interp *interp,
-                               int argc, CONST84 char *argv[]);
+int Asc_DebuGetBlkOfEqn(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Get the block number for an equation.
  *  Returns "none" if eqn is not in a partition (not assigned included).
@@ -64,8 +52,7 @@ extern int Asc_DebuGetBlkOfEqn(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:  dbg_get_blk_of_eqn eqnindex
  */
 
-extern int Asc_DebuGetBlkCoords(ClientData cdata, Tcl_Interp *interp,
-                                int argc, CONST84 char *argv[]);
+int Asc_DebuGetBlkCoords(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Get the coordinates of a block.
  *  returns "none" if block is not a partition.
@@ -76,8 +63,7 @@ extern int Asc_DebuGetBlkCoords(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:  dbg_get_blk_coords blocknumber
  */
 
-extern int Asc_DebuGetEqnOfVar(ClientData cdata, Tcl_Interp *interp,
-                               int argc, CONST84 char *argv[]);
+int Asc_DebuGetEqnOfVar(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Get the equation number for a variable.
  *  Returns "none" if var is not assigned (fixed or not incident).
@@ -88,8 +74,7 @@ extern int Asc_DebuGetEqnOfVar(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:  dbg_get_eqn_of_var  varindex
  */
 
-extern int Asc_DebuGetVarPartition(ClientData cdata, Tcl_Interp *interp,
-                                   int argc, CONST84 char *argv[]);
+int Asc_DebuGetVarPartition(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Return a / and space delimited list of the variables in the system.
  *  / separates partitions, space separates var #s. There's a trailing
@@ -99,8 +84,7 @@ extern int Asc_DebuGetVarPartition(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:  dbg_get_varpartition
  */
 
-extern int Asc_DebuGetEqnPartition(ClientData cdata, Tcl_Interp *interp,
-                                   int argc, CONST84 char *argv[]);
+int Asc_DebuGetEqnPartition(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Return a / and space delimited list of the equations in the system.
  *  / separates partitions, space separates eqn #s. There's a trailing
@@ -110,8 +94,7 @@ extern int Asc_DebuGetEqnPartition(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:  dbg_get_eqnpartition
  */
 
-extern int Asc_DebuListRels(ClientData cdata, Tcl_Interp *interp,
-                            int argc, CONST84 char *argv[]);
+int Asc_DebuListRels(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Return the C index list of rels matching the simple filter specified.
  *  No filter --> usage message,error.
@@ -122,8 +105,7 @@ extern int Asc_DebuListRels(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:  dbg_list_rels <filtercode> [anything]
  */
 
-extern int Asc_DebuListVars(ClientData cdata, Tcl_Interp *interp,
-                            int argc, CONST84 char *argv[]);
+int Asc_DebuListVars(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Return the C index list of vars matching the simple filter specified.
  *  No filter --> usage message,error.
@@ -135,11 +117,10 @@ extern int Asc_DebuListVars(ClientData cdata, Tcl_Interp *interp,
  *  Registered as: dbg_list_vars <filtercode> [anything]
  */
 
-extern int Asc_DebuWriteVar(ClientData cdata, Tcl_Interp *interp,
-                            int argc, CONST84 char *argv[]);
+int Asc_DebuWriteVar(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Writes a real variable.  Conditions:
- *   -# output device; stderr stdout or interp (0,1,2)
+ *   -# output device; stderr stdout or hptr (0,1,2)
  *   -# it's C index number
  *   -# with detail level: 0 name 1 val 2 dims 3 var# 4 fixedflag
  *      5 lower_bound 6 nominal 7 upper_bound
@@ -148,23 +129,22 @@ extern int Asc_DebuWriteVar(ClientData cdata, Tcl_Interp *interp,
  *   -# with optional string prepended to the qlfdid
  *
  *  Name returned is qualified id from root instance g_solvinst_root.
- *  The string is not prepended to the interp qlfdid,
+ *  The string is not prepended to the hptr qlfdid,
  *  an ampersand marks the root and should be edited in tcl before
- *  displaying the result. interp is returned as a list.
+ *  displaying the result. hptr is returned as a list.
  *  If cdata 1,uses g_browsys_cur instead of g_solvsys_cur.<br><br>
  *
  *  Registered as:  dbg_write_var out# Cindex detail# [string]
  */
 
-extern int Asc_DebuWriteUnattachedVar(ClientData cdata, Tcl_Interp *interp,
-                                      int argc, CONST84 char *argv[]);
+int Asc_DebuWriteUnattachedVar(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
- *  Writes the list of unattached variables to stderr, stdout, or interp
+ *  Writes the list of unattached variables to stderr, stdout, or hptr
  *  (0,1,2).
  *  Name returned is qualified id from root instance g_solvinst_root.
- *  The string is not prepended to the interp qlfdid,
+ *  The string is not prepended to the hptr qlfdid,
  *  an ampersand marks the root and should be edited in tcl before
- *  displaying the result. interp is returned as a list.
+ *  displaying the result. hptr is returned as a list.
  *  If cdata 1,uses g_browsys_cur instead of g_solvsys_cur.<br><br>
  *
  *  It is not assumed anymore that the unattached variables are in the
@@ -174,10 +154,9 @@ extern int Asc_DebuWriteUnattachedVar(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:  dbg_write_unattvar out#  [simname]
  */
 
-extern int Asc_DebuWriteRel(ClientData cdata, Tcl_Interp *interp,
-                            int argc, CONST84 char *argv[]);
+int Asc_DebuWriteRel(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
- *  Writes a relation to stderr stdout or interp (0,1,2).
+ *  Writes a relation to stderr stdout or hptr (0,1,2).
  *  Conditions:
  *    -# it's a C index number
  *    -# with detail level 0 name 1 resid 2 rel# 3 include flag
@@ -185,9 +164,9 @@ extern int Asc_DebuWriteRel(ClientData cdata, Tcl_Interp *interp,
  *
  *  If detail level is 4, only the relation itself is written/returned.
  *  Name returned is qualified id from root instance g_solvinst_root.
- *  The string is not prepended to the interp qlfdid,
+ *  The string is not prepended to the hptr qlfdid,
  *  an ampersand marks the root and should be edited in tcl before
- *  displaying the result. interp is returned as a list
+ *  displaying the result. hptr is returned as a list
  *  If cdata 1,uses g_browsys_cur instead of g_solvsys_cur.<br><br>
  *
  *  SIDE EFFECTS: updates the residual of the relation examined.
@@ -197,16 +176,14 @@ extern int Asc_DebuWriteRel(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:  dbg_write_rel <out> <Cindex> <detail> [string]
  */
 
-extern int Asc_DebuWriteObj(ClientData cdata, Tcl_Interp *interp,
-                            int argc, CONST84 char *argv[]);
+int Asc_DebuWriteObj(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Same as Asc_DebuWriteRel() except applies to objective relations. <br><br>
  *
  *  Registered as:  dbg_write_obj
  */
 
-extern int Asc_DebuWriteVarAttr(ClientData cdata, Tcl_Interp *interp,
-                                int argc, CONST84 char *argv[]);
+int Asc_DebuWriteVarAttr(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Writes a solver_var instance including some ip properties.
  *  Conditions:  it's a C index number in a list:
@@ -218,15 +195,14 @@ extern int Asc_DebuWriteVarAttr(ClientData cdata, Tcl_Interp *interp,
  *  dbg_write_varattr except takes qlfdid and
  *  if ip is null (var has never been to solver) ip data will be -1<br><br>
  *
- *  If something is amiss with the inst, returns nothing and TCL_ERROR. <br><br>
+ *  If something is amiss with the inst, returns nothing and HELP_ERROR. <br><br>
  *
  *  Dual registered as:
  *    - dbg_write_varattr <Cindex> (cdata==0)
  *    - dbg_write_qlfattr <qlfdid> (cdata==1)
  */
 
-extern int Asc_DebuRelIncluded(ClientData cdata, Tcl_Interp *interp,
-                               int argc, CONST84 char *argv[]);
+int Asc_DebuRelIncluded(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Returns 1 if rel included flag set true, 0 if not.
  *  This call, along with Asc_DebuVarFixed(), is used primarily
@@ -235,8 +211,7 @@ extern int Asc_DebuRelIncluded(ClientData cdata, Tcl_Interp *interp,
  *
  *  Registered as:  dbg_rel_included <index>
  */
-extern int Asc_DebuVarFixed(ClientData cdata, Tcl_Interp *interp,
-                            int argc, CONST84 char *argv[]);
+int Asc_DebuVarFixed(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Returns 1 if var fixed flag set true, 0 if not.
  *  This call, along with Asc_DebuRelIncluded(), is used primarily
@@ -246,8 +221,7 @@ extern int Asc_DebuVarFixed(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:  dbg_var_fixed <index>
  */
 
-extern int Asc_DebuGetIncidence(ClientData cdata, Tcl_Interp *interp,
-                                int argc, CONST84 char *argv[]);
+int Asc_DebuGetIncidence(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Returns the list of indexes of variables occuring in the relation
  *  index given.  Uses NumberVaribles and RelationVariable routines to
@@ -257,8 +231,7 @@ extern int Asc_DebuGetIncidence(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:  dbg_get_incidence
  */
 
-extern int Asc_DebuGetOrder(ClientData cdata, Tcl_Interp *interp,
-                            int argc, CONST84 char *argv[]);
+int Asc_DebuGetOrder(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Returns the list of original indexes as found running
  *  along the mtx of the current system's linsol_sys.  Will be
@@ -267,16 +240,14 @@ extern int Asc_DebuGetOrder(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:  dbg_get_order  <row,col>
  */
 
-extern int Asc_DebuWriteIncidence(ClientData cdata, Tcl_Interp *interp,
-                                  int argc, CONST84 char *argv[]);
+int Asc_DebuWriteIncidence(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Dumps the incidence matrix from slv. <br><br>
  *
  *  Registered as:  dbg_write_incidence <dest> 0= stdout 1 = stderr 2= list
  */
 
-extern int Asc_DebuFindEligible(ClientData cdata, Tcl_Interp *interp,
-                                int argc, CONST84 char *argv[]);
+int Asc_DebuFindEligible(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Output will be a list of indexes of the eligible variables
  *  that if fixed reduce the excess column count of the system.
@@ -290,8 +261,7 @@ extern int Asc_DebuFindEligible(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:  dbg_find_eligible <dest> 0= stdout 1 = stderr 2= list
  */
 
-extern int Asc_DebuConsistencyAnalysis(ClientData cdata, Tcl_Interp *interp,
-                                       int argc, CONST84 char *argv[]);
+int Asc_DebuConsistencyAnalysis(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Operates on g_solvsys_cur.
  *  Output will a set of indices of the variables , which, if fixed, will
@@ -304,8 +274,7 @@ extern int Asc_DebuConsistencyAnalysis(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:  dbg_consistency_analysis <dest> 0= stdout 1 = stderr 2= list
  */
 
-extern int Asc_DebuFindGlobalEligible(ClientData cdata, Tcl_Interp *interp,
-                                      int argc, CONST84 char *argv[]);
+int Asc_DebuFindGlobalEligible(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Operates on g_solvsys_cur.
  *  Output will be a list of indexes of the eligible variables
@@ -319,8 +288,7 @@ extern int Asc_DebuFindGlobalEligible(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:  dbg_global_eligible <dest> 0= stdout 1 = stderr 2= list
  */
 
-extern int Asc_DebuInstEligible(ClientData cdata, Tcl_Interp *interp,
-                            int argc, CONST84 char *argv[]);
+int Asc_DebuInstEligible(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Operates on newly made g_browsys_cur made from curinst
  *  and destroys g_browsys_cur when done, leaving it NULL.
@@ -334,8 +302,7 @@ extern int Asc_DebuInstEligible(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:  brow_find_eligible <dest> 0= stdout 1 = stderr 2= list
  */
 
-extern int Asc_DebuFindActive(ClientData cdata, Tcl_Interp *interp,
-                              int argc, CONST84 char *argv[]);
+int Asc_DebuFindActive(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Operates on g_solvsys_cur.
  *  Output will be a list of indexes of the active relations in the
@@ -346,8 +313,7 @@ extern int Asc_DebuFindActive(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:  dbg_find_activerels <dest> 0= stdout 1 = stderr 2= list
  */
 
-extern int Asc_DebuInstActive(ClientData cdata, Tcl_Interp *interp,
-                              int argc, CONST84 char *argv[]);
+int Asc_DebuInstActive(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Operates on newly made g_browsys_cur made from curinst
  *  and destroys g_browsys_cur when done, leaving it NULL.
@@ -360,8 +326,7 @@ extern int Asc_DebuInstActive(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:  brow_find_activerels <dest> 0= stdout 1 = stderr 2= list
  */
 
-extern int Asc_DebuNumBlockSing(ClientData cdata, Tcl_Interp *interp,
-                                int argc, CONST84 char *argv[]);
+int Asc_DebuNumBlockSing(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  output will be a list(or lists):
  *  {index {eqn coef} {eqn coef}}
@@ -372,12 +337,11 @@ extern int Asc_DebuNumBlockSing(ClientData cdata, Tcl_Interp *interp,
  *  The lists may come back empty if appropriate.
  *  Works only for Slv, since no other solver is currently blocking. <br><br>
  *
- *  Registered as:  dbg_num_block_singular <dest> 0= stdout 1 = stderr 2= interp
+ *  Registered as:  dbg_num_block_singular <dest> 0= stdout 1 = stderr 2= hptr
  *  <block #> <row,col>
  */
 
-extern int Asc_DebuStructSing(ClientData cdata, Tcl_Interp *interp,
-                              int argc, CONST84 char *argv[]);
+int Asc_DebuStructSing(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Output will be a list of indexes of the responsible relations
  *  and a list of indexes of the vars in the singularity(s)
@@ -390,8 +354,7 @@ extern int Asc_DebuStructSing(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:  dbg_struct_singular <dest> 0= stdout 1 = stderr 2= list <relindex>
  */
 
-extern int Asc_DebuVarFree2Nom(ClientData cdata, Tcl_Interp *interp,
-                               int argc, CONST84 char *argv[]);
+int Asc_DebuVarFree2Nom(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Moves all free vars in current solve system to their nominal values.
  *  This is basically a crash recovery call. Vars must also be incident. <br><br>
@@ -399,8 +362,7 @@ extern int Asc_DebuVarFree2Nom(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:  var_free2nom <no args>
  */
 
-extern int Asc_DebuVarNom2Free(ClientData cdata, Tcl_Interp *interp,
-                               int argc, CONST84 char *argv[]);
+int Asc_DebuVarNom2Free(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Moves all free vars nominals in current solve system to var values.
  *  Vars must also be incident. <br><br>
@@ -408,8 +370,7 @@ extern int Asc_DebuVarNom2Free(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:  var_nom2free <no args>
  */
 
-extern int Asc_DebuCheckRelFp(ClientData cdata, Tcl_Interp *interp,
-                              int argc, CONST84 char *argv[]);
+int Asc_DebuCheckRelFp(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Returns a list which is
  *  {{index lstat rstat dlstat drstat} ...}.
@@ -425,8 +386,7 @@ extern int Asc_DebuCheckRelFp(ClientData cdata, Tcl_Interp *interp,
  *        currently implemented: always 0.
  */
 
-extern int Asc_DebuCalcRelNominals(ClientData cdata, Tcl_Interp *interp,
-                                   int argc, CONST84 char *argv[]);
+int Asc_DebuCalcRelNominals(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Returns a list which is
  *  {{index lstat rstat nom} ...}.
@@ -439,8 +399,7 @@ extern int Asc_DebuCalcRelNominals(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:  dbg_calc_relnoms
  */
 
-extern int Asc_DebuWriteSystem(ClientData cdata, Tcl_Interp *interp,
-                               int argc, CONST84 char *argv[]);
+int Asc_DebuWriteSystem(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Write a system description suitable for a standalone slv0 to the
  *  file given. destroys anything in the file if it already exists.
@@ -451,21 +410,18 @@ extern int Asc_DebuWriteSystem(ClientData cdata, Tcl_Interp *interp,
  *  @todo Asc_DebuWriteSystem() doesn't deal with bnds.
  */
 
-extern int Asc_DebuWriteKirkSystem(ClientData cdata, Tcl_Interp *interp,
-                                   int argc, CONST84 char *argv[]);
+int Asc_DebuWriteKirkSystem(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  KAA_DEBUG.
  *  Registered as:  dbg_write_kirk_xsys
  */
-extern int Asc_DebuWriteGAMSSystem(ClientData cdata, Tcl_Interp *interp,
-                                   int argc, CONST84 char *argv[]);
+int Asc_DebuWriteGAMSSystem(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  KAA_DEBUG.
  *  Registered as:  dbg_write_gams_xsys
  */
 
-extern int Asc_DebuMtxCalcJacobianCmd(ClientData cdata, Tcl_Interp *interp,
-                                     int argc, CONST84 char *argv[]);
+int Asc_DebuMtxCalcJacobianCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  The jacobian is calculated at the current point.
  *  At the moment which solver must be an int which is the index of
@@ -474,8 +430,7 @@ extern int Asc_DebuMtxCalcJacobianCmd(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:  dbg_calc_jacobian <whichsolver>
  */
 
-extern int Asc_DebuMtxWritePlotCmd(ClientData cdata, Tcl_Interp *interp,
-                                   int argc, CONST84 char *argv[]);
+int Asc_DebuMtxWritePlotCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Write a mtx to the named file.
  *  Arguments:
@@ -502,8 +457,7 @@ extern int Asc_DebuMtxWritePlotCmd(ClientData cdata, Tcl_Interp *interp,
  *        region coordinates.
  */
 
-extern int Asc_DebuHelpList(ClientData cdata, Tcl_Interp *interp,
-                            int argc, CONST84 char *argv[]);
+int Asc_DebuHelpList(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Debug help command for tcl.
  *  No arg -> return tcl list.
@@ -512,5 +466,12 @@ extern int Asc_DebuHelpList(ClientData cdata, Tcl_Interp *interp,
  *  Registered as:  dbghelp [s,l]
  */
 
+private:
+static boolean dbg_calc_jacobian(mtx_matrix_t mtx, mtx_region_t reg,
+		 struct rel_relation **rlist, struct var_variable **vlist);
+static void dbg_factor_block(linsolqr_system_t lsys,
+		     mtx_region_t *reg, mtx_matrix_t mtx,
+		     struct rel_relation **rp, struct var_variable **vp);
+public:
 #endif  /* DebugProc_module_loaded */
 

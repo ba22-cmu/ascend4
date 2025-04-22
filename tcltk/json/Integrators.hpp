@@ -54,13 +54,10 @@
 */
 
 
-#ifndef ASCTK_INTEGRATORS_H
-#define ASCTK_INTEGRATORS_H
+#ifndef ASCTK_INTEGRATORS_HPP
+#define ASCTK_INTEGRATORS_HPP
 
-#include <ascend/integrator/integrator.h>
-
-extern int Asc_IntegSetYFileCmd(ClientData cdata, Tcl_Interp *interp,
-                                int argc, CONST84 char *argv[]);
+int Asc_IntegSetYFileCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Set the next filename to be used for integration state variable
  *  logging. Does not check the filesystem sanity of the given name.<br><br>
@@ -68,8 +65,7 @@ extern int Asc_IntegSetYFileCmd(ClientData cdata, Tcl_Interp *interp,
  *  Registered as: integrate_set_y_file filename
  */
 
-extern int Asc_IntegSetObsFileCmd(ClientData cdata, Tcl_Interp *interp,
-                                  int argc, CONST84 char *argv[]);
+int Asc_IntegSetObsFileCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Set the next filename to be used for integration observation variable
  *  logging. Does not check the filesystem sanity of the given name.<br><br>
@@ -77,8 +73,7 @@ extern int Asc_IntegSetObsFileCmd(ClientData cdata, Tcl_Interp *interp,
  *  Registered as: integrate_set_obs_file filename
  */
 
-extern int Asc_IntegSetFileUnitsCmd(ClientData cdata, Tcl_Interp *interp,
-                                    int argc, CONST84 char *argv[]);
+int Asc_IntegSetFileUnitsCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Sets output to be in SI (internal) units or in the user set display
  *  units. If display is selected and the variable to be printed cannot
@@ -91,8 +86,7 @@ extern int Asc_IntegSetFileUnitsCmd(ClientData cdata, Tcl_Interp *interp,
  *  Registered as: integrate_logunits <display,si>
  */
 
-extern int Asc_IntegSetFileFormatCmd(ClientData cdata, Tcl_Interp *interp,
-                                     int argc, CONST84 char *argv[]);
+int Asc_IntegSetFileFormatCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Sets output data to be in fixed column width (with extra white) or in
  *  space separated columns whose width is variable from line to line.
@@ -103,8 +97,7 @@ extern int Asc_IntegSetFileFormatCmd(ClientData cdata, Tcl_Interp *interp,
 
 
 
-extern int Asc_IntegGetXSamplesCmd(ClientData cdata, Tcl_Interp *interp,
-                                   int argc, CONST84 char *argv[]);
+int Asc_IntegGetXSamplesCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Returns the current vector of independent variable samples as fed to
  *  smarter integrators such as lsode. Returns 2 element list:
@@ -121,8 +114,7 @@ extern int Asc_IntegGetXSamplesCmd(ClientData cdata, Tcl_Interp *interp,
  *  Registered as: integrate_get_samples [display]
  */
 
-extern int Asc_IntegSetXSamplesCmd(ClientData data, Tcl_Interp *interp,
-                                   int argc, CONST84 char *argv[]);
+int Asc_IntegSetXSamplesCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Takes the values given and sets the intervals for smarter
  *  integrators accordingly. Values will be converted to SI values
@@ -139,8 +131,7 @@ extern int Asc_IntegSetXSamplesCmd(ClientData data, Tcl_Interp *interp,
  *  Registered as:  integrate_set_samples <units> <value [value...] value>
  */
 
-extern int Asc_IntegInstIntegrableCmd(ClientData cdata, Tcl_Interp *interp,
-                                      int argc, CONST84 char *argv[]);
+int Asc_IntegInstIntegrableCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Returns "1" if instance is integrable by the named integrator, "0"
  *  otherwise. Currently valid names are: lsode
@@ -150,8 +141,7 @@ extern int Asc_IntegInstIntegrableCmd(ClientData cdata, Tcl_Interp *interp,
  */
 
 
-extern int Asc_IntegSetupCmd(ClientData cdata,Tcl_Interp *interp,
-                             int argc, CONST84 char *argv[]);
+int Asc_IntegSetupCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Set up the integrator.
  *  itype is one of the supported integrator types (currently:
@@ -162,8 +152,7 @@ extern int Asc_IntegSetupCmd(ClientData cdata,Tcl_Interp *interp,
  *  Registered as:  integrateSetup itype n1 n2
  */
 
-extern int Asc_IntegCleanupCmd(ClientData cdata, Tcl_Interp *interp,
-                               int argc, CONST84 char *argv[]);
+int Asc_IntegCleanupCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  Do any C level housekeeping need after calling integration.
  *  Always use integrate_setup/integrate_cleanup in pairs.<br><br>
@@ -172,7 +161,7 @@ extern int Asc_IntegCleanupCmd(ClientData cdata, Tcl_Interp *interp,
  */
 
 /*  functions affecting the logging of data during integration */
-extern FILE *Asc_IntegOpenYFile(void);
+FILE *Asc_IntegOpenYFile(void);
 /**<
  *  Returns the pointer to a file to which state
  *  variables should be written at each recorded time interval. Other
@@ -191,7 +180,7 @@ extern FILE *Asc_IntegOpenYFile(void);
  *  Closing the files is your job.  When finished with the file, you
  *  should call Asc_IntegReleaseYFile() before closing it.
  */
-extern FILE *Asc_IntegOpenObsFile(void);
+FILE *Asc_IntegOpenObsFile(void);
 /**<
  *  Returns the pointer to a file to which observation
  *  variables should be written at each recorded time interval. Other
@@ -216,18 +205,20 @@ extern FILE *Asc_IntegOpenObsFile(void);
 	in a way that might not be useful to other interfaces.
 */
 
-extern FILE *Asc_IntegGetYFile(void);
+FILE *Asc_IntegGetYFile(void);
 /**<
  *  Returns the current FILE * for writing state variables,
  *  or NULL if none.
  */
-extern FILE *Asc_IntegGetObsFile(void);
+
+FILE *Asc_IntegGetObsFile(void);
 /**<
  *  Returns the current FILE * for writing observation variables,
  *  or NULL if none.
  */
-extern void Asc_IntegReleaseYFile(void);
-extern void Asc_IntegReleaseObsFile(void);
+
+void Asc_IntegReleaseYFile(void);
+void Asc_IntegReleaseObsFile(void);
 /**<
  *  Releases the internally-stored FILE * for observation variables.
  *  This does not close the file (which you still need to do).
@@ -237,7 +228,7 @@ extern void Asc_IntegReleaseObsFile(void);
  */
 
 
-extern void Asc_IntegPrintYHeader(FILE *fp, IntegratorSystem *blsys);
+void Asc_IntegPrintYHeader(FILE *fp, IntegratorSystem *blsys);
 /**<
  *  Prints Y header info to the file given.
  *  If FILE is NULL, returns immediately.
@@ -248,7 +239,8 @@ extern void Asc_IntegPrintYHeader(FILE *fp, IntegratorSystem *blsys);
  *      then a row (which will line up with printed values)
  *      of the ode_id/obs_id.
  */
-extern void Asc_IntegPrintObsHeader(FILE *fp, IntegratorSystem *blsys);
+
+void Asc_IntegPrintObsHeader(FILE *fp, IntegratorSystem *blsys);
 /**<
  *  Prints observation header info to the file given.
  *  If FILE is NULL, returns immediately.
@@ -260,7 +252,7 @@ extern void Asc_IntegPrintObsHeader(FILE *fp, IntegratorSystem *blsys);
  *      of the ode_id/obs_id.
  */
 
-extern int Asc_IntegPrintYLine(FILE *fp, IntegratorSystem *blsys);
+int Asc_IntegPrintYLine(FILE *fp, IntegratorSystem *blsys);
 /**<
 	Prints a Y line to the file given.
 	If FILE is NULL, returns immediately.
@@ -273,7 +265,7 @@ extern int Asc_IntegPrintYLine(FILE *fp, IntegratorSystem *blsys);
 	@return 1 on successful output
 */
 
-extern int Asc_IntegPrintObsLine(FILE *fp, IntegratorSystem *blsys);
+int Asc_IntegPrintObsLine(FILE *fp, IntegratorSystem *blsys);
 /**<
 	Prints an observation line to the file given.
 	If FILE is NULL, returns immediately.

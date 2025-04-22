@@ -257,9 +257,15 @@ extern "C" {
 #include <ascend/packages/ascFreeAllVars.h>
 
 #include <ascend/system/slv_server.h>   /* KHACK: not sure if this should be here */
+#include <ascend/system/calc.h>
 #include <ascend/system/system.h>
 #include <ascend/system/cond_config.h>
+#include <ascend/system/relman.h>
 #include <ascend/solver/slv_interface.h>
+#include <ascend/solver/slvDOF.h>
+#include <ascend/integrator/integrator.h>
+#include <ascend/integrator/samplelist.h>
+
 }
 
 #endif // ascjson_util_h

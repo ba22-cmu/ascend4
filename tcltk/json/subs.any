@@ -7,6 +7,7 @@ sed -e 's/Tcl_Interp .interp/Asc_DString *hptr/g' \
  -e 's/ClientData cdata, //g' \
  -e 's/ClientData cdata,//g' \
  -e 's/cdata, //g' \
+ -e 's/^extern //g' \
  -e 's/TCL_OK/HELP_OK/g' \
  -e 's/TCL_ERROR/HELP_ERROR/g' \
  -e 's/Asc_HelpGetLong/Asc_HelpGetLongDS/g' \

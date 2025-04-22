@@ -26,7 +26,7 @@
  */
 
 #define ASC_BUILDING_INTERFACE
-
+#if 0
 #include <ascend/utilities/config.h>
 #ifdef ASC_SIGNAL_TRAPS
 # include <ascend/utilities/ascSignal.h>
@@ -79,13 +79,13 @@
 #include "SolverGlobals.h"
 #include "BrowserProc.h"
 /* #include "slv5.h" *//* this is a sloppy mess due to slv5_calc_J */
+#endif
 
 #define SAFE_FIX_ME 0
 #define REIMPLEMENT 0
 #define TORF(b) ((b) ? "TRUE" : "FALSE")
 #define YORN(b) ((b) ? "YES" : "NO")
 #define ONEORZERO(b) ((b) ? "1" : "0")
-#define SNULL (char *)NULL
 #define QLFDID_LENGTH 1023
 #define DP_DEBUG TRUE
 
@@ -93,57 +93,52 @@
  * This function needs to be fixed to deal with mtxless systems
  * much better.
  */
-int Asc_DebuGetBlkOfVar(ClientData cdata, Tcl_Interp *interp,
-                      int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuGetBlkOfVar(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   char * tmps;
   int32 col,numblock,ndx,maxvar,blow,bhigh;
-  int status =TCL_OK;
+  int status =HELP_OK;
   mtx_matrix_t mtx;
   struct var_variable **vp;
   var_filter_t vfilter;
   dof_t *d;
   const mtx_block_t *b;
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc != 2 ) {
     FPRINTF(ASCERR,  "call is: dbg_get_blk_of_var <var index>\n");
-    Tcl_SetResult(interp, "dbg_get_blk_of_var takes 1 arg", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_get_blk_of_var takes 1 arg");
+    return HELP_ERROR;
   }
   if (g_solvsys_cur==NULL) {
     FPRINTF(ASCERR,  "dbg_get_blk_of_var called with NULL pointer\n");
-    Tcl_SetResult(interp, "dbg_get_blk_of_var called without slv_system",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_get_blk_of_var called without slv_system");
+    return HELP_ERROR;
   }
 
-  mtx = slv_get_sys_mtx(g_solvsys_cur);
+  mtx = ::slv_get_sys_mtx(g_solvsys_cur);
   if (mtx==NULL) {
     /* this is a horrible hack and incorrect and all that */
     /* probably should issue a warning here */
-    Tcl_SetResult(interp, "0", TCL_STATIC);
-    return TCL_OK;
+    Asc_DStringSet(hptr, "0");
+    return HELP_OK;
   }
-  d = slv_get_dofdata(g_solvsys_cur);
-  b = slv_get_solvers_blocks(g_solvsys_cur);
+  d = ::slv_get_dofdata(g_solvsys_cur);
+  b = ::slv_get_solvers_blocks(g_solvsys_cur);
   assert(d!=NULL && b!=NULL);
 
-  vp=slv_get_solvers_var_list(g_solvsys_cur);
-  /*  maxvar=slv_get_num_solvers_vars(g_solvsys_cur); */
+  vp= ::slv_get_solvers_var_list(g_solvsys_cur);
+  /*  maxvar= ::slv_get_num_solvers_vars(g_solvsys_cur); */
   vfilter.matchbits = (VAR_ACTIVE);
   vfilter.matchvalue = (VAR_ACTIVE);
-  maxvar=slv_count_solvers_vars(g_solvsys_cur,&vfilter);
+  maxvar= ::slv_count_solvers_vars(g_solvsys_cur,&vfilter);
   ndx=maxvar;
 
-  status=Tcl_GetInt(interp,argv[1],&ndx);
-  if (ndx>=maxvar||status==TCL_ERROR) {
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "get_blk_of_var: variable does not exist",
-                  TCL_STATIC);
+  status=JTcl_GetInt(hptr, argv[1],&ndx);
+  if (ndx>=maxvar||status==HELP_ERROR) {
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "get_blk_of_var: variable does not exist");
     FPRINTF(ASCERR,  "dbg_get_blk_of_var: variable index invalid\n");
-    return TCL_ERROR;
+    return HELP_ERROR;
   }
   col = mtx_org_to_col(mtx,ndx);
   blow = 0;
@@ -164,73 +159,68 @@ int Asc_DebuGetBlkOfVar(ClientData cdata, Tcl_Interp *interp,
         }
   }
   if ( var_fixed(vp[ndx]) || numblock<0 || !var_active(vp[ndx]) ) {
-    Tcl_SetResult(interp, "none", TCL_STATIC);
-    return TCL_OK;
+    Asc_DStringSet(hptr, "none");
+    return HELP_OK;
   } else {
     tmps= (char *)ascmalloc((MAXIMUM_NUMERIC_LENGTH+1)*sizeof(char));
     sprintf(tmps,"%d",numblock);
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     ascfree(tmps);
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
 /*
  * This function needs to be fixed to deal with mtxless systems
  * much better.
  */
-int Asc_DebuGetBlkOfEqn(ClientData cdata, Tcl_Interp *interp,
-                      int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuGetBlkOfEqn(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   char * tmps;
   int32 row,numblock,ndx,maxrel,blow,bhigh;
-  int status = TCL_OK;
+  int status = HELP_OK;
   mtx_matrix_t mtx;
   struct rel_relation **rp;
   rel_filter_t rfilter;
   dof_t *d;
   const mtx_block_t *b;
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc != 2 ) {
     FPRINTF(ASCERR,  "call is: dbg_get_blk_of_eqn <rel index>\n");
-    Tcl_SetResult(interp, "dbg_get_blk_of_eqn takes 1 arg", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_get_blk_of_eqn takes 1 arg");
+    return HELP_ERROR;
   }
   if (g_solvsys_cur==NULL) {
     FPRINTF(ASCERR,  "dbg_get_blk_of_eqn called with NULL pointer\n");
-    Tcl_SetResult(interp, "dbg_get_blk_of_eqn called without slv_system",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_get_blk_of_eqn called without slv_system");
+    return HELP_ERROR;
   }
 
-  mtx = slv_get_sys_mtx(g_solvsys_cur);
+  mtx = ::slv_get_sys_mtx(g_solvsys_cur);
   if (mtx==NULL) {
     /* this is a horrible hack and incorrect and all that */
     /*probably should issue a warning here */
-    Tcl_SetResult(interp, "0", TCL_STATIC);
-    return TCL_OK;
+    Asc_DStringSet(hptr, "0");
+    return HELP_OK;
   }
-  d = slv_get_dofdata(g_solvsys_cur);
-  b = slv_get_solvers_blocks(g_solvsys_cur);
+  d = ::slv_get_dofdata(g_solvsys_cur);
+  b = ::slv_get_solvers_blocks(g_solvsys_cur);
   assert(d!=NULL && b!=NULL);
 
-  rp=slv_get_solvers_rel_list(g_solvsys_cur);
-  /*  maxrel=slv_get_num_solvers_rels(g_solvsys_cur); */
+  rp= ::slv_get_solvers_rel_list(g_solvsys_cur);
+  /*  maxrel= ::slv_get_num_solvers_rels(g_solvsys_cur); */
   rfilter.matchbits = (REL_ACTIVE);
   rfilter.matchvalue = (REL_ACTIVE);
-  maxrel=slv_count_solvers_rels(g_solvsys_cur,&rfilter);
+  maxrel= ::slv_count_solvers_rels(g_solvsys_cur,&rfilter);
   ndx=maxrel;
 
-  status=Tcl_GetInt(interp,argv[1],&ndx);
-  if (ndx>=maxrel||status==TCL_ERROR) {
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp,
-                  "dbg_get_blk_of_eqn: equation requested does not exist",
-                  TCL_STATIC);
+  status=JTcl_GetInt(hptr, argv[1],&ndx);
+  if (ndx>=maxrel||status==HELP_ERROR) {
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr,
+                  "dbg_get_blk_of_eqn: equation requested does not exist");
     FPRINTF(ASCERR, "dbg_get_blk_of_eqn: relation index invalid.\n");
-    return TCL_ERROR;
+    return HELP_ERROR;
   }
   row = mtx_org_to_row(mtx,ndx);
   blow = 0;
@@ -251,113 +241,103 @@ int Asc_DebuGetBlkOfEqn(ClientData cdata, Tcl_Interp *interp,
         }
   }
   if (numblock<0 || !rel_included(rp[ndx]) || !rel_active(rp[ndx])) {
-    Tcl_SetResult(interp, "none", TCL_STATIC);
-    return TCL_OK;
+    Asc_DStringSet(hptr, "none");
+    return HELP_OK;
   } else {
     tmps= (char *)ascmalloc((MAXIMUM_NUMERIC_LENGTH+1)*sizeof(char));
     sprintf(tmps,"%d",numblock);
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     ascfree(tmps);
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
 /*
  * this function deals ok with mtxless solvers
  */
-int Asc_DebuGetBlkCoords(ClientData cdata, Tcl_Interp *interp,
-                      int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuGetBlkCoords(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   char * tmps;
   int32 numblock,ndx,maxblk;
-  int status =TCL_OK;
+  int status =HELP_OK;
   mtx_region_t reg;
   dof_t *d;
   const mtx_block_t *b;
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc != 2 ) {
     FPRINTF(ASCERR,  "call is: dbg_get_blk_coords <blocknumber>\n");
-    Tcl_SetResult(interp, "dbg_get_blk_coords takes 1 arg", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_get_blk_coords takes 1 arg");
+    return HELP_ERROR;
   }
   if (g_solvsys_cur==NULL) {
     FPRINTF(ASCERR,  "dbg_get_blk_coords called with NULL pointer\n");
-    Tcl_SetResult(interp, "dbg_get_blk_coords called without slv_system",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_get_blk_coords called without slv_system");
+    return HELP_ERROR;
   }
 
-  d = slv_get_dofdata(g_solvsys_cur);
-  b = slv_get_solvers_blocks(g_solvsys_cur);
+  d = ::slv_get_dofdata(g_solvsys_cur);
+  b = ::slv_get_solvers_blocks(g_solvsys_cur);
   assert(d!=NULL && b!=NULL);
 
   numblock = b->nblocks-1;
   maxblk = ndx = INT_MAX;
-  status=Tcl_GetInt(interp,argv[1],&ndx);
-  if (ndx<0 ||ndx>=maxblk||status==TCL_ERROR) {
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "dbg_get_blk_coords: block does not exist",
-                  TCL_STATIC);
+  status=JTcl_GetInt(hptr, argv[1],&ndx);
+  if (ndx<0 ||ndx>=maxblk||status==HELP_ERROR) {
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "dbg_get_blk_coords: block does not exist");
     FPRINTF(ASCERR,  "dbg_get_blk_coords: block index invalid\n");
-    return TCL_ERROR;
+    return HELP_ERROR;
   }
   if (ndx>numblock) {
-    Tcl_SetResult(interp, "none", TCL_STATIC);
-    return TCL_OK;
+    Asc_DStringSet(hptr, "none");
+    return HELP_OK;
   } else {
     reg = b->block[ndx];
     tmps= (char *)ascmalloc((2*MAXIMUM_NUMERIC_LENGTH+1)*sizeof(char));
     sprintf(tmps,"%d %d %d %d",
             reg.col.low, reg.row.low, reg.col.high, reg.row.high);
-    Tcl_AppendResult(interp,tmps,SNULL);
+    Asc_DStringAppend(hptr,tmps,HALL);
     ascfree(tmps);
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
 /*
  * needs to deal with mtxless systems.
  * quite likely spitting garbage.
  */
-int Asc_DebuGetEqnOfVar(ClientData cdata, Tcl_Interp *interp,
-                      int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuGetEqnOfVar(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   char * tmps;
   int32 num,maxvar,numeq;
-  int tmpi,status=TCL_OK;
+  int tmpi,status=HELP_OK;
   mtx_matrix_t mtx;
   struct var_variable **vp;
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc != 2 ) {
     FPRINTF(ASCERR,"call is: dbg_get_eqn_of_var <var Cindex> \n");
-    Tcl_SetResult(interp, "dbg_get_eqn_of_var wants 1 arg", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_get_eqn_of_var wants 1 arg");
+    return HELP_ERROR;
   }
   if (g_solvsys_cur==NULL) {
     FPRINTF(ASCERR,  "dbg_get_eqn_of_var called with NULL pointer\n");
-    Tcl_SetResult(interp, "dbg_get_eqn_of_var called without slv_system",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_get_eqn_of_var called without slv_system");
+    return HELP_ERROR;
   }
 
-  mtx = slv_get_sys_mtx(g_solvsys_cur);
-  vp=slv_get_solvers_var_list(g_solvsys_cur);
-  maxvar=slv_get_num_solvers_vars(g_solvsys_cur);
+  mtx = ::slv_get_sys_mtx(g_solvsys_cur);
+  vp= ::slv_get_solvers_var_list(g_solvsys_cur);
+  maxvar= ::slv_get_num_solvers_vars(g_solvsys_cur);
 
   tmpi=maxvar;
-  status=Tcl_GetInt(interp,argv[1],&tmpi);
+  status=JTcl_GetInt(hptr, argv[1],&tmpi);
   if (tmpi<0 || tmpi >= maxvar) {
-    status=TCL_ERROR;
+    status=HELP_ERROR;
   }
-  if (status!=TCL_OK) {
+  if (status!=HELP_OK) {
     FPRINTF(ASCERR,"dbg_get_eqn_of_var: arg is not variable number in list\n");
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "dbg_get_eqn_of_var: invalid variable number",
-                  TCL_STATIC);
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "dbg_get_eqn_of_var: invalid variable number");
     return status;
   }
   tmps= (char *)ascmalloc((MAXIMUM_NUMERIC_LENGTH+1)*sizeof(char));
@@ -368,17 +348,16 @@ int Asc_DebuGetEqnOfVar(ClientData cdata, Tcl_Interp *interp,
       || numeq>=maxvar
       || var_fixed(vp[numeq])
       || !var_active(vp[numeq]) ) {
-    Tcl_SetResult(interp, "none", TCL_STATIC);
+    Asc_DStringSet(hptr, "none");
   } else {
     sprintf(tmps,"%d",numeq);
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
   }
   ascfree(tmps);
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_DebuGetVarPartition(ClientData cdata, Tcl_Interp *interp,
-                          int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuGetVarPartition(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   char * tmps;
   int32 numblock,lastblock,c,maxvar;
@@ -386,25 +365,21 @@ int Asc_DebuGetVarPartition(ClientData cdata, Tcl_Interp *interp,
   dof_t *d;
   const mtx_block_t *b;
 
-  UNUSED_PARAMETER(cdata);
-  (void)argv;     /* stop gcc whine about unused parameter */
 
   if ( argc != 1 ) {
     FPRINTF(ASCERR,  "call is: dbg_get_varpartition <no args>\n");
-    Tcl_SetResult(interp, "dbg_get_varpartition: takes no arguments.",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_get_varpartition: takes no arguments.");
+    return HELP_ERROR;
   }
   if (g_solvsys_cur==NULL) {
     FPRINTF(ASCERR,  "dbg_get_varpartition called with NULL pointer\n");
-    Tcl_SetResult(interp, "dbg_get_varpartition called without slv_system",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_get_varpartition called without slv_system");
+    return HELP_ERROR;
   }
 
-  mtx = slv_get_sys_mtx(g_solvsys_cur);
-  d = slv_get_dofdata(g_solvsys_cur);
-  b = slv_get_solvers_blocks(g_solvsys_cur);
+  mtx = ::slv_get_sys_mtx(g_solvsys_cur);
+  d = ::slv_get_dofdata(g_solvsys_cur);
+  b = ::slv_get_solvers_blocks(g_solvsys_cur);
   assert(d!=NULL && b!=NULL);
 
   lastblock = b->nblocks;
@@ -416,30 +391,29 @@ int Asc_DebuGetVarPartition(ClientData cdata, Tcl_Interp *interp,
       reg = b->block[numblock];
       for( ; reg.col.low <= reg.col.high; reg.col.low++ ) {
         sprintf(tmps,"%d",mtx_col_to_org(mtx,reg.col.low));
-        Tcl_AppendElement(interp,tmps);
+        VTcl_AppendElement(hptr,tmps);
       }
       sprintf(tmps,"/"); /* add block separator w/out extra whitespace */
-      Tcl_AppendResult(interp,tmps,SNULL);
+      Asc_DStringAppend(hptr,tmps,HALL);
     }
   } else {
     struct var_variable **vp;
-    vp=slv_get_solvers_var_list(g_solvsys_cur);
-    maxvar=slv_get_num_solvers_vars(g_solvsys_cur);
+    vp= ::slv_get_solvers_var_list(g_solvsys_cur);
+    maxvar= ::slv_get_num_solvers_vars(g_solvsys_cur);
     if (vp) {
       for (c=0; c<maxvar; c++) {
         if (!var_fixed(vp[c]) && var_incident(vp[c]) && var_active(vp[c]) ) {
           sprintf(tmps,"%d",var_sindex(vp[c]));
-          Tcl_AppendElement(interp,tmps);
+          VTcl_AppendElement(hptr,tmps);
         } /* all in one block, no / needed */
       }
     }
   }
   ascfree(tmps);
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_DebuGetEqnPartition(ClientData cdata, Tcl_Interp *interp,
-                          int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuGetEqnPartition(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   char * tmps;
   int32 numblock,lastblock,maxrel,c;
@@ -447,25 +421,21 @@ int Asc_DebuGetEqnPartition(ClientData cdata, Tcl_Interp *interp,
   dof_t *d;
   const mtx_block_t *b;
 
-  UNUSED_PARAMETER(cdata);
-  (void)argv;     /* stop gcc whine about unused parameter */
 
   if ( argc != 1 ) {
     FPRINTF(ASCERR,  "call is: dbg_get_eqnpartition <no args>\n");
-    Tcl_SetResult(interp, "dbg_get_eqnpartition: takes no arguments.",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_get_eqnpartition: takes no arguments.");
+    return HELP_ERROR;
   }
   if (g_solvsys_cur==NULL) {
     FPRINTF(ASCERR,  "dbg_get_eqnpartition called with NULL pointer\n");
-    Tcl_SetResult(interp, "dbg_get_eqnpartition called without slv_system",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_get_eqnpartition called without slv_system");
+    return HELP_ERROR;
   }
 
-  mtx = slv_get_sys_mtx(g_solvsys_cur);
-  d = slv_get_dofdata(g_solvsys_cur);
-  b = slv_get_solvers_blocks(g_solvsys_cur);
+  mtx = ::slv_get_sys_mtx(g_solvsys_cur);
+  d = ::slv_get_dofdata(g_solvsys_cur);
+  b = ::slv_get_solvers_blocks(g_solvsys_cur);
   assert(d!=NULL && b!=NULL);
 
   lastblock = b->nblocks;
@@ -477,32 +447,31 @@ int Asc_DebuGetEqnPartition(ClientData cdata, Tcl_Interp *interp,
       reg = b->block[numblock];
       for( ; reg.row.low <= reg.row.high; reg.row.low++ ) {
         sprintf(tmps,"%d",mtx_row_to_org(mtx,reg.row.low));
-        Tcl_AppendElement(interp,tmps);
+        VTcl_AppendElement(hptr,tmps);
       }
       sprintf(tmps,"/"); /* add block separator w/out extra whitespace */
-      Tcl_AppendResult(interp,tmps,SNULL);
+      Asc_DStringAppend(hptr,tmps,HALL);
     }
   } else {
     struct rel_relation **rp;
-    rp=slv_get_solvers_rel_list(g_solvsys_cur);
-    maxrel=slv_get_num_solvers_rels(g_solvsys_cur);
+    rp= ::slv_get_solvers_rel_list(g_solvsys_cur);
+    maxrel= ::slv_get_num_solvers_rels(g_solvsys_cur);
     if (rp) {
       for (c=0; c<maxrel; c++) {
         if (rel_included(rp[c]) && rel_active(rp[c])) {
           sprintf(tmps,"%d",rel_sindex(rp[c]));
-          Tcl_AppendElement(interp,tmps);
+          VTcl_AppendElement(hptr,tmps);
         } /* all in one block, no / needed */
       }
     }
   }
   ascfree(tmps);
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_DebuListVars(ClientData cdata, Tcl_Interp *interp,
-                   int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuListVars(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
-  int status=TCL_OK,fil;
+  int status=HELP_OK,fil;
   var_filter_t vfilter;
   struct var_variable **vp;
   int32 maxvar,c;
@@ -510,8 +479,6 @@ int Asc_DebuListVars(ClientData cdata, Tcl_Interp *interp,
   dof_t *d;
   boolean vbool = FALSE;
   char tmps[MAXIMUM_NUMERIC_LENGTH+1];
-
-  UNUSED_PARAMETER(cdata);
 
   if (( argc != 2 ) && ( argc != 3 )) {
     FPRINTF(ASCERR,"call is: dbg_list_vars <1 args> [not] \n");
@@ -523,24 +490,24 @@ int Asc_DebuListVars(ClientData cdata, Tcl_Interp *interp,
     FPRINTF(ASCERR,"4  all vars assigned\n");
     FPRINTF(ASCERR,"5  all vars free & incident\n");
     FFLUSH(ASCERR);
-    Tcl_SetResult(interp, "dbg_list_vars wants at least 1 arg", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_list_vars wants at least 1 arg");
+    return HELP_ERROR;
   }
   if (g_solvsys_cur==NULL) {
     FPRINTF(ASCERR,  "dbg_list_vars called with NULL pointer\n");
-    Tcl_SetResult(interp,"dbg_list_vars called without slv_system",TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,"dbg_list_vars called without slv_system");
+    return HELP_ERROR;
   }
 
-  mtx = slv_get_sys_mtx(g_solvsys_cur);
-  status=Tcl_GetInt(interp,argv[1],&fil);
-  if(status!=TCL_OK) {
+  mtx = ::slv_get_sys_mtx(g_solvsys_cur);
+  status=JTcl_GetInt(hptr, argv[1],&fil);
+  if(status!=HELP_OK) {
     FPRINTF(ASCERR,  "dbg_list_vars called with noninteger arg 1\n");
-    Tcl_SetResult(interp,"dbg_list_vars first arg must be integer",TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,"dbg_list_vars first arg must be integer");
+    return HELP_ERROR;
   }
 
-  d = slv_get_dofdata(g_solvsys_cur);
+  d = ::slv_get_dofdata(g_solvsys_cur);
 
   switch (fil) {
     case 0: /*all*/
@@ -562,8 +529,8 @@ int Asc_DebuListVars(ClientData cdata, Tcl_Interp *interp,
     case 4:/*assigned*/
       if (!mtx) {
         FPRINTF(ASCERR,  "dbg_list_vars called with NULL mtx pointer\n");
-        Tcl_SetResult(interp,"dbg_list_vars found bad system mtx", TCL_STATIC);
-        return TCL_ERROR;
+        Asc_DStringSet(hptr,"dbg_list_vars found bad system mtx");
+        return HELP_ERROR;
       }
       break;
     case 5:/*free*/
@@ -571,12 +538,11 @@ int Asc_DebuListVars(ClientData cdata, Tcl_Interp *interp,
       vfilter.matchvalue = (VAR_INCIDENT | VAR_ACTIVE);
       break;
     default:
-      Tcl_SetResult(interp, "dbg_list_vars: Unrecognized variable filter",
-                    TCL_STATIC);
-      return TCL_ERROR;
+      Asc_DStringSet(hptr, "dbg_list_vars: Unrecognized variable filter");
+      return HELP_ERROR;
   }
-  vp=slv_get_solvers_var_list(g_solvsys_cur);
-  maxvar=slv_get_num_solvers_vars(g_solvsys_cur);
+  vp= ::slv_get_solvers_var_list(g_solvsys_cur);
+  maxvar= ::slv_get_num_solvers_vars(g_solvsys_cur);
   for (c=0; c<maxvar; c++) {
     switch( fil ) {
       case 0: case 1:
@@ -595,18 +561,17 @@ int Asc_DebuListVars(ClientData cdata, Tcl_Interp *interp,
     }
     if( vbool ) {
       sprintf(&tmps[0],"%d",var_sindex(vp[c]));
-      Tcl_AppendElement(interp,&tmps[0]);
+      VTcl_AppendElement(hptr,&tmps[0]);
     }
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
 
 
-int Asc_DebuListRels(ClientData cdata, Tcl_Interp *interp,
-                   int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuListRels(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
-  int status=TCL_OK,fil;
+  int status=HELP_OK,fil;
   rel_filter_t rfilter;
   struct rel_relation **rp;
   int32 maxrel,c;
@@ -614,8 +579,6 @@ int Asc_DebuListRels(ClientData cdata, Tcl_Interp *interp,
   dof_t *d;
   boolean rbool = FALSE;
   char tmps[MAXIMUM_NUMERIC_LENGTH+1];
-
-  UNUSED_PARAMETER(cdata);
 
   if (( argc != 2 ) && ( argc != 3 )) {
     FPRINTF(ASCERR,"call is: dbg_list_rels <1 args> [not] \n");
@@ -626,24 +589,24 @@ int Asc_DebuListRels(ClientData cdata, Tcl_Interp *interp,
     FPRINTF(ASCERR,"3  all inequalities\n");
     FPRINTF(ASCERR,"4  all assigned relations\n");
     FFLUSH(ASCERR);
-    Tcl_SetResult(interp, "dbg_list_rels wants at least 1 arg", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_list_rels wants at least 1 arg");
+    return HELP_ERROR;
   }
   if (g_solvsys_cur==NULL) {
     FPRINTF(ASCERR,  "dbg_list_rels called with NULL pointer\n");
-    Tcl_SetResult(interp,"dbg_list_rels called without slv_system",TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,"dbg_list_rels called without slv_system");
+    return HELP_ERROR;
   }
 
-  mtx = slv_get_sys_mtx(g_solvsys_cur);
-  status=Tcl_GetInt(interp,argv[1],&fil);
-  if(status!=TCL_OK) {
+  mtx = ::slv_get_sys_mtx(g_solvsys_cur);
+  status=JTcl_GetInt(hptr, argv[1],&fil);
+  if(status!=HELP_OK) {
     FPRINTF(ASCERR,  "dbg_list_rels called with noninteger arg 1\n");
-    Tcl_SetResult(interp,"dbg_list_rels first arg must be integer",TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,"dbg_list_rels first arg must be integer");
+    return HELP_ERROR;
   }
 
-  d = slv_get_dofdata(g_solvsys_cur);
+  d = ::slv_get_dofdata(g_solvsys_cur);
 
   switch (fil) {
     case 0: /*all*/
@@ -665,17 +628,16 @@ int Asc_DebuListRels(ClientData cdata, Tcl_Interp *interp,
     case 4:/*assigned*/
       if (!mtx) {
         FPRINTF(ASCERR,  "dbg_list_rels called with NULL mtx pointer\n");
-        Tcl_SetResult(interp, "dbg_list_rels found bad system mtx",TCL_STATIC);
-        return TCL_ERROR;
+        Asc_DStringSet(hptr, "dbg_list_rels found bad system mtx");
+        return HELP_ERROR;
       }
       break;
     default:
-      Tcl_SetResult(interp, "dbg_list_rels: Unrecognized relation filter",
-                    TCL_STATIC);
-      return TCL_ERROR;
+      Asc_DStringSet(hptr, "dbg_list_rels: Unrecognized relation filter");
+      return HELP_ERROR;
   }
-  rp=slv_get_solvers_rel_list(g_solvsys_cur);
-  maxrel=slv_get_num_solvers_rels(g_solvsys_cur);
+  rp= ::slv_get_solvers_rel_list(g_solvsys_cur);
+  maxrel= ::slv_get_num_solvers_rels(g_solvsys_cur);
 
   for ( c=0; c<maxrel; c++) {
     switch( fil ) {
@@ -694,16 +656,15 @@ int Asc_DebuListRels(ClientData cdata, Tcl_Interp *interp,
     }
     if( rbool ) {
       sprintf(&tmps[0],"%d",rel_sindex(rp[c]));
-      Tcl_AppendElement(interp,&tmps[0]);
+      VTcl_AppendElement(hptr,&tmps[0]);
     }
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_DebuWriteVar(ClientData cdata, Tcl_Interp *interp,
-                   int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuWriteVar(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
-  int tmpi,dev,status=TCL_OK;
+  int tmpi,dev,status=HELP_OK;
   char tmps[QLFDID_LENGTH+1];
   int32 maxvar,varnum,ilist;
   struct var_variable **vp;
@@ -719,31 +680,29 @@ int Asc_DebuWriteVar(ClientData cdata, Tcl_Interp *interp,
     FPRINTF(ASCERR,
             "call is: dbg/brow_write_var <dev> %s",
             " <var ndx> <fmt (#<8)>  <solver/master> [simname]\n");
-    Tcl_SetResult(interp, "dbg/brow_write_var wants at least 4 args",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg/brow_write_var wants at least 4 args");
+    return HELP_ERROR;
   }
-  if (!cdata) {
+  if (argv[0][0] == 'd') { // "dbg_..."
     sys=g_solvsys_cur;
   } else {
     sys=g_browsys_cur;
   }
   if (sys==NULL) {
     FPRINTF(ASCERR,  "dbg/brow_write_var called with NULL pointer\n");
-    Tcl_SetResult(interp, "dbg/brow_write_var called without slv_system",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg/brow_write_var called without slv_system");
+    return HELP_ERROR;
   }
   /* get io option */
   tmpi=3;
-  status=Tcl_GetInt(interp,argv[1],&tmpi);
+  status=JTcl_GetInt(hptr, argv[1],&tmpi);
   if (tmpi<0 || tmpi >2) {
-    status=TCL_ERROR;
+    status=HELP_ERROR;
   }
-  if (status!=TCL_OK) {
+  if (status!=HELP_OK) {
     FPRINTF(ASCERR,"dbg/brow_write_var: first arg is 0,1, or 2\n");
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "dbg/brow_write_var: invalid output dev",TCL_STATIC);
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "dbg/brow_write_var: invalid output dev");
     return status;
   } else {
     dev=tmpi;
@@ -758,59 +717,57 @@ int Asc_DebuWriteVar(ClientData cdata, Tcl_Interp *interp,
     default : /* should never be here */
             FPRINTF(ASCERR,
               "dbg/brow_write_var called with strange i/o option!!\n");
-            return TCL_ERROR;
+            return HELP_ERROR;
   }
 
   /* get list option */
   tmpi=0;
-  status=Tcl_GetInt(interp,argv[4],&tmpi);
+  status=JTcl_GetInt(hptr, argv[4],&tmpi);
   if (tmpi<0 || tmpi >1) {
-    status=TCL_ERROR;
+    status=HELP_ERROR;
   }
-  if (status!=TCL_OK) {
+  if (status!=HELP_OK) {
     FPRINTF(ASCERR,
     "dbg/brow_write_var: last arg is 0 (solver list) or 1 (master list)\n");
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "dbg/brow_write_var: invalid var list",TCL_STATIC);
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "dbg/brow_write_var: invalid var list");
     return status;
   } else {
     ilist =tmpi;
   }
 
   if (ilist == 0) {
-    vp=slv_get_solvers_var_list(sys);
+    vp= ::slv_get_solvers_var_list(sys);
   } else {
-    vp=slv_get_master_var_list(sys);
+    vp= ::slv_get_master_var_list(sys);
   }
 
   /*get variable index */
-  maxvar=slv_get_num_solvers_vars(sys);
+  maxvar= ::slv_get_num_solvers_vars(sys);
   tmpi=maxvar;
-  status=Tcl_GetInt(interp,argv[2],&tmpi);
+  status=JTcl_GetInt(hptr, argv[2],&tmpi);
   if (tmpi<0 || tmpi >= maxvar) {
-    status=TCL_ERROR;
+    status=HELP_ERROR;
   }
-  if (status!=TCL_OK) {
+  if (status!=HELP_OK) {
     FPRINTF(ASCERR,
       "dbg/brow_write_var: 2nd arg is not variable number in list\n");
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "dbg/brow_write_var: invalid variable number",
-                  TCL_STATIC);
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "dbg/brow_write_var: invalid variable number");
     return status;
   } else {
     varnum=tmpi;
     vp = vp + varnum;
   }
   /* get detail option */
-  status=Tcl_GetInt(interp,argv[3],&tmpi);
+  status=JTcl_GetInt(hptr, argv[3],&tmpi);
   if (tmpi<0 || tmpi >7) {
-    status=TCL_ERROR;
+    status=HELP_ERROR;
   }
-  if (status!=TCL_OK) {
+  if (status!=HELP_OK) {
     FPRINTF(ASCERR,"dbg/brow_write_var: 3rd arg is not valid output format\n");
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "dbg/brow_write_var: invalid output format #",
-                  TCL_STATIC);
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "dbg/brow_write_var: invalid output format #");
     return status;
   }
   /* tmpi is now the format option, don't change it. */
@@ -822,7 +779,7 @@ int Asc_DebuWriteVar(ClientData cdata, Tcl_Interp *interp,
          break;
       case 2:
          sprintf(&tmps[0],"<%d>",varnum);
-         Tcl_AppendElement(interp,&tmps[0]);
+         VTcl_AppendElement(hptr,&tmps[0]);
          break;
       default: break;
     }
@@ -838,7 +795,7 @@ int Asc_DebuWriteVar(ClientData cdata, Tcl_Interp *interp,
         FPRINTF(fp,"%s ",name);
         break;
       case 2:
-        Tcl_AppendElement(interp,name);
+        VTcl_AppendElement(hptr,name);
         break;
       default: break;
     }
@@ -855,21 +812,21 @@ int Asc_DebuWriteVar(ClientData cdata, Tcl_Interp *interp,
         break;
       case 2:
         sprintf(&tmps[0],"%g",var_value(*vp));
-        Tcl_AppendElement(interp,&tmps[0]);
+        VTcl_AppendElement(hptr,&tmps[0]);
         break;
       default: break;
     }
   }
   if (tmpi>=2) {/* dims */
     char *dimens;
-    dimens = asc_make_dimensions(RealAtomDims(var_instance(*vp)));
+    dimens = WriteDimensionString(RealAtomDims(T2I(var_instance(*vp))));
     switch (dev) {
       case 0:
       case 1:
         FPRINTF(fp,"%s ",dimens);
         break;
       case 2:
-        Tcl_AppendElement(interp,dimens);
+        VTcl_AppendElement(hptr,dimens);
         break;
       default: break;
     }
@@ -885,7 +842,7 @@ int Asc_DebuWriteVar(ClientData cdata, Tcl_Interp *interp,
         break;
       case 2:
         sprintf(&tmps[0],"fixed=%s", TORF(var_apply_filter(*vp,&vfilter)));
-        Tcl_AppendElement(interp,&tmps[0]);
+        VTcl_AppendElement(hptr,&tmps[0]);
         break;
       default: break;
     }
@@ -898,7 +855,7 @@ int Asc_DebuWriteVar(ClientData cdata, Tcl_Interp *interp,
         break;
       case 2:
         sprintf(&tmps[0],"%g",var_lower_bound(*vp));
-        Tcl_AppendElement(interp,&tmps[0]);
+        VTcl_AppendElement(hptr,&tmps[0]);
         break;
       default: break;
     }
@@ -911,7 +868,7 @@ int Asc_DebuWriteVar(ClientData cdata, Tcl_Interp *interp,
         break;
       case 2:
         sprintf(&tmps[0],"%g",var_nominal(*vp));
-        Tcl_AppendElement(interp,&tmps[0]);
+        VTcl_AppendElement(hptr,&tmps[0]);
         break;
       default: break;
     }
@@ -924,7 +881,7 @@ int Asc_DebuWriteVar(ClientData cdata, Tcl_Interp *interp,
         break;
       case 2:
         sprintf(&tmps[0],"%g",var_upper_bound(*vp));
-        Tcl_AppendElement(interp,&tmps[0]);
+        VTcl_AppendElement(hptr,&tmps[0]);
         break;
       default: break;
     }
@@ -932,13 +889,12 @@ int Asc_DebuWriteVar(ClientData cdata, Tcl_Interp *interp,
   if (dev<2) {
     FPRINTF(fp,"\n");
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_DebuWriteRel(ClientData cdata, Tcl_Interp *interp,
-                   int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuWriteRel(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
-  int tmpi,dev,status=TCL_OK;
+  int tmpi,dev,status=HELP_OK;
   char tmps[MAXIMUM_NUMERIC_LENGTH+1];
   int32 maxrel,relnum;
   struct rel_relation **rp;
@@ -950,32 +906,29 @@ int Asc_DebuWriteRel(ClientData cdata, Tcl_Interp *interp,
   if (argc !=4 && argc !=5) {
     FPRINTF(ASCERR,
       "call is: dbg/brow_write_rel <dev> <rel ndx> <fmt (#<5)> [simname] \n");
-    Tcl_SetResult(interp, "dbg/brow_write_rel wants at least 3 args",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg/brow_write_rel wants at least 3 args");
+    return HELP_ERROR;
   }
-  if (!cdata) {
+  if (argv[0][0] == 'd') { // "dbg_..."
     sys=g_solvsys_cur;
   } else {
     sys=g_browsys_cur;
   }
   if (sys==NULL) {
     FPRINTF(ASCERR,  "dbg/brow_write_rel called with NULL pointer\n");
-    Tcl_SetResult(interp, "dbg/brow_write_rel called without slv_system",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg/brow_write_rel called without slv_system");
+    return HELP_ERROR;
   }
   /* get io option */
   tmpi=3;
-  status=Tcl_GetInt(interp,argv[1],&tmpi);
+  status=JTcl_GetInt(hptr, argv[1],&tmpi);
   if (tmpi<0 || tmpi >2) {
-    status=TCL_ERROR;
+    status=HELP_ERROR;
   }
-  if (status!=TCL_OK) {
+  if (status!=HELP_OK) {
     FPRINTF(ASCERR,"dbg/brow_write_rel: first arg is 0,1, or 2\n");
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "dbg/brow_write_rel: invalid output dev #",
-                  TCL_STATIC);
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "dbg/brow_write_rel: invalid output dev #");
     return status;
   } else {
     dev=tmpi;
@@ -990,37 +943,35 @@ int Asc_DebuWriteRel(ClientData cdata, Tcl_Interp *interp,
     default : /* should never be here */
             FPRINTF(ASCERR,
               "dbg/brow_write_rel called with strange i/o option!!\n");
-            return TCL_ERROR;
+            return HELP_ERROR;
   }
   /*get relation index */
-  rp=slv_get_solvers_rel_list(sys);
-  maxrel=slv_get_num_solvers_rels(sys);
+  rp= ::slv_get_solvers_rel_list(sys);
+  maxrel= ::slv_get_num_solvers_rels(sys);
   tmpi=maxrel;
-  status=Tcl_GetInt(interp,argv[2],&tmpi);
+  status=JTcl_GetInt(hptr, argv[2],&tmpi);
   if (tmpi<0 || tmpi >= maxrel) {
-    status=TCL_ERROR;
+    status=HELP_ERROR;
   }
-  if (status!=TCL_OK) {
-    Tcl_ResetResult(interp);
+  if (status!=HELP_OK) {
+    Asc_DStringFree(hptr);
     FPRINTF(ASCERR,
       "dbg/brow_write_rel: 2nd arg is not relation number in list\n");
-    Tcl_SetResult(interp, "dbg/brow_write_rel: invalid relation number",
-                  TCL_STATIC);
+    Asc_DStringSet(hptr, "dbg/brow_write_rel: invalid relation number");
     return status;
   } else {
     relnum=tmpi;
     rp = rp + relnum;
   }
   /* get detail option */
-  status=Tcl_GetInt(interp,argv[3],&tmpi);
+  status=JTcl_GetInt(hptr, argv[3],&tmpi);
   if (tmpi<0 || tmpi >4) {
-    status=TCL_ERROR;
+    status=HELP_ERROR;
   }
-  if (status!=TCL_OK) {
-    Tcl_ResetResult(interp);
+  if (status!=HELP_OK) {
+    Asc_DStringFree(hptr);
     FPRINTF(ASCERR,"dbg/brow_write_rel: 3rd arg is not valid output format\n");
-    Tcl_SetResult(interp, "dbg/brow_write_rel: invalid output format #",
-                  TCL_STATIC);
+    Asc_DStringSet(hptr, "dbg/brow_write_rel: invalid output format #");
     return status;
   }
   /* tmpi is now the format option, don't change it. */
@@ -1030,12 +981,12 @@ int Asc_DebuWriteRel(ClientData cdata, Tcl_Interp *interp,
     if (dev<2) {
       FPRINTF(fp,"%s\n",infix);
     } else {
-      Tcl_AppendElement(interp, infix);
+      VTcl_AppendElement(hptr, infix);
     }
     if (infix) {
       ascfree(infix);
     }
-    return TCL_OK;
+    return HELP_OK;
   }
   if (tmpi>=2) { /*interface relindex*/
     switch (dev) {
@@ -1045,7 +996,7 @@ int Asc_DebuWriteRel(ClientData cdata, Tcl_Interp *interp,
          break;
       case 2:
          sprintf(&tmps[0],"<%d>",relnum);
-         Tcl_AppendElement(interp,&tmps[0]);
+         VTcl_AppendElement(hptr,&tmps[0]);
          break;
       default: break;
     }
@@ -1062,7 +1013,7 @@ int Asc_DebuWriteRel(ClientData cdata, Tcl_Interp *interp,
         FPRINTF(fp,"%s ",name);
         break;
       case 2:
-        Tcl_AppendElement(interp,name);
+        VTcl_AppendElement(hptr,name);
         break;
       default: break;
     }
@@ -1080,7 +1031,7 @@ int Asc_DebuWriteRel(ClientData cdata, Tcl_Interp *interp,
         break;
       case 2:
         sprintf(&tmps[0],"%g",res);
-        Tcl_AppendElement(interp,&tmps[0]);
+        VTcl_AppendElement(hptr,&tmps[0]);
         break;
       default: break;
     }
@@ -1095,7 +1046,7 @@ int Asc_DebuWriteRel(ClientData cdata, Tcl_Interp *interp,
         break;
       case 2:
         sprintf(&tmps[0],"included and active =%s", TORF(truth));
-        Tcl_AppendElement(interp,&tmps[0]);
+        VTcl_AppendElement(hptr,&tmps[0]);
         break;
       default: break;
     }
@@ -1103,13 +1054,12 @@ int Asc_DebuWriteRel(ClientData cdata, Tcl_Interp *interp,
   if (dev<2) {
     FPRINTF(fp,"\n");
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_DebuWriteUnattachedVar(ClientData cdata, Tcl_Interp *interp,
-                             int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuWriteUnattachedVar(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
-  int tmpi,dev,status=TCL_OK;
+  int tmpi,dev,status=HELP_OK;
   char tmps[QLFDID_LENGTH+1];
   int32 maxvar,c;
   struct var_variable **vp;
@@ -1125,35 +1075,34 @@ int Asc_DebuWriteUnattachedVar(ClientData cdata, Tcl_Interp *interp,
   if ( argc < 2 ) {
     FPRINTF(ASCERR,
       "call is: dbg_write_unattvar <dev> [simname] \n");
-    Tcl_SetResult(interp, "dbg_write_unattvar wants 2 args", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_write_unattvar wants 2 args");
+    return HELP_ERROR;
   }
 
-  if (!cdata) {
+  if (argv[0][0] == 'd') { // "dbg_..."
     sys=g_solvsys_cur;
   } else {
     sys=g_browsys_cur;
   }
   if (sys==NULL) {
     FPRINTF(ASCERR,  "dbg_write_unattvar called with NULL pointer\n");
-    Tcl_SetResult(interp, "dbg_write_var unattcalled without slv_system",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_write_var unattcalled without slv_system");
+    return HELP_ERROR;
   }
 
 
   /* get io option */
   tmpi=3;
-  status=Tcl_GetInt(interp,argv[1],&tmpi);
+  status=JTcl_GetInt(hptr, argv[1],&tmpi);
 
   if (tmpi<0 || tmpi >2) {
-    status=TCL_ERROR;
+    status=HELP_ERROR;
   }
 
-  if (status!=TCL_OK) {
+  if (status!=HELP_OK) {
     FPRINTF(ASCERR,"dbg_write_unattvar: first arg is 0,1, or 2\n");
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "dbg_write_unattvar: invalid output dev",TCL_STATIC);
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "dbg_write_unattvar: invalid output dev");
     return status;
   } else {
     dev=tmpi;
@@ -1170,12 +1119,12 @@ int Asc_DebuWriteUnattachedVar(ClientData cdata, Tcl_Interp *interp,
     default : /* should never be here */
             FPRINTF(ASCERR,
               "dbg_write_unattvar called with strange i/o option!!\n");
-            return TCL_ERROR;
+            return HELP_ERROR;
   }
 
   /*get unattached variable list */
-  vp=slv_get_solvers_unattached_list(sys);
-  maxvar = slv_get_num_solvers_unattached(sys);
+  vp= ::slv_get_solvers_unattached_list(sys);
+  maxvar = ::slv_get_num_solvers_unattached(sys);
 
   vfilter.matchbits = (VAR_ACTIVE);
   vfilter.matchvalue = (VAR_ACTIVE);
@@ -1191,7 +1140,7 @@ int Asc_DebuWriteUnattachedVar(ClientData cdata, Tcl_Interp *interp,
           FPRINTF(fp,"%s ",name);
           break;
         case 2:
-          Tcl_AppendElement(interp,name);
+          VTcl_AppendElement(hptr,name);
           break;
         default: break;
       }
@@ -1209,21 +1158,21 @@ int Asc_DebuWriteUnattachedVar(ClientData cdata, Tcl_Interp *interp,
           break;
         case 2:
           sprintf(&tmps[0],"%g",var_value(vp[c]));
-          Tcl_AppendElement(interp,&tmps[0]);
+          VTcl_AppendElement(hptr,&tmps[0]);
           break;
         default: break;
       }
 
 
       /* dims */
-      dimens = asc_make_dimensions(RealAtomDims(var_instance(vp[c])));
+      dimens = WriteDimensionString(RealAtomDims(T2I(var_instance(vp[c]))));
       switch (dev) {
         case 0:
         case 1:
           FPRINTF(fp,"%s ",dimens);
           break;
         case 2:
-          Tcl_AppendElement(interp,dimens);
+          VTcl_AppendElement(hptr,dimens);
           break;
         default: break;
       }
@@ -1235,13 +1184,12 @@ int Asc_DebuWriteUnattachedVar(ClientData cdata, Tcl_Interp *interp,
     }
   }
 
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_DebuWriteObj(ClientData cdata, Tcl_Interp *interp,
-                   int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuWriteObj(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
-  int tmpi,dev,status=TCL_OK;
+  int tmpi,dev,status=HELP_OK;
   char tmps[MAXIMUM_NUMERIC_LENGTH+1];
   int32 maxrel,relnum;
   struct rel_relation **rp;
@@ -1253,32 +1201,29 @@ int Asc_DebuWriteObj(ClientData cdata, Tcl_Interp *interp,
   if (argc !=4 && argc !=5) {
     FPRINTF(ASCERR,
       "call is: dbg/brow_write_obj <dev> <rel ndx> <fmt (#<5)> [simname] \n");
-    Tcl_SetResult(interp, "dbg/brow_write_obj wants at least 3 args",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg/brow_write_obj wants at least 3 args");
+    return HELP_ERROR;
   }
-  if (!cdata) {
+  if (argv[0][0] == 'd') { // "dbg_..."
     sys=g_solvsys_cur;
   } else {
     sys=g_browsys_cur;
   }
   if (sys==NULL) {
     FPRINTF(ASCERR,  "dbg/brow_write_obj called with NULL pointer\n");
-    Tcl_SetResult(interp, "dbg/brow_write_obj called without slv_system",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg/brow_write_obj called without slv_system");
+    return HELP_ERROR;
   }
   /* get io option */
   tmpi=3;
-  status=Tcl_GetInt(interp,argv[1],&tmpi);
+  status=JTcl_GetInt(hptr, argv[1],&tmpi);
   if (tmpi<0 || tmpi >2) {
-    status=TCL_ERROR;
+    status=HELP_ERROR;
   }
-  if (status!=TCL_OK) {
+  if (status!=HELP_OK) {
     FPRINTF(ASCERR,"dbg/brow_write_obj: first arg is 0,1, or 2\n");
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "dbg/brow_write_obj: invalid output dev #",
-                  TCL_STATIC);
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "dbg/brow_write_obj: invalid output dev #");
     return status;
   } else {
     dev=tmpi;
@@ -1293,37 +1238,35 @@ int Asc_DebuWriteObj(ClientData cdata, Tcl_Interp *interp,
     default : /* should never be here */
             FPRINTF(ASCERR,
               "dbg/brow_write_obj called with strange i/o option!!\n");
-            return TCL_ERROR;
+            return HELP_ERROR;
   }
   /*get relation index */
-  rp=slv_get_solvers_obj_list(sys);
-  maxrel=slv_get_num_solvers_objs(sys);
+  rp= ::slv_get_solvers_obj_list(sys);
+  maxrel= ::slv_get_num_solvers_objs(sys);
   tmpi=maxrel;
-  status=Tcl_GetInt(interp,argv[2],&tmpi);
+  status=JTcl_GetInt(hptr, argv[2],&tmpi);
   if (tmpi<0 || tmpi >= maxrel) {
-    status=TCL_ERROR;
+    status=HELP_ERROR;
   }
-  if (status!=TCL_OK) {
-    Tcl_ResetResult(interp);
+  if (status!=HELP_OK) {
+    Asc_DStringFree(hptr);
     FPRINTF(ASCERR,
       "dbg/brow_write_obj: 2nd arg is not objective number in list\n");
-    Tcl_SetResult(interp, "dbg/brow_write_obj: invalid objective number",
-                  TCL_STATIC);
+    Asc_DStringSet(hptr, "dbg/brow_write_obj: invalid objective number");
     return status;
   } else {
     relnum=tmpi;
     rp = rp + relnum;
   }
   /* get detail option */
-  status=Tcl_GetInt(interp,argv[3],&tmpi);
+  status=JTcl_GetInt(hptr, argv[3],&tmpi);
   if (tmpi<0 || tmpi >4) {
-    status=TCL_ERROR;
+    status=HELP_ERROR;
   }
-  if (status!=TCL_OK) {
-    Tcl_ResetResult(interp);
+  if (status!=HELP_OK) {
+    Asc_DStringFree(hptr);
     FPRINTF(ASCERR,"dbg/brow_write_obj: 3rd arg is not valid output format\n");
-    Tcl_SetResult(interp, "dbg/brow_write_obj: invalid output format #",
-                  TCL_STATIC);
+    Asc_DStringSet(hptr, "dbg/brow_write_obj: invalid output format #");
     return status;
   }
   /* tmpi is now the format option, don't change it. */
@@ -1333,12 +1276,12 @@ int Asc_DebuWriteObj(ClientData cdata, Tcl_Interp *interp,
     if (dev<2) {
       FPRINTF(fp,"%s\n",infix);
     } else {
-      Tcl_AppendElement(interp, infix);
+      VTcl_AppendElement(hptr, infix);
     }
     if (infix) {
       ascfree(infix);
     }
-    return TCL_OK;
+    return HELP_OK;
   }
   if (tmpi>=2) { /*interface relindex*/
     switch (dev) {
@@ -1348,7 +1291,7 @@ int Asc_DebuWriteObj(ClientData cdata, Tcl_Interp *interp,
          break;
       case 2:
          sprintf(&tmps[0],"<%d>",relnum);
-         Tcl_AppendElement(interp,&tmps[0]);
+         VTcl_AppendElement(hptr,&tmps[0]);
          break;
       default: break;
     }
@@ -1365,7 +1308,7 @@ int Asc_DebuWriteObj(ClientData cdata, Tcl_Interp *interp,
         FPRINTF(fp,"%s ",name);
         break;
       case 2:
-        Tcl_AppendElement(interp,name);
+        VTcl_AppendElement(hptr,name);
         break;
       default: break;
     }
@@ -1383,7 +1326,7 @@ int Asc_DebuWriteObj(ClientData cdata, Tcl_Interp *interp,
         break;
       case 2:
         sprintf(&tmps[0],"%g",res);
-        Tcl_AppendElement(interp,&tmps[0]);
+        VTcl_AppendElement(hptr,&tmps[0]);
         break;
       default: break;
     }
@@ -1398,7 +1341,7 @@ int Asc_DebuWriteObj(ClientData cdata, Tcl_Interp *interp,
         break;
       case 2:
         sprintf(&tmps[0],"included and active =%s", TORF(truth));
-        Tcl_AppendElement(interp,&tmps[0]);
+        VTcl_AppendElement(hptr,&tmps[0]);
         break;
       default: break;
     }
@@ -1406,13 +1349,12 @@ int Asc_DebuWriteObj(ClientData cdata, Tcl_Interp *interp,
   if (dev<2) {
     FPRINTF(fp,"\n");
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_DebuWriteVarAttr(ClientData cdata, Tcl_Interp *interp,
-                       int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuWriteVarAttr(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
-  int tmpi,status=TCL_OK;
+  int tmpi,status=HELP_OK;
   char tmps[QLFDID_LENGTH+1];
   int32 maxvar,varnum;
   struct var_variable **vp;
@@ -1423,48 +1365,46 @@ int Asc_DebuWriteVarAttr(ClientData cdata, Tcl_Interp *interp,
   sys=g_solvsys_cur; /* may be null */
 
   tmps[QLFDID_LENGTH]='\0';
+  int cdata = (argv[0][10] == 'q');
   /*check sanity */
   if ( argc != 2 ) {
-    if (cdata) {
+    if (cdata) { // "dbg_write_q..."
       FPRINTF(ASCERR, "call is: dbg_write_qlfattr <qlfdid>\n");
-      Tcl_SetResult(interp, "dbg_write_qlfattr wants 1 arg", TCL_STATIC);
+      Asc_DStringSet(hptr, "dbg_write_qlfattr wants 1 arg");
     } else {
       FPRINTF(ASCERR, "call is: dbg_write_varattr <var ndx>\n");
-      Tcl_SetResult(interp, "dbg_write_varattr wants 1 arg", TCL_STATIC);
+      Asc_DStringSet(hptr, "dbg_write_varattr wants 1 arg");
     }
-    return TCL_ERROR;
+    return HELP_ERROR;
   }
   if (!cdata) { /* dbg_write_varattr case */
     if (sys==NULL) {
       FPRINTF(ASCERR,  "dbg_write_varattr called with NULL pointer\n");
-      Tcl_SetResult(interp, "dbg_write_varattr called without slv_system",
-                    TCL_STATIC);
-      return TCL_ERROR;
+      Asc_DStringSet(hptr, "dbg_write_varattr called without slv_system");
+      return HELP_ERROR;
     }
     /*get variable index */
-    vp=slv_get_solvers_var_list(sys);
+    vp= ::slv_get_solvers_var_list(sys);
     if (vp==NULL) {
       FPRINTF(ASCERR,  "dbg_write_varattr called with NULL varlist\n");
-      Tcl_SetResult(interp, "dbg_write_varattr called without varlist",
-                    TCL_STATIC);
-      return TCL_ERROR;
+      Asc_DStringSet(hptr, "dbg_write_varattr called without varlist");
+      return HELP_ERROR;
     }
-    maxvar=slv_get_num_solvers_vars(sys);
+    maxvar= ::slv_get_num_solvers_vars(sys);
     tmpi=maxvar;
-    status=Tcl_GetInt(interp,argv[1],&tmpi);
+    status=JTcl_GetInt(hptr, argv[1],&tmpi);
     if (tmpi<0 || tmpi >= maxvar) {
-      status=TCL_ERROR;
+      status=HELP_ERROR;
     }
-    if (status!=TCL_OK) {
+    if (status!=HELP_OK) {
       FPRINTF(ASCERR,"dbg_write_varattr: arg not variable number in list\n");
-      Tcl_ResetResult(interp);
-      Tcl_SetResult(interp, "dbg_write_varattr: invalid variable number",
-                    TCL_STATIC);
+      Asc_DStringFree(hptr);
+      Asc_DStringSet(hptr, "dbg_write_varattr: invalid variable number");
       return status;
     } else {
       varnum=tmpi;
       vp = vp + varnum;
-      i=var_instance(*vp);
+      i=T2I(var_instance(*vp));
     }
   } else { /* qlfattr case */ /* broken, since vars != instances */
 #define VARS_EQ_INSTS 0
@@ -1474,197 +1414,181 @@ int Asc_DebuWriteVarAttr(ClientData cdata, Tcl_Interp *interp,
       i = g_search_inst;
       vp = &i; /* this is in error */
     } else {
-      Tcl_AppendResult(interp,"dbg_write_qlfattr: QlfdidSearch error",
-                       argv[1]," not found.",SNULL);
-      return TCL_ERROR;
+      Asc_DStringAppend3(hptr,"dbg_write_qlfattr: QlfdidSearch error",
+                       argv[1]," not found.",HALL);
+      return HELP_ERROR;
     }
     if (InstanceKind(i)!=REAL_ATOM_INST) {
-      Tcl_SetResult(interp,"dbg_write_qlfattr called on non-variable instance",
-                    TCL_STATIC);
-      return TCL_ERROR;
+      Asc_DStringSet(hptr,"dbg_write_qlfattr called on non-variable instance");
+      return HELP_ERROR;
     }
   } /* vp and i now set to interesting instance */
   if (!vp || !i) {
     if (cdata) {
       FPRINTF(ASCERR, "dbg_write_qlfattr found NULL variable instance\n");
-      Tcl_SetResult(interp,"dbg_write_qlfattr found NULL variable",TCL_STATIC);
+      Asc_DStringSet(hptr,"dbg_write_qlfattr found NULL variable");
     } else {
       FPRINTF(ASCERR, "dbg_write_varattr found NULL variable instance\n");
-      Tcl_SetResult(interp,"dbg_write_varattr found NULL variable",TCL_STATIC);
+      Asc_DStringSet(hptr,"dbg_write_varattr found NULL variable");
     }
-    return TCL_ERROR;
+    return HELP_ERROR;
 #else
-    Tcl_SetResult(interp,
-                  "dbg_write_qlfattr broken since vars no longer = instances.",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,
+                  "dbg_write_qlfattr broken since vars no longer = instances.");
+    return HELP_ERROR;
 #endif
   }
   /* write type */
-  Tcl_AppendResult(interp,"{TYPE: ",(char *)InstanceType(i),"} ",SNULL);
+  Asc_DStringAppend3(hptr,"{TYPE: ",(char *)InstanceType(i),"} ",HALL);
   /* write dims */
-  dimens = asc_make_dimensions(RealAtomDims(var_instance(*vp)));
-  Tcl_AppendResult(interp,"{DIMENSIONS: ",dimens,"}",SNULL);
+  dimens = WriteDimensionString(RealAtomDims(T2I(var_instance(*vp))));
+  Asc_DStringAppend3(hptr,"{DIMENSIONS: ",dimens,"}",HALL);
   if (dimens) {
     ascfree(dimens);
   }
   dimens=NULL;
   /* write value */
   sprintf(tmps,"VALUE: %g",var_value(*vp));
-  Tcl_AppendElement(interp,tmps);
+  VTcl_AppendElement(hptr,tmps);
   /* write qlfdid */
   if (cdata) {
-    Tcl_AppendElement(interp,argv[1]);
+    VTcl_AppendElement(hptr, argv[1]);
   } else {
     name = var_make_name(sys,*vp); /* this is in error. no sys exists */
-    Tcl_AppendElement(interp,name);
+    VTcl_AppendElement(hptr,name);
     if (name) {
       ascfree(name);
     }
     name=NULL;
   }
-  if (Asc_DispWriteIpCmd(interp,i)) {
-    Tcl_AppendElement(interp,"index: -1");
-    Tcl_AppendElement(interp,"incident: -1");
-    Tcl_AppendElement(interp,"in block: -1");
+  if (Asc_DispWriteIpCmd(hptr,i)) {
+    VTcl_AppendElement(hptr,"index: -1");
+    VTcl_AppendElement(hptr,"incident: -1");
+    VTcl_AppendElement(hptr,"in block: -1");
   }
-  Tcl_AppendResult(interp," ",SNULL);
-  Asc_BrowWriteAtomChildren(interp,i);
-  return TCL_OK;
+  Asc_DStringAppend(hptr," ",HALL);
+  Asc_BrowWriteAtomChildren(hptr,i);
+  return HELP_OK;
 }
 
-int Asc_DebuRelIncluded(ClientData cdata, Tcl_Interp *interp,
-                      int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuRelIncluded(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
-  int tmpi,status=TCL_OK;
+  int tmpi,status=HELP_OK;
   int32 maxrel,relnum;
   struct rel_relation **rp;
   slv_system_t sys=NULL;
   char res[40];
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc != 2 ) {
     FPRINTF(ASCERR, "call is: dbg_rel_included <var ndx>\n");
-    Tcl_SetResult(interp, "dbg_rel_included wants 1 arg", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_rel_included wants 1 arg");
+    return HELP_ERROR;
   }
   sys=g_solvsys_cur;
   if (sys==NULL) {
     FPRINTF(ASCERR,  "dbg_rel_included called with NULL pointer\n");
-    Tcl_SetResult(interp, "dbg_rel_included called without slv_system",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_rel_included called without slv_system");
+    return HELP_ERROR;
   }
   /*get relation index */
-  rp=slv_get_solvers_rel_list(sys);
-  maxrel=slv_get_num_solvers_rels(sys);
+  rp= ::slv_get_solvers_rel_list(sys);
+  maxrel= ::slv_get_num_solvers_rels(sys);
   tmpi=maxrel;
-  status=Tcl_GetInt(interp,argv[1],&tmpi);
+  status=JTcl_GetInt(hptr, argv[1],&tmpi);
   if (tmpi<0 || tmpi >= maxrel) {
-    status=TCL_ERROR;
+    status=HELP_ERROR;
   }
-  if (status!=TCL_OK) {
+  if (status!=HELP_OK) {
     FPRINTF(ASCERR, "dbg_rel_included: arg is not number in relation list\n");
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "dbg_rel_included: invalid relation number",
-                  TCL_STATIC);
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "dbg_rel_included: invalid relation number");
     return status;
   } else {
     relnum=tmpi;
     rp = rp + relnum;
   }
   sprintf(res,"%d",(rel_included(*rp) && rel_active(*rp) ));
-  Tcl_AppendResult(interp,res,SNULL);
-  return TCL_OK;
+  Asc_DStringAppend(hptr,res,HALL);
+  return HELP_OK;
 }
 
-int Asc_DebuVarFixed(ClientData cdata, Tcl_Interp *interp,
-                   int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuVarFixed(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
-  int tmpi,status=TCL_OK;
+  int tmpi,status=HELP_OK;
   int32 maxvar,varnum;
   struct var_variable **vp;
   slv_system_t sys=NULL;
   char res[40];
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc != 2 ) {
     FPRINTF(ASCERR, "call is: dbg_var_fixed <var ndx>\n");
-    Tcl_SetResult(interp, "dbg_var_fixed wants 1 arg", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_var_fixed wants 1 arg");
+    return HELP_ERROR;
   }
   sys=g_solvsys_cur;
   if (sys==NULL) {
     FPRINTF(ASCERR,  "dbg_var_fixed called with NULL pointer\n");
-    Tcl_SetResult(interp,"dbg_var_fixed called without slv_system",TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,"dbg_var_fixed called without slv_system");
+    return HELP_ERROR;
   }
   /*get variable index */
-  vp=slv_get_solvers_var_list(sys);
-  maxvar=slv_get_num_solvers_vars(sys);
+  vp= ::slv_get_solvers_var_list(sys);
+  maxvar= ::slv_get_num_solvers_vars(sys);
   tmpi=maxvar;
-  status=Tcl_GetInt(interp,argv[1],&tmpi);
+  status=JTcl_GetInt(hptr, argv[1],&tmpi);
   if (tmpi<0 || tmpi >= maxvar) {
-    status=TCL_ERROR;
+    status=HELP_ERROR;
   }
-  if (status!=TCL_OK) {
+  if (status!=HELP_OK) {
     FPRINTF(ASCERR, "dbg_var_fixed: arg is not number in variable list\n");
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "dbg_var_fixed: invalid variable number",TCL_STATIC);
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "dbg_var_fixed: invalid variable number");
     return status;
   } else {
     varnum=tmpi;
     vp = vp + varnum;
   }
   sprintf(res,"%d",var_fixed(*vp));
-  Tcl_AppendResult(interp,res,SNULL);
-  return TCL_OK;
+  Asc_DStringAppend(hptr,res,HALL);
+  return HELP_OK;
 }
 
 
-int Asc_DebuGetIncidence(ClientData cdata, Tcl_Interp *interp,
-                       int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuGetIncidence(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   int32 relnum,maxrel,ninc,c;
   struct rel_relation **rp=NULL;
   var_filter_t vfilter;
   const struct var_variable **vp=NULL;
-  int status=TCL_OK;
+  int status=HELP_OK;
   char *tmps=NULL;
-
-  UNUSED_PARAMETER(cdata);
 
   if ( argc != 2 ) {
     FPRINTF(ASCERR,  "call is: dbg_get_incidence <rel index>\n");
-    Tcl_SetResult(interp, "dbg_get_incidence takes 1 arg", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_get_incidence takes 1 arg");
+    return HELP_ERROR;
   }
   if (g_solvsys_cur==NULL) {
     FPRINTF(ASCERR,  "dbg_get_incidence called with NULL pointer\n");
-    Tcl_SetResult(interp, "dbg_get_incidence called without slv_system",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_get_incidence called without slv_system");
+    return HELP_ERROR;
   }
-  rp=slv_get_solvers_rel_list(g_solvsys_cur);
+  rp= ::slv_get_solvers_rel_list(g_solvsys_cur);
   if (!rp) {
     FPRINTF(ASCERR,  "NULL relation list found in dbg_get_incidence\n");
-    Tcl_SetResult(interp, "dbg_get_incidence called with null rellist",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_get_incidence called with null rellist");
+    return HELP_ERROR;
   }
 
-  maxrel=slv_get_num_solvers_rels(g_solvsys_cur);
+  maxrel= ::slv_get_num_solvers_rels(g_solvsys_cur);
   relnum=maxrel;
-  status=Tcl_GetInt(interp,argv[1],&relnum);
-  if (relnum>=maxrel||status==TCL_ERROR) {
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp,
-                  "dbg_get_incidence: equation requested does not exist",
-                  TCL_STATIC);
+  status=JTcl_GetInt(hptr, argv[1],&relnum);
+  if (relnum>=maxrel||status==HELP_ERROR) {
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr,
+                  "dbg_get_incidence: equation requested does not exist");
     /*FPRINTF(ASCERR,  "dbg_get_incidence: relation index invalid.\n"); */
-    return TCL_ERROR;
+    return HELP_ERROR;
   }
 
   tmps= (char *)ascmalloc((MAXIMUM_NUMERIC_LENGTH+1)*sizeof(char));
@@ -1678,48 +1602,44 @@ int Asc_DebuGetIncidence(ClientData cdata, Tcl_Interp *interp,
     for(c=0; c<ninc; c++ ) {
       if(var_apply_filter(vp[c],&vfilter)) {
         sprintf(tmps,"%d",var_sindex(vp[c]));
-        Tcl_AppendElement(interp,tmps);
+        VTcl_AppendElement(hptr,tmps);
       }
     }
   }
   if (tmps) {
     ascfree(tmps);
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_DebuGetOrder(ClientData cdata, Tcl_Interp *interp,
-                   int argc, CONST84 char **argv)
+int ascjson::Asc_DebuGetOrder(Asc_DString *hptr, int argc, CONST84 char **argv)
 {
   int32 ndx,rc,max;
   mtx_matrix_t mtx;
   char num[20];
   rel_filter_t rfilter;
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc != 2 ) {
     FPRINTF(ASCERR,"call is: dbg_get_order <row,col> \n");
-    Tcl_SetResult(interp, "dbg_get_order wants one arg", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_get_order wants one arg");
+    return HELP_ERROR;
   }
   if (g_solvsys_cur==NULL) {
     FPRINTF(ASCERR,"dbg_get_order called with empty slv_system\n");
-    Tcl_SetResult(interp, "dbg_get_order called with empty slv_system",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_get_order called with empty slv_system");
+    return HELP_ERROR;
   }
-  mtx=slv_get_sys_mtx(g_solvsys_cur);
+  mtx= ::slv_get_sys_mtx(g_solvsys_cur);
   if (!mtx) {
     FPRINTF(ASCERR,"dbg_get_order found no mtx. odd!\n");
-    Tcl_SetResult(interp, "dbg_get_order found no mtx. odd!", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_get_order found no mtx. odd!");
+    return HELP_ERROR;
   }
   max=mtx_order(mtx);
   if (argv[1][0]=='r') {
       rfilter.matchbits = (REL_INCLUDED | REL_ACTIVE);
       rfilter.matchvalue = (REL_INCLUDED | REL_ACTIVE);
-      max=slv_count_solvers_rels(g_solvsys_cur,&rfilter);
+      max= ::slv_count_solvers_rels(g_solvsys_cur,&rfilter);
   }
   for (rc=0;rc<max;rc++) {
     switch (argv[1][0]) {
@@ -1734,13 +1654,12 @@ int Asc_DebuGetOrder(ClientData cdata, Tcl_Interp *interp,
         break;
     }
     sprintf(&num[0],"%d",ndx);
-    Tcl_AppendElement(interp,(char *)&num[0]);
+    VTcl_AppendElement(hptr,(char *)&num[0]);
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_DebuWriteIncidence(ClientData cdata, Tcl_Interp *interp,
-                         int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuWriteIncidence(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   int tmpi,dev,status;
   FILE * fp;
@@ -1753,40 +1672,35 @@ int Asc_DebuWriteIncidence(ClientData cdata, Tcl_Interp *interp,
   struct rel_relation **rp;
   char *line = ASC_NEW_ARRAY(char,32);
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc != 2 ) {
     FPRINTF(ASCERR,"call is: dbg_write_incidence <device#> \n");
-    Tcl_SetResult(interp, "dbg_write_incidence wants 1 arg", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_write_incidence wants 1 arg");
+    return HELP_ERROR;
   }
   if (!g_solvsys_cur) {
     FPRINTF(ASCERR,  "dbg_write_incidence called with NULL pointer\n");
-    Tcl_SetResult(interp, "dbg_write_incidence called without slv_system",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_write_incidence called without slv_system");
+    return HELP_ERROR;
   }
-  rp=slv_get_solvers_rel_list(g_solvsys_cur);
+  rp= ::slv_get_solvers_rel_list(g_solvsys_cur);
   if (!rp) {
     FPRINTF(ASCERR,  "dbg_write_incidence called with NULL rellist\n");
-    Tcl_SetResult(interp,
-                  "dbg_write_incidence called on system without rel list",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,
+                  "dbg_write_incidence called on system without rel list");
+    return HELP_ERROR;
   }
-  maxrel=slv_get_num_solvers_rels(g_solvsys_cur);
+  maxrel= ::slv_get_num_solvers_rels(g_solvsys_cur);
 
   /* get io option */
   tmpi=4;
-  status=Tcl_GetInt(interp,argv[1],&tmpi);
+  status=JTcl_GetInt(hptr, argv[1],&tmpi);
   if (tmpi<0 || tmpi >3) {
-    status=TCL_ERROR;
+    status=HELP_ERROR;
   }
-  if (status!=TCL_OK) {
+  if (status!=HELP_OK) {
     FPRINTF(ASCERR,"dbg_write_incidence: first arg is 0,1, or 2\n");
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "dbg_write_incidence: invalid output dev #",
-                  TCL_STATIC);
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "dbg_write_incidence: invalid output dev #");
     return status;
   } else {
     dev=tmpi;
@@ -1801,21 +1715,20 @@ int Asc_DebuWriteIncidence(ClientData cdata, Tcl_Interp *interp,
     break;
   default : /* should never be here */
     FPRINTF(ASCERR,"dbg_write_incidence called with strange i/o option\n");
-    return TCL_ERROR;
+    return HELP_ERROR;
   }
   if (dev==3) { /* an unpublished option for DOF debugging */
-    tmpi=slv_get_selected_solver(g_solvsys_cur);
-    slv_select_solver(g_solvsys_cur,32767);
+    tmpi= ::slv_get_selected_solver(g_solvsys_cur);
+    ::slv_select_solver(g_solvsys_cur,32767);
   }
-  mtx=slv_get_sys_mtx(g_solvsys_cur);
+  mtx= ::slv_get_sys_mtx(g_solvsys_cur);
   if (!mtx) {
     FPRINTF(ASCERR,"dbg_get_order found no linsol matrix. odd!\n");
-    Tcl_SetResult(interp, "dbg_get_order found no linsol matrix. odd!",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_get_order found no linsol matrix. odd!");
+    return HELP_ERROR;
   }
   if (dev==3) {
-    slv_select_solver(g_solvsys_cur,tmpi);
+    ::slv_select_solver(g_solvsys_cur,tmpi);
   }
   order = mtx_order(mtx);
   tmp = ASC_NEW_ARRAY(int32,order);
@@ -1840,7 +1753,7 @@ int Asc_DebuWriteIncidence(ClientData cdata, Tcl_Interp *interp,
       FPRINTF(fp,"block %4d: ",bnum);
     } else {
       sprintf( line, " {%4d:", bnum );
-      Tcl_AppendResult(interp,line,SNULL);
+      Asc_DStringAppend(hptr,line,HALL);
     }
     mtx_zero_int32(tmp,order);
     nz.col=mtx_FIRST;
@@ -1851,13 +1764,13 @@ int Asc_DebuWriteIncidence(ClientData cdata, Tcl_Interp *interp,
       if (dev<2) {
         FPRINTF(fp,tmp[nz.col]? "X ": ". ");
       } else {
-        Tcl_AppendResult(interp,(tmp[nz.col]? "X": "."),SNULL);
+        Asc_DStringAppend(hptr,(tmp[nz.col]? "X": "."),HALL);
       }
     }
     if (dev<2) {
       PUTC('\n',fp);
     } else {
-      Tcl_AppendResult(interp,"}\n",SNULL);
+      Asc_DStringAppend(hptr,"}\n",HALL);
     }
   }
   ascfree(tmp);
@@ -1865,8 +1778,7 @@ int Asc_DebuWriteIncidence(ClientData cdata, Tcl_Interp *interp,
   return (status);
 }
 
-int Asc_DebuFindEligible(ClientData cdata, Tcl_Interp *interp,
-                       int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuFindEligible(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   int32 *vip=NULL;
   char tmps[MAXIMUM_NUMERIC_LENGTH];
@@ -1877,29 +1789,26 @@ int Asc_DebuFindEligible(ClientData cdata, Tcl_Interp *interp,
   symchar *eligible;
   symchar *none;
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc != 2 ) {
     FPRINTF(ASCERR,  "call is: dbg_find_eligible <out>\n");
-    Tcl_SetResult(interp, "dbg_find_eligible wants output device.",TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_find_eligible wants output device.");
+    return HELP_ERROR;
   }
   if (g_solvsys_cur==NULL) {
     FPRINTF(ASCERR,  "dbg_find_eligible called with NULL pointer\n");
-    Tcl_SetResult(interp, "dbg_find_eligible called without slv_system",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_find_eligible called without slv_system");
+    return HELP_ERROR;
   }
   /* get io option */
   i=3;
-  status=Tcl_GetInt(interp,argv[1],&i);
+  status=JTcl_GetInt(hptr, argv[1],&i);
   if (i<0 || i >2) {
-    status=TCL_ERROR;
+    status=HELP_ERROR;
   }
-  if (status!=TCL_OK) {
+  if (status!=HELP_OK) {
     FPRINTF(ASCERR,"dbg_find_eligible: first arg is 0,1, or 2\n");
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp,"dbg_find_eligible: invalid output dev #",TCL_STATIC);
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr,"dbg_find_eligible: invalid output dev #");
     return status;
   } else {
     dev=i;
@@ -1913,18 +1822,18 @@ int Asc_DebuFindEligible(ClientData cdata, Tcl_Interp *interp,
     break;
   default : /* should never be here */
     FPRINTF(ASCERR,"dbg_find_eligible called with strange i/o option\n");
-    return TCL_ERROR;
+    return HELP_ERROR;
   }
   eligible = AddSymbol("eligible");
   message = AddSymbol("message");
   none = AddSymbol("none");
-  len = slv_get_num_solvers_vars(g_solvsys_cur);
-  vp = slv_get_solvers_var_list(g_solvsys_cur);
+  len = ::slv_get_num_solvers_vars(g_solvsys_cur);
+  vp = ::slv_get_solvers_var_list(g_solvsys_cur);
     for (i=0; i < len; i++) {
-    Asc_BrowSetAtomAttribute(interp,(struct Instance *)var_instance(vp[i]),
+    Asc_BrowSetAtomAttribute(hptr,T2I(var_instance(vp[i])),
                              message,SYMBOL_INST,&none);
   }
-  if (slvDOF_eligible(g_solvsys_cur,&vip)) {
+  if (::slvDOF_eligible(g_solvsys_cur,&vip)) {
     switch (dev) {
     case 0:
     case 1:
@@ -1934,30 +1843,29 @@ int Asc_DebuFindEligible(ClientData cdata, Tcl_Interp *interp,
       }
       break;
     case 2:
-      Tcl_AppendResult(interp,"{",SNULL);
+      Asc_DStringAppend(hptr,"{",HALL);
       for (i=0;vip[i]>-1;i++) {
         sprintf(tmps,"%d ",vip[i]);
-        Tcl_AppendResult(interp,tmps,SNULL);
+        Asc_DStringAppend(hptr,tmps,HALL);
       }
-      Tcl_AppendResult(interp,"}",SNULL);
+      Asc_DStringAppend(hptr,"}",HALL);
       break;
     default:
       FPRINTF(ASCERR,"wierdness in i/o!");
       break;
     }
     for (i=0;vip[i]>-1;i++) {
-      Asc_BrowSetAtomAttribute(interp,var_instance(vp[vip[i]]),
+      Asc_BrowSetAtomAttribute(hptr,T2I(var_instance(vp[vip[i]])),
                                message,SYMBOL_INST,&eligible);
     }
     ascfree(vip);
   } else {
-    Tcl_SetResult(interp, "{}", TCL_STATIC);
+    Asc_DStringSet(hptr, "{}");
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_DebuInstEligible(ClientData cdata, Tcl_Interp *interp,
-                       int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuInstEligible(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   int32 *vip=NULL;
   struct var_variable **vp;
@@ -1967,29 +1875,26 @@ int Asc_DebuInstEligible(ClientData cdata, Tcl_Interp *interp,
   unsigned long pc;
   FILE *fp;
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc != 2 ) {
     FPRINTF(ASCERR,  "call is: brow_find_eligible <out>\n");
-    Tcl_SetResult(interp,"brow_find_eligible wants output device.",TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,"brow_find_eligible wants output device.");
+    return HELP_ERROR;
   }
   if (!g_root) {
     FPRINTF(ASCERR,"brow_find_eligible: called without sim in browser.\n");
-    Tcl_SetResult(interp, "focus browser before calling brow_find_eligible",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "focus browser before calling brow_find_eligible");
+    return HELP_ERROR;
   }
   ikind=InstanceKind(g_curinst);
   if (ikind!=MODEL_INST) {
     FPRINTF(ASCERR,  "Instance examined is not a solvable kind.\n");
-    Tcl_SetResult(interp, "Instance kind not MODEL.", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "Instance kind not MODEL.");
+    return HELP_ERROR;
   }
   if ((pc=NumberPendingInstances(g_curinst))!=0) {
     FPRINTF(ASCERR,  "Instance examined is incomplete: %ld pendings.\n",pc);
-    Tcl_SetResult(interp, "Instance has pendings: Not solvable.", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "Instance has pendings: Not solvable.");
+    return HELP_ERROR;
   }
   if (g_browsys_cur != NULL) {
     system_destroy(g_browsys_cur);
@@ -1998,23 +1903,22 @@ int Asc_DebuInstEligible(ClientData cdata, Tcl_Interp *interp,
 
   /* get io option */
   i=3;
-  status=Tcl_GetInt(interp,argv[1],&i);
+  status=JTcl_GetInt(hptr, argv[1],&i);
   if (i<-1 || i >2) {
-    status=TCL_ERROR;
+    status=HELP_ERROR;
   }
-  if (status!=TCL_OK) {
+  if (status!=HELP_OK) {
     FPRINTF(ASCERR,"brow_find_eligible: first arg is -1,0,1, or 2\n");
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "brow_find_eligible: invalid output dev #",
-                  TCL_STATIC);
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "brow_find_eligible: invalid output dev #");
     return status;
   } else {
     dev=i;
   }
   switch (dev) {
   case -1:
-    Tcl_SetResult(interp, "{}", TCL_STATIC);
-    return TCL_OK;
+    Asc_DStringSet(hptr, "{}");
+    return HELP_OK;
   case 0:
     fp=stdout;
     break;
@@ -2026,18 +1930,17 @@ int Asc_DebuInstEligible(ClientData cdata, Tcl_Interp *interp,
     break;
   default : /* should never be here */
     FPRINTF(ASCERR,"brow_find_eligible called with strange i/o option\n");
-    return TCL_ERROR;
+    return HELP_ERROR;
   }
   g_browsys_cur = system_build(g_curinst);
   if( g_browsys_cur == NULL ) {
     FPRINTF(ASCERR,"system_build returned NULL.\n");
-    Tcl_SetResult(interp, "Bad relations found: DOF system not created.",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "Bad relations found: DOF system not created.");
+    return HELP_ERROR;
   }
 
-  if (slvDOF_eligible(g_browsys_cur,&vip)) {
-    vp = slv_get_solvers_var_list(g_browsys_cur);
+  if (::slvDOF_eligible(g_browsys_cur,&vip)) {
+    vp = ::slv_get_solvers_var_list(g_browsys_cur);
     switch (dev) {
     case 0:
     case 1:
@@ -2052,17 +1955,17 @@ int Asc_DebuInstEligible(ClientData cdata, Tcl_Interp *interp,
       }
       break;
     case 2:
-      Tcl_AppendResult(interp,"{",SNULL);
+      Asc_DStringAppend(hptr,"{",HALL);
       for (i=0;vip[i]>-1;i++) {
         tmps = var_make_name(g_browsys_cur,vp[vip[i]]);
-        Tcl_AppendResult(interp,"{",tmps,"}",SNULL);
+        Asc_DStringAppend3(hptr,"{",tmps,"}",HALL);
         ascfree(tmps);
         tmps = NULL;
         if (vip[i+1] > -1) {
-          Tcl_AppendResult(interp," ",SNULL);
+          Asc_DStringAppend(hptr," ",HALL);
         }
       }
-      Tcl_AppendResult(interp,"}",SNULL);
+      Asc_DStringAppend(hptr,"}",HALL);
       break;
     default:
       FPRINTF(ASCERR,"wierdness in i/o!");
@@ -2072,11 +1975,11 @@ int Asc_DebuInstEligible(ClientData cdata, Tcl_Interp *interp,
       ascfree(vip);
     }
   } else {
-    Tcl_SetResult(interp, "{}", TCL_STATIC);
+    Asc_DStringSet(hptr, "{}");
   }
   system_destroy(g_browsys_cur);
   g_browsys_cur = NULL;
-  return TCL_OK;
+  return HELP_OK;
 }
 
 /*
@@ -2085,8 +1988,7 @@ int Asc_DebuInstEligible(ClientData cdata, Tcl_Interp *interp,
  * alternatives square and structurally consistent
  *
  */
-int Asc_DebuConsistencyAnalysis(ClientData cdata, Tcl_Interp *interp,
-                                int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuConsistencyAnalysis(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   int32 *vip=NULL;
   char tmps[MAXIMUM_NUMERIC_LENGTH];
@@ -2097,31 +1999,26 @@ int Asc_DebuConsistencyAnalysis(ClientData cdata, Tcl_Interp *interp,
   symchar *consistent;
   symchar *none;
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc != 2 ) {
     FPRINTF(ASCERR,  "call is: dbg_consistency_analysis <out>\n");
-    Tcl_SetResult(interp, "dbg_consistency_analysis wants output device.",
-		  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_consistency_analysis wants output device.");
+    return HELP_ERROR;
   }
   if (g_solvsys_cur==NULL) {
     FPRINTF(ASCERR,  "cdbg_consistency_analysis alled with NULL pointer\n");
-    Tcl_SetResult(interp, "dbg_consistency_analysis called without slv_system",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_consistency_analysis called without slv_system");
+    return HELP_ERROR;
   }
   /* get io option */
   i=3;
-  status=Tcl_GetInt(interp,argv[1],&i);
+  status=JTcl_GetInt(hptr, argv[1],&i);
   if (i<0 || i >2) {
-    status=TCL_ERROR;
+    status=HELP_ERROR;
   }
-  if (status!=TCL_OK) {
+  if (status!=HELP_OK) {
     FPRINTF(ASCERR,":dbg_consistency_analysis first arg is 0,1, or 2\n");
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp,"dbg_consistency_analysis: invalid output dev #",
-		  TCL_STATIC);
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr,"dbg_consistency_analysis: invalid output dev #");
     return status;
   } else {
     dev=i;
@@ -2136,15 +2033,15 @@ int Asc_DebuConsistencyAnalysis(ClientData cdata, Tcl_Interp *interp,
   default : /* should never be here */
     FPRINTF(ASCERR,
 	    "dbg_consistency_analysis called with strange i/o option\n");
-    return TCL_ERROR;
+    return HELP_ERROR;
   }
   consistent = AddSymbol("consistent");
   message = AddSymbol("message");
   none = AddSymbol("none");
-  len = slv_get_num_master_vars(g_solvsys_cur);
-  vp = slv_get_master_var_list(g_solvsys_cur);
+  len = ::slv_get_num_master_vars(g_solvsys_cur);
+  vp = ::slv_get_master_var_list(g_solvsys_cur);
   for (i=0; i < len; i++) {
-    Asc_BrowSetAtomAttribute(interp,(struct Instance *)var_instance(vp[i]),
+    Asc_BrowSetAtomAttribute(hptr,T2I(var_instance(vp[i])),
                              message,SYMBOL_INST,&none);
   }
   if (consistency_analysis(g_solvsys_cur,&vip)) {
@@ -2157,34 +2054,33 @@ int Asc_DebuConsistencyAnalysis(ClientData cdata, Tcl_Interp *interp,
       }
       break;
     case 2:
-      Tcl_AppendResult(interp,"{",SNULL);
+      Asc_DStringAppend(hptr,"{",HALL);
       for (i=0;vip[i]>-1;i++) {
         sprintf(tmps,"%d ",vip[i]);
-        Tcl_AppendResult(interp,tmps,SNULL);
+        Asc_DStringAppend(hptr,tmps,HALL);
       }
-      Tcl_AppendResult(interp,"}",SNULL);
+      Asc_DStringAppend(hptr,"}",HALL);
       break;
     default:
       FPRINTF(ASCERR,"wierdness in i/o!");
       break;
     }
     for (i=0;vip[i]>-1;i++) {
-      Asc_BrowSetAtomAttribute(interp,var_instance(vp[vip[i]]),
+      Asc_BrowSetAtomAttribute(hptr,T2I(var_instance(vp[vip[i]])),
                                message,SYMBOL_INST,&consistent);
     }
     ascfree(vip);
   } else {
-    Tcl_SetResult(interp, "{}", TCL_STATIC);
+    Asc_DStringSet(hptr, "{}");
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
 /*
  * Get a set of eligible variables common to all the alternatives in
  * the problem
  */
-int Asc_DebuFindGlobalEligible(ClientData cdata, Tcl_Interp *interp,
-                               int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuFindGlobalEligible(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   int32 *vip=NULL;
   char tmps[MAXIMUM_NUMERIC_LENGTH];
@@ -2195,31 +2091,26 @@ int Asc_DebuFindGlobalEligible(ClientData cdata, Tcl_Interp *interp,
   symchar *eligible;
   symchar *none;
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc != 2 ) {
     FPRINTF(ASCERR,  "call is: dbg_global_eligible <out>\n");
-    Tcl_SetResult(interp, "dbg_global_eligible wants output device.",
-		  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_global_eligible wants output device.");
+    return HELP_ERROR;
   }
   if (g_solvsys_cur==NULL) {
     FPRINTF(ASCERR,  "dbg_global_eligible called with NULL pointer\n");
-    Tcl_SetResult(interp, "dbg_global_eligible called without slv_system",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_global_eligible called without slv_system");
+    return HELP_ERROR;
   }
   /* get io option */
   i=3;
-  status=Tcl_GetInt(interp,argv[1],&i);
+  status=JTcl_GetInt(hptr, argv[1],&i);
   if (i<0 || i >2) {
-    status=TCL_ERROR;
+    status=HELP_ERROR;
   }
-  if (status!=TCL_OK) {
+  if (status!=HELP_OK) {
     FPRINTF(ASCERR,":dbg_global_eligible first arg is 0,1, or 2\n");
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp,"dbg_global_eligible: invalid output dev #",
-		  TCL_STATIC);
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr,"dbg_global_eligible: invalid output dev #");
     return status;
   } else {
     dev=i;
@@ -2234,15 +2125,15 @@ int Asc_DebuFindGlobalEligible(ClientData cdata, Tcl_Interp *interp,
   default : /* should never be here */
     FPRINTF(ASCERR,
 	    "dbg_global_eligible called with strange i/o option\n");
-    return TCL_ERROR;
+    return HELP_ERROR;
   }
   eligible = AddSymbol("g_eligible");
   message = AddSymbol("message");
   none = AddSymbol("none");
-  len = slv_get_num_master_vars(g_solvsys_cur);
-  vp = slv_get_master_var_list(g_solvsys_cur);
+  len = ::slv_get_num_master_vars(g_solvsys_cur);
+  vp = ::slv_get_master_var_list(g_solvsys_cur);
   for (i=0; i < len; i++) {
-    Asc_BrowSetAtomAttribute(interp,(struct Instance *)var_instance(vp[i]),
+    Asc_BrowSetAtomAttribute(hptr,T2I(var_instance(vp[i])),
                              message,SYMBOL_INST,&none);
   }
   if (get_globally_consistent_eligible(g_solvsys_cur,&vip)) {
@@ -2255,33 +2146,32 @@ int Asc_DebuFindGlobalEligible(ClientData cdata, Tcl_Interp *interp,
       }
       break;
     case 2:
-      Tcl_AppendResult(interp,"{",SNULL);
+      Asc_DStringAppend(hptr,"{",HALL);
       for (i=0;vip[i]>-1;i++) {
         sprintf(tmps,"%d ",vip[i]);
-        Tcl_AppendResult(interp,tmps,SNULL);
+        Asc_DStringAppend(hptr,tmps,HALL);
       }
-      Tcl_AppendResult(interp,"}",SNULL);
+      Asc_DStringAppend(hptr,"}",HALL);
       break;
     default:
       FPRINTF(ASCERR,"wierdness in i/o!");
       break;
     }
         for (i=0;vip[i]>-1;i++) {
-      Asc_BrowSetAtomAttribute(interp,var_instance(vp[vip[i]]),
+      Asc_BrowSetAtomAttribute(hptr,T2I(var_instance(vp[vip[i]])),
                                message,SYMBOL_INST,&eligible);
     }
     ascfree(vip);
   } else {
-    Tcl_SetResult(interp, "{}", TCL_STATIC);
+    Asc_DStringSet(hptr, "{}");
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
 /*
  * Find Active relations in the current solver system
  */
-int Asc_DebuFindActive(ClientData cdata, Tcl_Interp *interp,
-                       int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuFindActive(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   FILE *fp;
   struct rel_relation **rp;
@@ -2295,33 +2185,28 @@ int Asc_DebuFindActive(ClientData cdata, Tcl_Interp *interp,
   int i,dev,status;
   int count,len,aclen;
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc != 2 ) {
     FPRINTF(ASCERR,  "call is: dbg_find_activerels <out>\n");
-    Tcl_SetResult(interp, "dbg_find_activerels wants output device.",
-		  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_find_activerels wants output device.");
+    return HELP_ERROR;
   }
 
   if (g_solvsys_cur==NULL) {
     FPRINTF(ASCERR,"dbg_find_activerels called with NULL pointer\n");
-    Tcl_SetResult(interp, "dbg_find_activerels called without slv_system",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_find_activerels called without slv_system");
+    return HELP_ERROR;
   }
 
   /* get io option */
   i=3;
-  status=Tcl_GetInt(interp,argv[1],&i);
+  status=JTcl_GetInt(hptr, argv[1],&i);
   if (i<0 || i >2) {
-    status=TCL_ERROR;
+    status=HELP_ERROR;
   }
-  if (status!=TCL_OK) {
+  if (status!=HELP_OK) {
     FPRINTF(ASCERR,"dbg_find_activerels: first arg is 0,1, or 2\n");
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp,"dbg_find_activerels: invalid output dev #",
-		  TCL_STATIC);
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr,"dbg_find_activerels: invalid output dev #");
     return status;
   } else {
     dev=i;
@@ -2335,7 +2220,7 @@ int Asc_DebuFindActive(ClientData cdata, Tcl_Interp *interp,
     break;
   default : /* should never be here */
     FPRINTF(ASCERR,"dbg_find_activerels called with strange i/o option\n");
-    return TCL_ERROR;
+    return HELP_ERROR;
   }
 
   active = AddSymbol("active");
@@ -2345,21 +2230,21 @@ int Asc_DebuFindActive(ClientData cdata, Tcl_Interp *interp,
   rfilter.matchbits = (REL_ACTIVE);
   rfilter.matchvalue = (REL_ACTIVE);
 
-  rp = slv_get_solvers_rel_list(g_solvsys_cur);
-  len = slv_get_num_solvers_rels(g_solvsys_cur);
-  aclen = slv_count_solvers_rels(g_solvsys_cur,&rfilter);
+  rp = ::slv_get_solvers_rel_list(g_solvsys_cur);
+  len = ::slv_get_num_solvers_rels(g_solvsys_cur);
+  aclen = ::slv_count_solvers_rels(g_solvsys_cur,&rfilter);
   rip = ASC_NEW_ARRAY(int32,aclen);
 
   count =0;
   for (i=0; i < len; i++) {
     rel = rp[i];
     if (rel_apply_filter(rel,&rfilter)) {
-      Asc_BrowSetAtomAttribute(interp,(struct Instance *)rel_instance(rel),
+      Asc_BrowSetAtomAttribute(hptr,T2I(rel_instance(rel)),
                                message,SYMBOL_INST,&active);
       rip[count] = i;
       count++;
     } else {
-     Asc_BrowSetAtomAttribute(interp,(struct Instance *)rel_instance(rel),
+     Asc_BrowSetAtomAttribute(hptr,T2I(rel_instance(rel)),
                                message,SYMBOL_INST,&none);
     }
   }
@@ -2375,12 +2260,12 @@ int Asc_DebuFindActive(ClientData cdata, Tcl_Interp *interp,
         }
         break;
       case 2:
-        Tcl_AppendResult(interp,"{",SNULL);
+        Asc_DStringAppend(hptr,"{",HALL);
         for (i=0;i<aclen;i++) {
           sprintf(tmps,"%d ",rip[i]);
-          Tcl_AppendResult(interp,tmps,SNULL);
+          Asc_DStringAppend(hptr,tmps,HALL);
         }
-        Tcl_AppendResult(interp,"}",SNULL);
+        Asc_DStringAppend(hptr,"}",HALL);
         break;
       default:
         FPRINTF(ASCERR,"wierdness in i/o!");
@@ -2388,18 +2273,17 @@ int Asc_DebuFindActive(ClientData cdata, Tcl_Interp *interp,
     }
     ascfree(rip);
   } else {
-    Tcl_SetResult(interp, "{}", TCL_STATIC);
+    Asc_DStringSet(hptr, "{}");
   }
 
-  return TCL_OK;
+  return HELP_OK;
 }
 
 
 /*
  * Find Active relations in the instance selected in the browser
  */
-int Asc_DebuInstActive(ClientData cdata, Tcl_Interp *interp,
-                       int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuInstActive(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   FILE *fp;
   struct rel_relation **rp;
@@ -2411,32 +2295,28 @@ int Asc_DebuInstActive(ClientData cdata, Tcl_Interp *interp,
   int i,dev,status,len,count,aclen;
   int32 *rip;
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc != 2 ) {
     FPRINTF(ASCERR,"call is: brow_find_activerels <out>\n");
-    Tcl_SetResult(interp,"brow_find_activerels wants output device.",
-		  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,"brow_find_activerels wants output device.");
+    return HELP_ERROR;
   }
 
   if (!g_root) {
     FPRINTF(ASCERR,"brow_find_activerels: called without sim in browser.\n");
-    Tcl_SetResult(interp, "focus browser before calling brow_find_activerels",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "focus browser before calling brow_find_activerels");
+    return HELP_ERROR;
   }
 
   ikind=InstanceKind(g_curinst);
   if (ikind!=MODEL_INST) {
     FPRINTF(ASCERR,  "Instance examined is not a solvable kind.\n");
-    Tcl_SetResult(interp, "Instance kind not MODEL.", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "Instance kind not MODEL.");
+    return HELP_ERROR;
   }
   if ((pc=NumberPendingInstances(g_curinst))!=0) {
     FPRINTF(ASCERR,  "Instance examined is incomplete: %ld pendings.\n",pc);
-    Tcl_SetResult(interp, "Instance has pendings: Not solvable.", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "Instance has pendings: Not solvable.");
+    return HELP_ERROR;
   }
 
   if (g_browsys_cur != NULL) {
@@ -2446,23 +2326,22 @@ int Asc_DebuInstActive(ClientData cdata, Tcl_Interp *interp,
 
   /* get io option */
   i=3;
-  status=Tcl_GetInt(interp,argv[1],&i);
+  status=JTcl_GetInt(hptr, argv[1],&i);
   if (i<-1 || i >2) {
-    status=TCL_ERROR;
+    status=HELP_ERROR;
   }
-  if (status!=TCL_OK) {
+  if (status!=HELP_OK) {
     FPRINTF(ASCERR,"brow_find_activerels: first arg is -1,0,1, or 2\n");
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "brow_find_activerels: invalid output dev #",
-                  TCL_STATIC);
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "brow_find_activerels: invalid output dev #");
     return status;
   } else {
     dev=i;
   }
   switch (dev) {
   case -1:
-    Tcl_SetResult(interp, "{}", TCL_STATIC);
-    return TCL_OK;
+    Asc_DStringSet(hptr, "{}");
+    return HELP_OK;
   case 0:
     fp=stdout;
     break;
@@ -2474,23 +2353,22 @@ int Asc_DebuInstActive(ClientData cdata, Tcl_Interp *interp,
     break;
   default : /* should never be here */
     FPRINTF(ASCERR,"brow_find_activerels called with strange i/o option\n");
-    return TCL_ERROR;
+    return HELP_ERROR;
   }
 
   g_browsys_cur = system_build(g_curinst);
   if( g_browsys_cur == NULL ) {
     FPRINTF(ASCERR,"system_build returned NULL.\n");
-    Tcl_SetResult(interp, "Bad relations found: DOF system not created.",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "Bad relations found: DOF system not created.");
+    return HELP_ERROR;
   }
 
   rfilter.matchbits = (REL_ACTIVE);
   rfilter.matchvalue = (REL_ACTIVE);
 
-  rp = slv_get_solvers_rel_list(g_browsys_cur);
-  len = slv_get_num_solvers_rels(g_browsys_cur);
-  aclen = slv_count_solvers_rels(g_browsys_cur,&rfilter);
+  rp = ::slv_get_solvers_rel_list(g_browsys_cur);
+  len = ::slv_get_num_solvers_rels(g_browsys_cur);
+  aclen = ::slv_count_solvers_rels(g_browsys_cur,&rfilter);
   rip = ASC_NEW_ARRAY(int32,aclen);
 
   count =0;
@@ -2517,17 +2395,17 @@ int Asc_DebuInstActive(ClientData cdata, Tcl_Interp *interp,
         }
         break;
       case 2:
-        Tcl_AppendResult(interp,"{",SNULL);
+        Asc_DStringAppend(hptr,"{",HALL);
         for (i=0;i<count;i++) {
           tmps = rel_make_name(g_browsys_cur,rp[rip[i]]);
-          Tcl_AppendResult(interp,"{",tmps,"}",SNULL);
+          Asc_DStringAppend3(hptr,"{",tmps,"}",HALL);
           ascfree(tmps);
           tmps = NULL;
           if (i < count -1) {
-            Tcl_AppendResult(interp," ",SNULL);
+            Asc_DStringAppend(hptr," ",HALL);
 	  }
         }
-        Tcl_AppendResult(interp,"}",SNULL);
+        Asc_DStringAppend(hptr,"}",HALL);
         break;
       default:
         FPRINTF(ASCERR,"wierdness in i/o!");
@@ -2538,12 +2416,12 @@ int Asc_DebuInstActive(ClientData cdata, Tcl_Interp *interp,
       ascfree(rip);
     }
   } else {
-    Tcl_SetResult(interp, "{}", TCL_STATIC);
+    Asc_DStringSet(hptr, "{}");
   }
 
   system_destroy(g_browsys_cur);
   g_browsys_cur = NULL;
-  return TCL_OK;
+  return HELP_OK;
 }
 
 
@@ -2552,7 +2430,7 @@ int Asc_DebuInstActive(ClientData cdata, Tcl_Interp *interp,
  *  var/rel _in_block flags will be set based on the region.
  *  returns calc_ok value.
  */
-static boolean dbg_calc_jacobian(mtx_matrix_t mtx,
+boolean ascjson::dbg_calc_jacobian(mtx_matrix_t mtx,
                                  mtx_region_t reg,
                                  struct rel_relation **rlist,
                                  struct var_variable **vlist)
@@ -2572,8 +2450,8 @@ static boolean dbg_calc_jacobian(mtx_matrix_t mtx,
 
   vp=vlist;
   rp=rlist;
-  maxrel=slv_get_num_solvers_rels(g_solvsys_cur);
-  maxvar=slv_get_num_solvers_vars(g_solvsys_cur);
+  maxrel= ::slv_get_num_solvers_rels(g_solvsys_cur);
+  maxvar= ::slv_get_num_solvers_vars(g_solvsys_cur);
 
   for (c=0;c<maxvar; c++) {
     var_set_in_block(vp[c],FALSE);
@@ -2610,7 +2488,7 @@ static void dbg_invert_block(linsolqr_system_t lsys,
                              struct var_variable **vp) {
   int status=1;
   linsolqr_matrix_was_changed(lsys);
-  status=dbg_calc_jacobian(mtx,*reg,rp,vp);
+  status= dbg_calc_jacobian(mtx,*reg,rp,vp);
   if (!status) {
     FPRINTF(ASCERR,"Error in jacobian calculation: attempting check anyway.");
   }
@@ -2621,7 +2499,7 @@ static void dbg_invert_block(linsolqr_system_t lsys,
 #endif
 
 
-static void dbg_factor_block(linsolqr_system_t lsys,
+void ascjson::dbg_factor_block(linsolqr_system_t lsys,
                              mtx_region_t *reg,
                              mtx_matrix_t mtx,
                              struct rel_relation **rp,
@@ -2630,7 +2508,7 @@ static void dbg_factor_block(linsolqr_system_t lsys,
   enum factor_method fmethod;
   enum reorder_method rmethod;
   linsolqr_matrix_was_changed(lsys);
-  status=dbg_calc_jacobian(mtx,*reg,rp,vp);
+  status= dbg_calc_jacobian(mtx,*reg,rp,vp);
   if (!status) {
     FPRINTF(ASCERR,"Error in jacobian calculation: attempting check anyway.");
   }
@@ -2659,8 +2537,7 @@ static void dbg_factor_block(linsolqr_system_t lsys,
   g_linsolqr_timing =oldtiming;
 }
 
-int Asc_DebuNumBlockSing(ClientData cdata, Tcl_Interp *interp,
-                       int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuNumBlockSing(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct rel_relation **rp;
   struct var_variable **vp;
@@ -2676,79 +2553,70 @@ int Asc_DebuNumBlockSing(ClientData cdata, Tcl_Interp *interp,
   char tmps[MAXIMUM_NUMERIC_LENGTH];
   FILE *fp;
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc != 4 ) {
     FPRINTF(ASCERR,
       "call is: dbg_num_block_singular <out#> <block#> <row,col>\n");
-    Tcl_SetResult(interp,
-                  "dbg_num_block_singular wants output dev & row or col.",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,
+                  "dbg_num_block_singular wants output dev & row or col.");
+    return HELP_ERROR;
   }
   if (g_solvsys_cur==NULL) {
     FPRINTF(ASCERR,  "dbg_num_block_singular called with NULL pointer\n");
-    Tcl_SetResult(interp, "dbg_num_block_singular called without slv_system",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_num_block_singular called without slv_system");
+    return HELP_ERROR;
   }
-  slv_get_status(g_solvsys_cur,&ss);
-  rp=slv_get_solvers_rel_list(g_solvsys_cur);
+  ::slv_get_status(g_solvsys_cur,&ss);
+  rp= ::slv_get_solvers_rel_list(g_solvsys_cur);
   if (!rp) {
     FPRINTF(ASCERR,  "NULL relation list found in dbg_num_block_singular\n");
-    Tcl_SetResult(interp, "dbg_num_block_singular called with null rellist",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_num_block_singular called with null rellist");
+    return HELP_ERROR;
   }
-  lsys = slv_get_linsolqr_sys(g_solvsys_cur);
+  lsys = ::slv_get_linsolqr_sys(g_solvsys_cur);
   if (!lsys) {
     FPRINTF(ASCERR,  "NULL linsolqr sys found in dbg_num_singular\n");
-    Tcl_SetResult(interp,
-                  "dbg_num_block_singular called with null linsolqr sys",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,
+                  "dbg_num_block_singular called with null linsolqr sys");
+    return HELP_ERROR;
   }
   mtx = linsolqr_get_matrix(lsys);
 #ifdef DEBUG
-  dof_t *d = slv_get_dofdata(g_solvsys_cur);
+  dof_t *d = ::slv_get_dofdata(g_solvsys_cur);
 #endif
-  b = slv_get_solvers_blocks(g_solvsys_cur);
+  b = ::slv_get_solvers_blocks(g_solvsys_cur);
   numblocks = b->nblocks;
 
   if (!numblocks) {
     FPRINTF(ASCERR,  "dbg_num_block_singular: mtx not assigned yet.\n");
-    Tcl_SetResult(interp, "dbg_num_block_singular called before presolve.",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_num_block_singular called before presolve.");
+    return HELP_ERROR;
   }
 
-  vp=slv_get_solvers_var_list(g_solvsys_cur);
+  vp= ::slv_get_solvers_var_list(g_solvsys_cur);
   if (!vp) {
     FPRINTF(ASCERR,  "NULL variable list found in dbg_num_singular\n");
-    Tcl_SetResult(interp, "dbg_num_block_singular called with null varlist",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_num_block_singular called with null varlist");
+    return HELP_ERROR;
   }
 #ifdef DEBUG
   int32 nr=
 #endif
-  slv_get_num_solvers_rels(g_solvsys_cur);
+  ::slv_get_num_solvers_rels(g_solvsys_cur);
 #ifdef DEBUG
   int32 nv=
 #endif
-  slv_get_num_solvers_vars(g_solvsys_cur);
+  ::slv_get_num_solvers_vars(g_solvsys_cur);
 
   /* get io option */
   i=3;
-  status=Tcl_GetInt(interp,argv[1],&i);
+  status=JTcl_GetInt(hptr, argv[1],&i);
   if (i<0 || i >2) {
-    status=TCL_ERROR;
+    status=HELP_ERROR;
   }
-  if (status!=TCL_OK) {
+  if (status!=HELP_OK) {
     FPRINTF(ASCERR,"dbg_num_block_singular: first arg is 0,1, or 2\n");
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "dbg_num_block_singular: invalid output dev #",
-                  TCL_STATIC);
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "dbg_num_block_singular: invalid output dev #");
     return status;
   } else {
     dev=i;
@@ -2763,19 +2631,18 @@ int Asc_DebuNumBlockSing(ClientData cdata, Tcl_Interp *interp,
     default : /* should never be here */
        FPRINTF(ASCERR,
         "dbg_num_block_singular called with strange i/o option\n");
-       return TCL_ERROR;
+       return HELP_ERROR;
   }
   /* get block number */
   i=-1;
-  status=Tcl_GetInt(interp,argv[2],&i);
+  status=JTcl_GetInt(hptr, argv[2],&i);
   if (i<0 || i >= numblocks) {
-    status=TCL_ERROR;
+    status=HELP_ERROR;
   }
-  if (status!=TCL_OK) {
+  if (status!=HELP_OK) {
     FPRINTF(ASCERR,"dbg_num_block_singular: second arg is a block number");
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "dbg_num_block_singular: invalid block #",
-                  TCL_STATIC);
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "dbg_num_block_singular: invalid block #");
     return status;
   } else {
     cur_block=i;
@@ -2789,9 +2656,8 @@ int Asc_DebuNumBlockSing(ClientData cdata, Tcl_Interp *interp,
 #ifdef ASC_SIGNAL_TRAPS
   } else {
     FPRINTF(ASCERR, "Floating point exception in dbg_num_block_singular.\n");
-    Tcl_SetResult(interp, " Float error in dbg_num_block_singular. ",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, " Float error in dbg_num_block_singular. ");
+    return HELP_ERROR;
   }
 #endif /* ASC_SIGNAL_TRAPS */
   switch (argv[3][0]) {
@@ -2802,10 +2668,9 @@ int Asc_DebuNumBlockSing(ClientData cdata, Tcl_Interp *interp,
       rc=1;   /* if want col dependency instead, rc is 1 */
       break;
     default:
-      Tcl_SetResult(interp,
-                    "dbg_num_block_singular:second arg is \"row\" or \"col\"",
-                    TCL_STATIC);
-      return TCL_ERROR;
+      Asc_DStringSet(hptr,
+                    "dbg_num_block_singular:second arg is \"row\" or \"col\"");
+      return HELP_ERROR;
   }
   if (!rc) {
     if (dev!=2) {
@@ -2817,7 +2682,7 @@ int Asc_DebuNumBlockSing(ClientData cdata, Tcl_Interp *interp,
       for (u = 0; u < singrows->len; u++) {
         if (dev==2) {
           sprintf(tmps,"{%d ",u);
-          Tcl_AppendResult(interp,tmps,SNULL);
+          Asc_DStringAppend(hptr,tmps,HALL);
         } else {
           FPRINTF(fp,"Unpivoted row %d sum of:\n",singrows->idata[u]);
         }
@@ -2825,7 +2690,7 @@ int Asc_DebuNumBlockSing(ClientData cdata, Tcl_Interp *interp,
         for (p = 0; p < rowcoefs->len; p++) {
           if (dev==2) {
             sprintf(tmps,"{%d %.16g} ",rowcoefs->idata[p],rowcoefs->data[p]);
-            Tcl_AppendResult(interp,tmps,SNULL);
+            Asc_DStringAppend(hptr,tmps,HALL);
           } else {
             FPRINTF(fp,"Row(%d) * %.16g\n",rowcoefs->idata[p],
               rowcoefs->data[p]);
@@ -2833,7 +2698,7 @@ int Asc_DebuNumBlockSing(ClientData cdata, Tcl_Interp *interp,
         }
         if (dev==2) {
           sprintf(tmps,"} ");
-          Tcl_AppendResult(interp,tmps,SNULL);
+          Asc_DStringAppend(hptr,tmps,HALL);
         } else {
           FPRINTF(fp,"\n");
         }
@@ -2852,7 +2717,7 @@ int Asc_DebuNumBlockSing(ClientData cdata, Tcl_Interp *interp,
       for (u = 0; u < singcols->len; u++) {
         if (dev==2) {
           sprintf(tmps,"{%d ",u);
-          Tcl_AppendResult(interp,tmps,SNULL);
+          Asc_DStringAppend(hptr,tmps,HALL);
         } else {
           FPRINTF(fp,"Unpivoted column %d sum of:",singrows->idata[u]);
         }
@@ -2860,7 +2725,7 @@ int Asc_DebuNumBlockSing(ClientData cdata, Tcl_Interp *interp,
         for (p = 0; p < colcoefs->len; p++) {
           if (dev==2) {
             sprintf(tmps,"{%d %.16g} ",colcoefs->idata[p],colcoefs->data[p]);
-            Tcl_AppendResult(interp,tmps,SNULL);
+            Asc_DStringAppend(hptr,tmps,HALL);
           } else {
             FPRINTF(fp,"Column(%d) * %.16g\n",colcoefs->idata[p],
                colcoefs->data[p]);
@@ -2869,7 +2734,7 @@ int Asc_DebuNumBlockSing(ClientData cdata, Tcl_Interp *interp,
       }
       if (dev==2) {
         sprintf(tmps,"} ");
-        Tcl_AppendResult(interp,tmps,SNULL);
+        Asc_DStringAppend(hptr,tmps,HALL);
       } else {
         FPRINTF(fp,"\n");
       }
@@ -2882,12 +2747,11 @@ int Asc_DebuNumBlockSing(ClientData cdata, Tcl_Interp *interp,
   mtx_destroy_sparse(singcols);
   mtx_destroy_sparse(rowcoefs);
   mtx_destroy_sparse(colcoefs);
-  return TCL_OK;
+  return HELP_OK;
 }
 
 
-int Asc_DebuStructSing(ClientData cdata, Tcl_Interp *interp,
-                     int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuStructSing(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   int32 *rip=NULL, *vip=NULL, *fip=NULL;
   struct rel_relation **rp;
@@ -2896,40 +2760,38 @@ int Asc_DebuStructSing(ClientData cdata, Tcl_Interp *interp,
   int32 relnum,maxrel;
   FILE *fp;
 
-  UNUSED_PARAMETER(cdata);
-
   if(argc != 3){
 	ERROR_REPORTER_HERE(ASC_PROG_ERR,"call is: dbg_struct_singular <out> <relindex,-1>");
-    Tcl_SetResult(interp, "dbg_struct_singular wants output dev & relation index.", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_struct_singular wants output dev & relation index.");
+    return HELP_ERROR;
   }
   if(g_solvsys_cur==NULL){
 	ERROR_REPORTER_HERE(ASC_PROG_ERR,"g_solvsys_cur is NULL");
-    Tcl_SetResult(interp, "dbg_struct_singular called without slv_system", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_struct_singular called without slv_system");
+    return HELP_ERROR;
   }
 
-  rp=slv_get_solvers_rel_list(g_solvsys_cur);
+  rp= ::slv_get_solvers_rel_list(g_solvsys_cur);
   if(!rp){
 	ERROR_REPORTER_HERE(ASC_PROG_ERR,"got NULL relation list");
-    Tcl_SetResult(interp, "dbg_struct_singular called with null rellist", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_struct_singular called with null rellist");
+    return HELP_ERROR;
   }
-  vp=slv_get_solvers_var_list(g_solvsys_cur);
+  vp= ::slv_get_solvers_var_list(g_solvsys_cur);
   if(!vp){
 	ERROR_REPORTER_HERE(ASC_PROG_ERR,"got NULL variable list");
     FPRINTF(ASCERR,  "NULL variable list found in dbg_struct_singular\n");
-    Tcl_SetResult(interp, "dbg_struct_singular called with null varlist", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_struct_singular called with null varlist");
+    return HELP_ERROR;
   }
 
-  maxrel=slv_get_num_solvers_rels(g_solvsys_cur);
+  maxrel= ::slv_get_num_solvers_rels(g_solvsys_cur);
   relnum = maxrel;
-  status = Tcl_GetInt(interp,argv[2],&relnum);
-  if(relnum >= maxrel || status == TCL_ERROR){
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "dbg_struct_singular: equation checked does not exist", TCL_STATIC);
-    return TCL_ERROR;
+  status = JTcl_GetInt(hptr, argv[2],&relnum);
+  if(relnum >= maxrel || status == HELP_ERROR){
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "dbg_struct_singular: equation checked does not exist");
+    return HELP_ERROR;
   }
 
   if (relnum < 0) {
@@ -2938,15 +2800,14 @@ int Asc_DebuStructSing(ClientData cdata, Tcl_Interp *interp,
 
   /* get io option */
   i=3;
-  status=Tcl_GetInt(interp,argv[1],&i);
+  status=JTcl_GetInt(hptr, argv[1],&i);
   if (i<0 || i >2) {
-    status=TCL_ERROR;
+    status=HELP_ERROR;
   }
-  if (status!=TCL_OK) {
+  if (status!=HELP_OK) {
     FPRINTF(ASCERR,"dbg_struct_singular: first arg is 0,1, or 2\n");
-    Tcl_ResetResult(interp);
-    Tcl_SetResult(interp, "dbg_struct_singular: invalid output dev #",
-                  TCL_STATIC);
+    Asc_DStringFree(hptr);
+    Asc_DStringSet(hptr, "dbg_struct_singular: invalid output dev #");
     return status;
   } else {
     dev=i;
@@ -2960,11 +2821,11 @@ int Asc_DebuStructSing(ClientData cdata, Tcl_Interp *interp,
        break;
     default : /* should never be here */
        FPRINTF(ASCERR,"dbg_struct_singular called with strange i/o option\n");
-            return TCL_ERROR;
+            return HELP_ERROR;
   }
 
   /* do the test */
-  if(0==slvDOF_structsing(g_solvsys_cur,relnum,&vip,&rip,&fip)) {
+  if(0== ::slvDOF_structsing(g_solvsys_cur,relnum,&vip,&rip,&fip)) {
     /* successfully got lists... */
     char tmps[MAXIMUM_NUMERIC_LENGTH];
     switch(dev){
@@ -2988,22 +2849,22 @@ int Asc_DebuStructSing(ClientData cdata, Tcl_Interp *interp,
         }
         break;
       case 2:
-        Tcl_AppendResult(interp,"{",SNULL);
+        Asc_DStringAppend(hptr,"{",HALL);
         for (i=0;rip[i]>-1;i++) {
           sprintf(tmps,"%d ",rip[i]);
-          Tcl_AppendResult(interp,tmps,SNULL);
+          Asc_DStringAppend(hptr,tmps,HALL);
         }
-        Tcl_AppendResult(interp,"} {",SNULL);
+        Asc_DStringAppend(hptr,"} {",HALL);
         for (i=0;vip[i]>-1;i++) {
           sprintf(tmps,"%d ",vip[i]);
-          Tcl_AppendResult(interp,tmps,SNULL);
+          Asc_DStringAppend(hptr,tmps,HALL);
         }
-        Tcl_AppendResult(interp,"} {",SNULL);
+        Asc_DStringAppend(hptr,"} {",HALL);
         for (i=0;fip[i]>-1;i++) {
           sprintf(tmps,"%d ",fip[i]);
-          Tcl_AppendResult(interp,tmps,SNULL);
+          Asc_DStringAppend(hptr,tmps,HALL);
         }
-        Tcl_AppendResult(interp,"}",SNULL);
+        Asc_DStringAppend(hptr,"}",HALL);
         break;
       default:
         FPRINTF(ASCERR,"wierdness in i/o!");
@@ -3020,35 +2881,32 @@ int Asc_DebuStructSing(ClientData cdata, Tcl_Interp *interp,
     }
   }else{
 	ERROR_REPORTER_HERE(ASC_PROG_WARNING,"Couldn't determine singularity lists");
-    Tcl_SetResult(interp, "{} {} {}", TCL_STATIC);
+    Asc_DStringSet(hptr, "{} {} {}");
   }
-  return TCL_OK;
+  return HELP_OK;
 }
-int Asc_DebuVarFree2Nom(ClientData cdata, Tcl_Interp *interp,
-                      int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuVarFree2Nom(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct var_variable **vp;
   var_filter_t vfilter;
   int32 c,maxvar;
 
-  UNUSED_PARAMETER(cdata);
-  (void)argv;     /* stop gcc whine about unused parameter */
 
   if ( argc != 1 ) {
     FPRINTF(ASCERR,  "call is: var_free2nom <no args>\n");
-    Tcl_SetResult(interp, "var_free2nom takes no arguments.", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "var_free2nom takes no arguments.");
+    return HELP_ERROR;
   }
   if (g_solvsys_cur==NULL) {
     FPRINTF(ASCERR,  "var_free2nom called with NULL pointer\n");
-    Tcl_SetResult(interp, "var_free2nom called without slv_system",TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "var_free2nom called without slv_system");
+    return HELP_ERROR;
   }
   vfilter.matchbits = (VAR_FIXED | VAR_INCIDENT | VAR_ACTIVE);
   vfilter.matchvalue = (VAR_INCIDENT | VAR_ACTIVE);
 
-  vp=slv_get_solvers_var_list(g_solvsys_cur);
-  maxvar=slv_get_num_solvers_vars(g_solvsys_cur);
+  vp= ::slv_get_solvers_var_list(g_solvsys_cur);
+  maxvar= ::slv_get_num_solvers_vars(g_solvsys_cur);
 
   for (c=0; c<maxvar; c++) { /*reset vars */
      if (var_apply_filter(vp[c],&vfilter)) {
@@ -3057,34 +2915,31 @@ int Asc_DebuVarFree2Nom(ClientData cdata, Tcl_Interp *interp,
      }
   }
 
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_DebuVarNom2Free(ClientData cdata, Tcl_Interp *interp,
-                   int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuVarNom2Free(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct var_variable **vp;
   var_filter_t vfilter;
   int32 maxvar,c;
 
-  UNUSED_PARAMETER(cdata);
-  (void)argv;     /* stop gcc whine about unused parameter */
 
   if ( argc != 1 ) {
     FPRINTF(ASCERR,  "call is: var_nom2free <no args>\n");
-    Tcl_SetResult(interp, "var_nom2free takes no arguments.", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "var_nom2free takes no arguments.");
+    return HELP_ERROR;
   }
   if (g_solvsys_cur==NULL) {
     FPRINTF(ASCERR,  "var_nom2free called with NULL pointer\n");
-    Tcl_SetResult(interp, "var_nomfree called without slv_system", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "var_nomfree called without slv_system");
+    return HELP_ERROR;
   }
   vfilter.matchbits = (VAR_FIXED | VAR_INCIDENT | VAR_ACTIVE);
   vfilter.matchvalue = (VAR_INCIDENT | VAR_ACTIVE);
 
-  vp=slv_get_solvers_var_list(g_solvsys_cur);
-  maxvar=slv_get_num_solvers_vars(g_solvsys_cur);
+  vp= ::slv_get_solvers_var_list(g_solvsys_cur);
+  maxvar= ::slv_get_num_solvers_vars(g_solvsys_cur);
 
   for (c=0; c<maxvar; c++) {  /*reset vars */
     if (var_apply_filter(vp[c],&vfilter)) {
@@ -3093,7 +2948,7 @@ int Asc_DebuVarNom2Free(ClientData cdata, Tcl_Interp *interp,
     }
   }
 
-  return TCL_OK;
+  return HELP_OK;
 }
 
 /* since an fp error -> badness to automatic variables, and
@@ -3107,10 +2962,10 @@ static int dbg_calc_nominal(struct rel_relation *rel) {
 #ifdef ASC_SIGNAL_TRAPS
   if (SETJMP(g_fpe_env)==0) {
 #endif /* ASC_SIGNAL_TRAPS */
-    nom = CalcRelationNominal(rel_instance(rel));
+    nom = CalcRelationNominal(T2I(rel_instance(rel)));
     if (nom >0.0) {
       SetRelationNominal(
-        (struct relation *)GetInstanceRelation(rel_instance(rel),&dummy), nom);
+        (struct relation *)GetInstanceRelation(T2I(rel_instance(rel)),&dummy), nom);
     }
     return 0;
 #ifdef ASC_SIGNAL_TRAPS
@@ -3120,8 +2975,7 @@ static int dbg_calc_nominal(struct rel_relation *rel) {
 #endif /* ASC_SIGNAL_TRAPS */
 }
 
-int Asc_DebuCheckRelFp(ClientData cdata, Tcl_Interp *interp,
-                      int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuCheckRelFp(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct rel_relation **rp,*rel;
   struct var_variable **vp;
@@ -3130,29 +2984,25 @@ int Asc_DebuCheckRelFp(ClientData cdata, Tcl_Interp *interp,
   struct Instance *rinst;
   char tmps[MAXIMUM_NUMERIC_LENGTH+1];
 
-  UNUSED_PARAMETER(cdata);
-  (void)argv;     /* stop gcc whine about unused parameter */
 
   if ( argc != 1 ) {
     FPRINTF(ASCERR,"call is: dbg_check_rels <no args>\n");
-    Tcl_SetResult(interp, "dbg_check_rels wants no args", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_check_rels wants no args");
+    return HELP_ERROR;
   }
   if (g_solvsys_cur==NULL) {
     FPRINTF(ASCERR,  "dbg_check_rels called with NULL pointer\n");
-    Tcl_SetResult(interp, "dbg_check_rels called without slv_system",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_check_rels called without slv_system");
+    return HELP_ERROR;
   }
-  vp=slv_get_solvers_var_list(g_solvsys_cur);
-  rp=slv_get_solvers_rel_list(g_solvsys_cur);
-  maxrel=slv_get_num_solvers_rels(g_solvsys_cur);
+  vp= ::slv_get_solvers_var_list(g_solvsys_cur);
+  rp= ::slv_get_solvers_rel_list(g_solvsys_cur);
+  maxrel= ::slv_get_num_solvers_rels(g_solvsys_cur);
 
   if (!vp || !rp ) {
     FPRINTF(ASCERR,  "dbg_check_rels called with NULL rel or var list\n");
-    Tcl_SetResult(interp, "dbg_check_rels called without rels or vars",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_check_rels called without rels or vars");
+    return HELP_ERROR;
   }
 
 #ifdef ASC_SIGNAL_TRAPS
@@ -3162,7 +3012,7 @@ int Asc_DebuCheckRelFp(ClientData cdata, Tcl_Interp *interp,
 #define ISTRUE(a) ((a)!=0)
   for (i=0; i<maxrel; i++) {
     rel=rp[i];
-    rinst =(struct Instance *)rel_instance(rel);
+    rinst = T2I(rel_instance(rel));
     status = RelationCalcExceptionsInfix(rinst);
     if (status != RCE_OK && status != RCE_BADINPUT) {
       sprintf(tmps,"%d %d %d %d %d",i,
@@ -3170,7 +3020,7 @@ int Asc_DebuCheckRelFp(ClientData cdata, Tcl_Interp *interp,
         ISTRUE(RCE_ERR_RHS & status),
         ISTRUE(RCE_ERR_LHSGRAD & status),
         ISTRUE(RCE_ERR_RHSGRAD & status));
-      Tcl_AppendElement(interp, tmps);
+      VTcl_AppendElement(hptr, tmps);
     }
   }
 #ifdef ASC_SIGNAL_TRAPS
@@ -3181,39 +3031,34 @@ int Asc_DebuCheckRelFp(ClientData cdata, Tcl_Interp *interp,
  * But the compiler while whine accordingly.
  */
 
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_DebuCalcRelNominals(ClientData cdata, Tcl_Interp *interp,
-                         int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuCalcRelNominals(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct rel_relation **rp,**rl,*rel;
   struct var_variable **vp,**vl;
   int32 maxrel,i;
 
-  UNUSED_PARAMETER(cdata);
-  (void)argv;     /* stop gcc whine about unused parameter */
 
   if ( argc != 1 ) {
     FPRINTF(ASCERR,"call is: dbg_calc_relnoms <no args>\n");
-    Tcl_SetResult(interp, "dbg_calc_relnoms wants no args", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_calc_relnoms wants no args");
+    return HELP_ERROR;
   }
   if (g_solvsys_cur==NULL) {
     FPRINTF(ASCERR,  "dbg_calc_relnoms called with NULL pointer\n");
-    Tcl_SetResult(interp, "dbg_calc_relnoms called without slv_system",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_calc_relnoms called without slv_system");
+    return HELP_ERROR;
   }
-  vp = vl = slv_get_solvers_var_list(g_solvsys_cur);
-  rp = rl = slv_get_solvers_rel_list(g_solvsys_cur);
-  maxrel=slv_get_num_solvers_rels(g_solvsys_cur);
+  vp = vl = ::slv_get_solvers_var_list(g_solvsys_cur);
+  rp = rl = ::slv_get_solvers_rel_list(g_solvsys_cur);
+  maxrel= ::slv_get_num_solvers_rels(g_solvsys_cur);
 
   if (!vp || !rp ) {
     FPRINTF(ASCERR,  "dbg_calc_relnoms called with NULL rel or var list\n");
-    Tcl_SetResult(interp, "dbg_calc_relnoms called without rels or vars",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_calc_relnoms called without rels or vars");
+    return HELP_ERROR;
   }
 
   for (i=0; i<maxrel; i++) {
@@ -3227,12 +3072,11 @@ int Asc_DebuCalcRelNominals(ClientData cdata, Tcl_Interp *interp,
       }
     }
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
 
-int Asc_DebuWriteSystem(ClientData cdata, Tcl_Interp *interp,
-                    int argc, CONST84 char *argv[]) {
+int ascjson::Asc_DebuWriteSystem(Asc_DString *hptr, int argc, CONST84 char *argv[]) {
   rel_filter_t rfilter;
   var_filter_t vfilter;
   struct rel_relation **rp;
@@ -3246,49 +3090,47 @@ int Asc_DebuWriteSystem(ClientData cdata, Tcl_Interp *interp,
   char *objs=NULL;
   FILE *fp;
 
+  int cdata = (argv[0][15] == 's');
   if ( argc != 2 ) {
     FPRINTF(ASCERR,  "call is: dbg_write_slv0_sys <filepath>\n");
-    Tcl_SetResult(interp, "dbg_write_slv0_sys takes 1 arg", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_write_slv0_sys takes 1 arg");
+    return HELP_ERROR;
   }
   if (g_solvsys_cur==NULL) {
     FPRINTF(ASCERR,  "dbg_write_slv0_sys called with NULL pointer\n");
-    Tcl_SetResult(interp, "dbg_write_slv0_sys called without slv_system",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_write_slv0_sys called without slv_system");
+    return HELP_ERROR;
   }
-  vp=slv_get_solvers_var_list(g_solvsys_cur);
+  vp= ::slv_get_solvers_var_list(g_solvsys_cur);
   if (vp==NULL) {
     FPRINTF(ASCERR,  "dbg_write_slv0_sys called with NULL varlist\n");
-    Tcl_SetResult(interp, "dbg_write_slv0_sys called without varlist",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_write_slv0_sys called without varlist");
+    return HELP_ERROR;
   }
 
-  up=slv_get_solvers_unattached_list(g_solvsys_cur);
+  up= ::slv_get_solvers_unattached_list(g_solvsys_cur);
   if (up==NULL) {
     FPRINTF(ASCERR,  "There are no unattacehd variables in the model \n");
   }
 
-  rp=slv_get_solvers_rel_list(g_solvsys_cur);
+  rp= ::slv_get_solvers_rel_list(g_solvsys_cur);
   if (rp==NULL) {
     FPRINTF(ASCERR,  "dbg_write_slv0_sys called with NULL rellist\n");
   }
-  obj= slv_get_obj_relation(g_solvsys_cur);
+  obj= ::slv_get_obj_relation(g_solvsys_cur);
   if (rp==NULL && obj==NULL) {
     FPRINTF(ASCERR,  "dbg_write_slv0_sys called without task.\n");
-    Tcl_SetResult(interp,
-                  "dbg_write_slv0_sys called without constraints or obj",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,
+                  "dbg_write_slv0_sys called without constraints or obj");
+    return HELP_ERROR;
   }
-  slv_get_parameters(g_solvsys_cur,&sp);
-  slv_get_status(g_solvsys_cur,&ss);
+  ::slv_get_parameters(g_solvsys_cur,&sp);
+  ::slv_get_status(g_solvsys_cur,&ss);
   /*
   if (!ss.ready_to_solve) {
     FPRINTF(ASCERR,  "dbg_write_slv0_sys called without ready_to_solve sys\n");
-    Tcl_SetResult(interp, "system unready to solve. not written.", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "system unready to solve. not written.");
+    return HELP_ERROR;
   }
   */
 
@@ -3298,19 +3140,18 @@ int Asc_DebuWriteSystem(ClientData cdata, Tcl_Interp *interp,
   vfilter.matchbits = (VAR_INCIDENT | VAR_ACTIVE);
   vfilter.matchvalue = (VAR_INCIDENT | VAR_ACTIVE);
 
-  maxrel=slv_get_num_solvers_rels(g_solvsys_cur);
-  maxvar=slv_get_num_solvers_vars(g_solvsys_cur);
+  maxrel= ::slv_get_num_solvers_rels(g_solvsys_cur);
+  maxvar= ::slv_get_num_solvers_vars(g_solvsys_cur);
 
-  maxirel=slv_count_solvers_rels(g_solvsys_cur,&rfilter);
-  maxivar=slv_count_solvers_vars(g_solvsys_cur,&vfilter);
+  maxirel= ::slv_count_solvers_rels(g_solvsys_cur,&rfilter);
+  maxivar= ::slv_count_solvers_vars(g_solvsys_cur,&vfilter);
 
   fp=fopen(argv[1],"w");
   if (!fp) {
     FPRINTF(ASCERR, "dbg_write_slv0_sys unable to open %s.\n",argv[1]);
-    Tcl_SetResult(interp,
-                  "dbg_write_slv0_sys file open failed. system not written.",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,
+                  "dbg_write_slv0_sys file open failed. system not written.");
+    return HELP_ERROR;
   }
   FPRINTF(fp,"Solver:   \"slv\"\n\n");
   FPRINTF(fp,"Variables: %d\n",maxivar);
@@ -3334,8 +3175,8 @@ int Asc_DebuWriteSystem(ClientData cdata, Tcl_Interp *interp,
   }
   FPRINTF(fp,"\n");
 
-  maxuna =slv_get_num_solvers_unattached(g_solvsys_cur);
-  maxpar= slv_count_solvers_unattached(g_solvsys_cur,&vfilter);
+  maxuna = ::slv_get_num_solvers_unattached(g_solvsys_cur);
+  maxpar= ::slv_count_solvers_unattached(g_solvsys_cur,&vfilter);
 
   if (maxuna) {
     FPRINTF(fp,"Parameters: %d\n",maxpar);
@@ -3403,22 +3244,18 @@ int Asc_DebuWriteSystem(ClientData cdata, Tcl_Interp *interp,
   FPRINTF(fp,"Rho:         %g\n\n",sp.rho);
 
   fclose(fp);
-  return TCL_OK;
+  return HELP_OK;
 }
 
 #define LONGHELP(b,ms) ((b)?ms:"")
-int Asc_DebuHelpList(ClientData cdata, Tcl_Interp *interp,
-                   int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuHelpList(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   boolean detail=1;
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc > 2 ) {
     FPRINTF(ASCERR,"call is: dbghelp [s,l] \n");
-    Tcl_SetResult(interp, "Too many args to dbghelp. Want 0 or 1 args",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "Too many args to dbghelp. Want 0 or 1 args");
+    return HELP_ERROR;
   }
   if ( argc == 2 ) {
     if (argv[1][0]=='s') {
@@ -3511,84 +3348,83 @@ int Asc_DebuHelpList(ClientData cdata, Tcl_Interp *interp,
     char * tmps;
     tmps= (char *)ascmalloc((MAXIMUM_NUMERIC_LENGTH+1)*sizeof(char));
     sprintf(tmps,"dbg_get_blk_of_var");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"dbg_get_blk_of_eqn");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"dbg_get_blk_coords");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"dbg_get_eqn_of_var");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"dbg_get_varpartition");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"dbg_get_eqnpartition");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
 
     sprintf(tmps,"dbg_list_rels");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"dbg_list_vars");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"dbg_write_rel");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"dbg_write_var");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"dbg_write_unattvar");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"dbg_write_varattr");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"dbg_write_qlfattr");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"dbg_rel_included");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"dbg_var_fixed");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
 
     sprintf(tmps,"dbg_get_incidence");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"dbg_get_order");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"dbg_write_incidence");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"dbg_find_eligible");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"dbg_consistency_analysis");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"dbg_global_eligible");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"dbg_find_activerels");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"dbg_num_block_singular");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"dbg_struct_singular");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"var_free2nom");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"var_nom2free");
 #if REIMPLEMENT
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"dbg_check_rels");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"dbg_calc_relnoms");
 #endif
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"dbg_write_slv0_sys");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"dbg_write_slv0_xsys");
 #if REIMPLEMENT
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"dbg_write_kirk_xsys");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     sprintf(tmps,"dbg_write_gams_xsys");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
 #endif
     sprintf(tmps,"dbghelp");
-    Tcl_AppendElement(interp,tmps);
+    VTcl_AppendElement(hptr,tmps);
     ascfree(tmps);
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_DebuWriteKirkSystem(ClientData cdata, Tcl_Interp *interp,
-                           int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuWriteKirkSystem(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   rel_filter_t rfilter;
   var_filter_t vfilter;
@@ -3599,46 +3435,39 @@ int Asc_DebuWriteKirkSystem(ClientData cdata, Tcl_Interp *interp,
   char *objs=NULL, *lhs=NULL, *rhs=NULL;
   FILE *fp;
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc != 2 ) {
-    Tcl_SetResult(interp, "Usage dbg_write_kirk_sys <filename>", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "Usage dbg_write_kirk_sys <filename>");
+    return HELP_ERROR;
   }
   if (g_solvsys_cur==NULL) {
-    Tcl_SetResult(interp, "dbg_write_kirk_sys called without slv_system",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_write_kirk_sys called without slv_system");
+    return HELP_ERROR;
   }
-  vp = slv_get_solvers_var_list(g_solvsys_cur);
+  vp = ::slv_get_solvers_var_list(g_solvsys_cur);
   if (vp==NULL) {
-    Tcl_SetResult(interp, "dbg_write_kirk_sys called without varlist",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_write_kirk_sys called without varlist");
+    return HELP_ERROR;
   }
-  rp = slv_get_solvers_rel_list(g_solvsys_cur);
+  rp = ::slv_get_solvers_rel_list(g_solvsys_cur);
   if (rp==NULL) {
-    Tcl_SetResult(interp,"Warning : dbg_write_kirk_sys called without rellist",
-                  TCL_STATIC);
+    Asc_DStringSet(hptr,"Warning : dbg_write_kirk_sys called without rellist");
   }
-  obj = slv_get_obj_relation(g_solvsys_cur);
+  obj = ::slv_get_obj_relation(g_solvsys_cur);
   if (obj==NULL && rp==NULL) {                /* objectives are optional */
-    Tcl_SetResult(interp,
-                  "dbg_write_kirk_sys called without constraints or obj",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,
+                  "dbg_write_kirk_sys called without constraints or obj");
+    return HELP_ERROR;
   }
   fp=fopen(argv[1],"w");
   if (!fp) {
     FPRINTF(ASCERR, "dbg_write_kirk_sys unable to open %s.\n",argv[1]);
-    Tcl_SetResult(interp,
-                  "dbg_write_kirk_sys file open failed. system not written.",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,
+                  "dbg_write_kirk_sys file open failed. system not written.");
+    return HELP_ERROR;
   }
 
-  maxrel=slv_get_num_solvers_rels(g_solvsys_cur);
-  maxvar=slv_get_num_solvers_vars(g_solvsys_cur);
+  maxrel= ::slv_get_num_solvers_rels(g_solvsys_cur);
+  maxvar= ::slv_get_num_solvers_vars(g_solvsys_cur);
 
   rfilter.matchbits = (REL_INCLUDED | REL_ACTIVE);
   rfilter.matchvalue = (REL_INCLUDED | REL_ACTIVE);
@@ -3646,8 +3475,8 @@ int Asc_DebuWriteKirkSystem(ClientData cdata, Tcl_Interp *interp,
   vfilter.matchbits = (VAR_INCIDENT | VAR_ACTIVE);
   vfilter.matchvalue = (VAR_INCIDENT | VAR_ACTIVE);
 
-  maxirel = slv_count_solvers_rels(g_solvsys_cur,&rfilter);
-  maxivar = slv_count_solvers_vars(g_solvsys_cur,&vfilter);
+  maxirel = ::slv_count_solvers_rels(g_solvsys_cur,&rfilter);
+  maxivar = ::slv_count_solvers_vars(g_solvsys_cur,&vfilter);
 
 
   /*
@@ -3710,11 +3539,10 @@ int Asc_DebuWriteKirkSystem(ClientData cdata, Tcl_Interp *interp,
     }
   }
   fclose(fp);
-  return TCL_OK;
+  return HELP_OK;
 }
 
-int Asc_DebuWriteGAMSSystem(ClientData cdata, Tcl_Interp *interp,
-                           int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuWriteGAMSSystem(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct rel_relation **rp;
   struct var_variable **vp;
@@ -3726,45 +3554,38 @@ int Asc_DebuWriteGAMSSystem(ClientData cdata, Tcl_Interp *interp,
   real64 val_tmp;
   FILE *fp;
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc != 2 ) {
-    Tcl_SetResult(interp, "dbg_write_gams_sys takes 1 arg", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_write_gams_sys takes 1 arg");
+    return HELP_ERROR;
   }
   if (g_solvsys_cur==NULL) {
-    Tcl_SetResult(interp, "dbg_write_gams_sys called without slv_system",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_write_gams_sys called without slv_system");
+    return HELP_ERROR;
   }
-  vp = slv_get_solvers_var_list(g_solvsys_cur);
+  vp = ::slv_get_solvers_var_list(g_solvsys_cur);
   if (vp==NULL) {
-    Tcl_SetResult(interp, "dbg_write_gams_sys called without varlist",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "dbg_write_gams_sys called without varlist");
+    return HELP_ERROR;
   }
-  rp =slv_get_solvers_rel_list(g_solvsys_cur);
+  rp = ::slv_get_solvers_rel_list(g_solvsys_cur);
   if (rp==NULL) {
-    Tcl_SetResult(interp, "dbg_write_gams_sys called with NULL rellist",
-                  TCL_STATIC);
+    Asc_DStringSet(hptr, "dbg_write_gams_sys called with NULL rellist");
   }
-  obj= slv_get_obj_relation(g_solvsys_cur);
+  obj= ::slv_get_obj_relation(g_solvsys_cur);
   if (rp==NULL && obj==NULL) {
-    Tcl_SetResult(interp,
-                  "dbg_write_gams_sys called without constraints or obj",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,
+                  "dbg_write_gams_sys called without constraints or obj");
+    return HELP_ERROR;
   }
 
-  maxrel=slv_get_num_solvers_rels(g_solvsys_cur);
-  maxvar=slv_get_num_solvers_vars(g_solvsys_cur);
+  maxrel= ::slv_get_num_solvers_rels(g_solvsys_cur);
+  maxvar= ::slv_get_num_solvers_vars(g_solvsys_cur);
 
   fp=fopen(argv[1],"w");
   if (!fp) {
-    Tcl_SetResult(interp,
-                  "dbg_write_gams_sys file open failed. system not written.",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr,
+                  "dbg_write_gams_sys file open failed. system not written.");
+    return HELP_ERROR;
   }
   FPRINTF(fp,"$Title Ascend Generated GAMS Model");
   FPRINTF(fp,"$offsymlist\n");
@@ -3834,7 +3655,7 @@ int Asc_DebuWriteGAMSSystem(ClientData cdata, Tcl_Interp *interp,
     break;
 #endif
       FPRINTF(fp,"rel_%d..   %s",rel_sindex(rp[c]),lhs);
-      switch( GetInstanceRelationType(rel_instance(rp[c])) ) {
+      switch( GetInstanceRelationType(T2I(rel_instance(rp[c])))) {
       case e_less:
       case e_lesseq:
         FPRINTF(fp," =l= ");
@@ -3875,7 +3696,7 @@ int Asc_DebuWriteGAMSSystem(ClientData cdata, Tcl_Interp *interp,
 
   FPRINTF(fp,"solve test1 using nlp minimizing obj_var;\n");
   fclose(fp);
-  return TCL_OK;
+  return HELP_OK;
 }
 
 
@@ -3885,8 +3706,7 @@ int Asc_DebuWriteGAMSSystem(ClientData cdata, Tcl_Interp *interp,
  * it tries to figure out the rank, and plots that region.
  */
 
-int Asc_DebuMtxWritePlotCmd(ClientData cdata, Tcl_Interp *interp,
-                         int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuMtxWritePlotCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   FILE *fp = NULL;
   int rank, coeff_or_inverse = 0;
@@ -3896,17 +3716,15 @@ int Asc_DebuMtxWritePlotCmd(ClientData cdata, Tcl_Interp *interp,
   mtx_region_t reg;
   real64 *rhs = NULL;
 
-  UNUSED_PARAMETER(cdata);
-
   if ( argc < 4 ) {
-    Tcl_AppendResult(interp,"wrong # args: Usage :",
-                     "dbg_mtxwriteplot file ?coeff?inv? ",
-                     "?plot?mtx?csr?smms?", (char *)NULL);
-    return TCL_ERROR;
+    Asc_DStringAppend(hptr,"wrong # args: Usage :"
+                     "dbg_mtxwriteplot file ?coeff?inv? "
+                     "?plot?mtx?csr?smms?", HALL);
+    return HELP_ERROR;
   }
   if (g_solvsys_cur==NULL) {
-    Tcl_SetResult(interp, "NULL solve system in dbg_mtxwriteplot", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "NULL solve system in dbg_mtxwriteplot");
+    return HELP_ERROR;
   }
   if (strncmp(argv[2],"coeff",3)==0) {
     coeff_or_inverse = 0;
@@ -3916,12 +3734,12 @@ int Asc_DebuMtxWritePlotCmd(ClientData cdata, Tcl_Interp *interp,
 
   fp = fopen(argv[1],"w");
   if (!fp) {
-    Tcl_SetResult(interp, "Unable to create named file.\n", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "Unable to create named file.\n");
+    return HELP_ERROR;
   }
   if (coeff_or_inverse==0) {
     /* we have a standard matrix fetch for coefficient matrices */
-    mtx = slv_get_sys_mtx(g_solvsys_cur);
+    mtx = ::slv_get_sys_mtx(g_solvsys_cur);
     if (mtx==NULL || mtx_order(mtx)<1) {
       FPRINTF(ASCERR,
         "Solve system does not have a valid coefficient matrix\n");
@@ -3929,10 +3747,10 @@ int Asc_DebuMtxWritePlotCmd(ClientData cdata, Tcl_Interp *interp,
     }
   } else {
     /* WARNING: developers ui hack only! */
-    switch(slv_get_selected_solver(g_solvsys_cur)) {
+    switch(::slv_get_selected_solver(g_solvsys_cur)) {
     case 3:
     case 5:
-      linsysqr = slv_get_linsolqr_sys(g_solvsys_cur);
+      linsysqr = ::slv_get_linsolqr_sys(g_solvsys_cur);
       mtx = linsolqr_get_factors(linsysqr);
       rhs = linsolqr_get_rhs(linsysqr,1);
       break;
@@ -3990,7 +3808,7 @@ int Asc_DebuMtxWritePlotCmd(ClientData cdata, Tcl_Interp *interp,
   if (fp) {
     fclose(fp);
   }
-  return TCL_OK;
+  return HELP_OK;
 }
 
 /*
@@ -3999,35 +3817,31 @@ int Asc_DebuMtxWritePlotCmd(ClientData cdata, Tcl_Interp *interp,
  */
 /*extern int slv5_calc_J();*/                /* KAA_DEBUG */
 
-int Asc_DebuMtxCalcJacobianCmd(ClientData cdata, Tcl_Interp *interp,
-                            int argc, CONST84 char *argv[])
+int ascjson::Asc_DebuMtxCalcJacobianCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   int whichsolver;
-  int result=TCL_ERROR;
-
-  UNUSED_PARAMETER(cdata);
+  int result=HELP_ERROR;
 
   if ( argc != 2 ) {
-    Tcl_AppendResult(interp,"wrong # args :",
-                     "Usage dbg_calc_jacobian whichsolver",(char *)NULL);
-    return TCL_ERROR;
+    Asc_DStringAppend(hptr,"wrong # args :"
+                     "Usage dbg_calc_jacobian whichsolver",HALL);
+    return HELP_ERROR;
   }
 
   if (g_solvsys_cur==NULL) {
-    Tcl_SetResult(interp, "Solve system does not exist", TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "Solve system does not exist");
+    return HELP_ERROR;
   }
   whichsolver = atoi(argv[1]);
 
   if (whichsolver!=5) {        /* slv5 */
-    Tcl_SetResult(interp, "Invalid solver given -- only slv5 is valid",
-                  TCL_STATIC);
-    return TCL_ERROR;
+    Asc_DStringSet(hptr, "Invalid solver given -- only slv5 is valid");
+    return HELP_ERROR;
   }
 /*  result = slv5_calc_J(g_solvsys_cur); KHACK */
   if (result) {
-    return TCL_ERROR;
+    return HELP_ERROR;
   } else {
-    return TCL_OK;
+    return HELP_OK;
   }
 }

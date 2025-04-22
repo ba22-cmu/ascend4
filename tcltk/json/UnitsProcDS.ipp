@@ -646,7 +646,6 @@ dim_type *ascjson::Unit_FindRelDim(struct Instance *i)
     Asc_Panic(2, __FUNCTION__, "Type is not a relation type in Unit_FindRelDimen.");
   }
 
-  //consistent = asc_check_dimensions(reln,&dim);
   consistent = RelationCheckDimensions(i,&dim);
   if( !consistent ) {
     if (g_check_dimensions_noisy) {

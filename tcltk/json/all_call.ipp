@@ -314,6 +314,7 @@ int ascjson::call_all_force_link() {
 	count += e->e;
 	e = dbghelp (vargv) ;
 	count += e->e;
+#ifdef REDO_INTEGRATOR
 	e = integrate_setup (vargv) ;
 	count += e->e;
 	e = integrate_cleanup (vargv) ;
@@ -331,6 +332,7 @@ int ascjson::call_all_force_link() {
 	e = integrate_set_samples (vargv) ;
 	count += e->e;
 	e = integrate_able (vargv) ;
+#endif
 	count += e->e;
 	e = x__mtx_norms (vargv) ;
 	count += e->e;

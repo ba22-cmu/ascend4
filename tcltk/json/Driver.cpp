@@ -153,8 +153,10 @@ int AscDriver(int argc, CONST char **argv)
 	printf("%s\n", r3->v);
 	// should return testcmumodel cmumodel your_site_models catch_Word_model as a vtab list
 	
-	//int count = world->call_all_force_link();
-	//printf("force count was: %d", count);
+	if (argc > 6) {
+		int count = world->call_all_force_link();
+		printf("force count was: %d", count);
+	}
 	
 	delete world;
 
