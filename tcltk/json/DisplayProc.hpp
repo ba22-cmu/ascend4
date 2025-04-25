@@ -28,8 +28,7 @@
 #ifndef ASCTK_DISPLAYPROC_HPP
 #define ASCTK_DISPLAYPROC_HPP
 
-int Asc_DispDefineCmd(Asc_DString *hptr,
-                             int argc, CONST84 char *argv[]);
+int Asc_DispDefineCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]);
 /**<
  *  This function is used mainly by the Library and Display tools for
  *  displaying the types. It will take 0, 1 or 2 arguments. For no

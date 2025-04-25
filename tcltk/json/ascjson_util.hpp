@@ -45,6 +45,9 @@ typedef const struct rc * rcp;
  */
 struct jcache;
 
+// free the result
+char *file_to_string(FILE *f);
+
 #define VQUIET(a) a.c_str()
 #define QUIET(a) a
 #define QUIET2(a) a

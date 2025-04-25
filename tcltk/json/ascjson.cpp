@@ -33,6 +33,28 @@
 #include <cstdio>
 #include <cerrno>
 
+char *file_to_string(FILE *f)
+{
+	if (!f) {
+		errno =  EINVAL;
+		return NULL;
+	}
+	fflush(f);
+	fseek(f, 0L, SEEK_END);
+	long sz = ftell(f);
+	rewind(f);
+	char *result = (char*)malloc(sz+1);
+	if (!result) {
+		errno = ENOMEM;
+		return result;
+	}
+	result[sz] = '\0';
+	size_t in = fread(result, sizeof(char), sz, f);
+	if (in < (size_t)sz) 
+		printf("short read in file_to_string :(.\n");
+	return result;
+}
+
 /* convert string to argv by splitting. must be called before ASCUSE */
 #define INIT_ARGV(vargv) \
 	if (bad) { \

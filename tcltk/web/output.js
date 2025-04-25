@@ -3824,6 +3824,25 @@ async function createWasm() {
   }
   }
 
+  function ___syscall_unlinkat(dirfd, path, flags) {
+  try {
+  
+      path = SYSCALLS.getStr(path);
+      path = SYSCALLS.calculateAt(dirfd, path);
+      if (flags === 0) {
+        FS.unlink(path);
+      } else if (flags === 512) {
+        FS.rmdir(path);
+      } else {
+        abort('Invalid flags passed to unlinkat');
+      }
+      return 0;
+    } catch (e) {
+    if (typeof FS == 'undefined' || !(e.name === 'ErrnoError')) throw e;
+    return -e.errno;
+  }
+  }
+
   var __abort_js = () =>
       abort('native code called abort()');
 
@@ -4624,6 +4643,8 @@ var wasmImports = {
   /** @export */
   __syscall_stat64: ___syscall_stat64,
   /** @export */
+  __syscall_unlinkat: ___syscall_unlinkat,
+  /** @export */
   _abort_js: __abort_js,
   /** @export */
   _emscripten_fs_load_embedded_files: __emscripten_fs_load_embedded_files,
@@ -4840,7 +4861,7 @@ var _emscripten_stack_get_end = wasmExports['emscripten_stack_get_end']
 var __emscripten_stack_restore = wasmExports['_emscripten_stack_restore']
 var __emscripten_stack_alloc = wasmExports['_emscripten_stack_alloc']
 var _emscripten_stack_get_current = wasmExports['emscripten_stack_get_current']
-var ___emscripten_embedded_file_data = Module['___emscripten_embedded_file_data'] = 520684;
+var ___emscripten_embedded_file_data = Module['___emscripten_embedded_file_data'] = 520716;
 function invoke_iiii(index,a1,a2,a3) {
   var sp = stackSave();
   try {

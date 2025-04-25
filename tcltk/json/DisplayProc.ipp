@@ -49,8 +49,7 @@
 #define MAXIMUM_STR_LENGTH 256
 #define DISPTAB 4
 
-int ascjson::Asc_DispDefineCmd(Asc_DString *hptr,
-                  int argc, CONST84 char *argv[])
+int ascjson::Asc_DispDefineCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   /* The format of this command is : ddefine ?arg?, where arg may
    * be none or one. We might add a module arg.
@@ -74,18 +73,21 @@ int ascjson::Asc_DispDefineCmd(Asc_DString *hptr,
       return HELP_ERROR;
     } else {
       if ( argc == 3 ) {
-        ddef_outfile=fopen(argv[2],"w");
+        ddef_outfile=tmpfile();
         if (!ddef_outfile) {
           Asc_DStringSet(hptr, "ddefine: unable to open data file.");
           return HELP_ERROR;
         }
         closefile=1;
       } else {
-        ddef_outfile=stderr;
+        ddef_outfile=stdout;
       }
       WriteDefinition(ddef_outfile,desc); /* later store this in a list */
       if (closefile) {
+        char *r = file_to_string(ddef_outfile);
         fclose(ddef_outfile);
+	Asc_DStringSet(hptr, r);
+	free(r);
       }
       return HELP_OK;
     }
@@ -95,7 +97,8 @@ int ascjson::Asc_DispDefineCmd(Asc_DString *hptr,
       length = gl_length(list);
       for(c=1;c<=length;c++) {
         desc = (struct TypeDescription *)gl_fetch(list,c);
-        PRINTF("\t%s\n",SCP(GetName(desc)));
+        // PRINTF("\t%s\n",SCP(GetName(desc)));
+        VTcl_AppendElement(hptr,SCP(GetName(desc)));
       }
       return HELP_OK;
     } else {
@@ -127,7 +130,7 @@ int ascjson::Asc_DispDiffDefineCmd(Asc_DString *hptr,
     return HELP_ERROR;
   } else {
     if ( argc == 3 ) {
-        ddef_outfile=fopen(argv[2],"w");
+        ddef_outfile=tmpfile();
         if (!ddef_outfile) {
           Asc_DStringSet(hptr, "ddiffdefine: unable to open data file.");
           return HELP_ERROR;
@@ -139,14 +142,16 @@ int ascjson::Asc_DispDiffDefineCmd(Asc_DString *hptr,
     }
     WriteDiffDefinition(ddef_outfile,desc);
     if (closefile) {
+      char *r = file_to_string(ddef_outfile);
       fclose(ddef_outfile);
+      Asc_DStringSet(hptr, r);
+      free(r);
     }
     return HELP_OK;
   }
 }
 
-int ascjson::Asc_DispTypePartsCmd(Asc_DString *hptr,
-                     int argc, CONST84 char *argv[])
+int ascjson::Asc_DispTypePartsCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct gl_list_t *names;
   unsigned long len,c;

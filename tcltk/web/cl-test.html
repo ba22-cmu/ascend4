@@ -111,31 +111,31 @@
 
 			rtcode = asc("ddefine");
 			if (rtcode.e == 0) {
-				console.log("output of types list is in:","/codedump.txt");
-				// fix that it dumps to console or use right args
+				console.log("output of types list is ",rtcode.v);
 			} else {
 				console.log("error:" + rtcode.v);
 			}
 
 			rtcode = asc("ddefine", "cmumodel", "/codedump.txt");
 			if (rtcode.e == 0) {
-				console.log("output of model type is in:","/codedump.txt");
-				// dump to string or suck it in and return it or filename
+				console.log("output of model type is");
+				console.log(rtcode.v);
 			} else {
 				console.log("error:" + rtcode.v);
 			}
 
 			rtcode = asc("ddefine", "solver_int", "/codedump.txt");
 			if (rtcode.e == 0) {
-				console.log("output of solver_int code is in:","/codedump.txt");
+				console.log("output of solver_int code is:");
+				console.log(rtcode.v);
 			} else {
 				console.log("error:" + rtcode.v);
 			}
 
 			rtcode = asc("ddiffdefine", "solver_binary", "/codedump.txt");
 			if (rtcode.e == 0) {
-				// dump to string or suck it in and return it or filename
-				console.log("output of solver_binary new code is in:","/codedump.txt");
+				console.log("output of solver_binary new code is:");
+				console.log(rtcode.v);
 			} else {
 				console.log("error:" + rtcode.v);
 			}
