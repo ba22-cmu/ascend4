@@ -56,7 +56,7 @@ struct jcache;
 #endif
 /** add vtab separated entry to string */
 #define VTcl_AppendElement(a, b) \
-	Asc_DStringAppend(a, b, HALL); \
+	Asc_DStringAppend(a, (b ? b : ""), HALL); \
 	Asc_DStringAppend(a, "\v", 1)
 
 /// split str on vtab and return data in *argvP. call must free *argvP.

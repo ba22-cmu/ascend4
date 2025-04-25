@@ -399,15 +399,12 @@ int LibrAncestorType(Asc_DString *hptr, struct TypeDescription *desc)
 
 
 STDHLF(Asc_LibrModuleInfoCmdHC,(Asc_LibrModuleInfoCmdHL,HLFSTOP));
-int ascjson::Asc_LibrModuleInfoCmdDS( Asc_DString *hptr,
-                          int argc, CONST84 char **argv)
+int ascjson::Asc_LibrModuleInfoCmdDS( Asc_DString *hptr, int argc, CONST84 char **argv)
 {
   CONST struct module_t *mod;
   CONST char *string;
   char intbuf[36];
   int i;
-
-  OLD_ASCUSE;  /* see if first arg is -help */
 
   if( argc < 2 ) {
     Asc_DStringSet(hptr, "wrong # args: Usage: " Asc_LibrModuleInfoCmdHU);
@@ -416,16 +413,16 @@ int ascjson::Asc_LibrModuleInfoCmdDS( Asc_DString *hptr,
 
   for( i = 1; i < argc; i++ ) {
     if((mod = Asc_GetModuleByName(argv[i])) != NULL ) {
-      VTcl_AppendElement(hptr, (char *)SCP(Asc_ModuleName(mod)));
-      VTcl_AppendElement(hptr, (char *)SCP(Asc_ModuleBestName(mod)));
+      VTcl_AppendElement(hptr, SCP(Asc_ModuleName(mod)));
+      VTcl_AppendElement(hptr, SCP(Asc_ModuleBestName(mod)));
       string = Asc_ModuleString(mod);
       if (string == NULL) {
         VTcl_AppendElement(hptr, asctime(Asc_ModuleTimeModified(mod)));
-        VTcl_AppendElement(hptr, NULL);
+        VTcl_AppendElement(hptr, "");
       } else {
         sprintf(intbuf,"%d",(int)Asc_ModuleStringIndex(mod));
         VTcl_AppendElement(hptr, intbuf);
-        VTcl_AppendElement(hptr, (char *)string);
+        VTcl_AppendElement(hptr, string);
       }
     }
   }

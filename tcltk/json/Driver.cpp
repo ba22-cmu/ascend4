@@ -152,6 +152,11 @@ int AscDriver(int argc, CONST char **argv)
 	printf("%d\n", r3->e);
 	printf("%s\n", r3->v);
 	// should return testcmumodel cmumodel your_site_models catch_Word_model as a vtab list
+
+	const char *minfo = Asc_LibrModuleInfoCmdHN "\vbasemodel.a4l<0>";
+	auto r4 = world->Asc_LibrModuleInfoCmdHC(minfo);
+	printf("%d\n", r4->e);
+	printf("%s\n", r4->v);
 	
 	if (argc > 6) {
 		int count = world->call_all_force_link();
