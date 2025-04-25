@@ -197,7 +197,7 @@ rcp ascjson::Asc_LibrModuleInfoCmdHC (const char *vargv)
 
 rcp ascjson::Asc_LibrDestroyTypesCmdHC (const char *vargv) 
 {
-#if 1
+#if 0
 	{
  if (bad) { setc(__func__, SVcstr, " badness detected. restart needed.", -1);
 	 return getc(__func__);
@@ -874,10 +874,8 @@ rcp ascjson::dbg_write_unattvar (const char *vargv)
 
 rcp ascjson::brow_write_var (const char *vargv) 
 {
-	unimplemented;
-	// wrap_dstring( Asc_DebuWriteVar cd=1 , SVcstr);
+	wrap_dstring( Asc_DebuWriteVar , SVcstr);
 }
-
 
 rcp ascjson::dbg_write_rel (const char *vargv) 
 {
@@ -886,8 +884,7 @@ rcp ascjson::dbg_write_rel (const char *vargv)
 
 rcp ascjson::brow_write_rel (const char *vargv) 
 {
-	unimplemented;
-	// wrap_dstring( Asc_DebuWriteRel cd=1 , SVcstr);
+	wrap_dstring( Asc_DebuWriteRel , SVcstr);
 }
 
 rcp ascjson::dbg_write_obj (const char *vargv) 

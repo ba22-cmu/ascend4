@@ -414,14 +414,17 @@ int ascjson::Asc_LibrModuleInfoCmdDS( Asc_DString *hptr, int argc, CONST84 char 
   for( i = 1; i < argc; i++ ) {
     if((mod = Asc_GetModuleByName(argv[i])) != NULL ) {
       VTcl_AppendElement(hptr, SCP(Asc_ModuleName(mod)));
+
       VTcl_AppendElement(hptr, SCP(Asc_ModuleBestName(mod)));
       string = Asc_ModuleString(mod);
       if (string == NULL) {
         VTcl_AppendElement(hptr, asctime(Asc_ModuleTimeModified(mod)));
+
         VTcl_AppendElement(hptr, "");
       } else {
         sprintf(intbuf,"%d",(int)Asc_ModuleStringIndex(mod));
         VTcl_AppendElement(hptr, intbuf);
+
         VTcl_AppendElement(hptr, string);
       }
     }

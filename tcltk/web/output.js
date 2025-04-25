@@ -4707,6 +4707,7 @@ var _emscripten_bind_ascjson_libr_hide_type_1 = Module['_emscripten_bind_ascjson
 var _emscripten_bind_ascjson_libr_unhide_type_1 = Module['_emscripten_bind_ascjson_libr_unhide_type_1'] = createExportWrapper('emscripten_bind_ascjson_libr_unhide_type_1', 2);
 var _emscripten_bind_ascjson_libr_type_is_shown_1 = Module['_emscripten_bind_ascjson_libr_type_is_shown_1'] = createExportWrapper('emscripten_bind_ascjson_libr_type_is_shown_1', 2);
 var _emscripten_bind_ascjson_libr_types_in_module_1 = Module['_emscripten_bind_ascjson_libr_types_in_module_1'] = createExportWrapper('emscripten_bind_ascjson_libr_types_in_module_1', 2);
+var _emscripten_bind_ascjson_libr_extract_type_1 = Module['_emscripten_bind_ascjson_libr_extract_type_1'] = createExportWrapper('emscripten_bind_ascjson_libr_extract_type_1', 2);
 var _emscripten_bind_ascjson_ddefine_1 = Module['_emscripten_bind_ascjson_ddefine_1'] = createExportWrapper('emscripten_bind_ascjson_ddefine_1', 2);
 var _emscripten_bind_ascjson_ddiffdefine_1 = Module['_emscripten_bind_ascjson_ddiffdefine_1'] = createExportWrapper('emscripten_bind_ascjson_ddiffdefine_1', 2);
 var _emscripten_bind_ascjson_disp_1 = Module['_emscripten_bind_ascjson_disp_1'] = createExportWrapper('emscripten_bind_ascjson_disp_1', 2);
@@ -4839,7 +4840,7 @@ var _emscripten_stack_get_end = wasmExports['emscripten_stack_get_end']
 var __emscripten_stack_restore = wasmExports['_emscripten_stack_restore']
 var __emscripten_stack_alloc = wasmExports['_emscripten_stack_alloc']
 var _emscripten_stack_get_current = wasmExports['emscripten_stack_get_current']
-var ___emscripten_embedded_file_data = Module['___emscripten_embedded_file_data'] = 517052;
+var ___emscripten_embedded_file_data = Module['___emscripten_embedded_file_data'] = 520684;
 function invoke_iiii(index,a1,a2,a3) {
   var sp = stackSave();
   try {
@@ -5466,6 +5467,15 @@ ascjson.prototype['libr_types_in_module'] = ascjson.prototype.libr_types_in_modu
   if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
   else vargv = ensureString(vargv);
   return wrapPointer(_emscripten_bind_ascjson_libr_types_in_module_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['libr_extract_type'] = ascjson.prototype.libr_extract_type = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_libr_extract_type_1(self, vargv), rc);
 };
 
 /** @suppress {undefinedVars, duplicate} @this{Object} */

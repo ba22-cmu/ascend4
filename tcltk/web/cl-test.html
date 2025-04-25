@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+</head>
+
+<body>
+	<script type="text/javascript" src="output.js" crossorigin="anonymous"></script>
+	<script>
+		var instance;
+		var world;
+		// this is supposed to not finish until all is well. (via webidl binder)
+		createModule().then(module => {
+			instance = module;
+		});
+
+		/*
+		async function create_mod() {
+			instance = await createModule();
+		};
+		window.onload = async function() {
+			await create_mod();
+		}
+		*/
+		
+//		function displayOutput(x) {
+//			const elmt = document.createElement("p");
+//			elmt.appendChild(document.createTextNode(x));
+//			document.body.appendChild(elmt);
+//		}
+//		
+		/// Call the method (must also be quoted) with all the string args.
+		/// This eliminates manually building the vtab string.
+		function asc(method, ...rest) {
+			rest.unshift(method);
+			return world[method](rest.join("\v"));
+		}
+		function run_ascend() {
+			console.log("called run_ascend")
+			if (world == null) {
+				console.log("creating the world")
+				world = new instance.ascjson();
+				console.log("joy to the world")
+			}
+			// rt2 = asc("librread", "/models/system.a4l");
+			rt2 = asc("librread", "/models/basemodel.a4l");
+			rt1 = asc("libr_destroy_types");
+			console.log(rt1.e);
+			console.log(rt1.v);
+			if (rt1.e != 0)
+				return;
+			rt2 = asc("librread", "/models/vesselPlot.a4c");
+			console.log(rt2.e);
+			console.log(rt2.v);
+			if (rt1.e != 0)
+				return;
+			rt2a = asc("libr_query", "-modulelist", "-mtype", "0");
+			console.log(rt2a.e);
+			console.log(rt2a.v);
+			if (rt2a.e != 0)
+				return;
+			console.log("found modules with types:");
+			modules = rt2a.v.split("\v");
+			for (const m of modules) {
+				if (m.length > 0) {
+					console.log("module", m);
+					rt3 = asc("libr_types_in_module", m);
+					if (rt3.e != 0)
+						break;
+					types = rt3.v.split("\v");
+					if (types.length > 0) {
+						console.log("found types in module " + m);
+						for (const t of types) {
+							if (t.length > 0) {
+								console.log(t);
+							}
+						}
+					} else {
+						console.log("no types in module " + m);
+					}
+				}
+			}
+
+			for (const m of modules) {
+				if (m.length > 0) {
+					console.log("libr_moduleinfo", m);
+					// bug in append call
+					rti = asc("libr_moduleinfo", m);
+					if (rti.e != 0)
+						break;
+					console.log("info: " + rti.v);
+				}
+			}
+
+			rth = asc( "help","library");
+			if (rth.e == 0) {
+				console.log("commands from 'help library' output are:");
+				help = rth.v.split("\v");
+				for (const i of help) {
+					console.log(i);
+				}
+			}
+			rth2 = asc("help", "help");
+			if (rth2.e == 0) {
+				console.log("'help help' output are:");
+				help = rth2.v.split("\v");
+				for (const i of help) {
+					console.log(i);
+				}
+			}
+
+			rtcode = asc("ddefine");
+			if (rtcode.e == 0) {
+				console.log("output of types list is in:","/codedump.txt");
+				// fix that it dumps to console or use right args
+			} else {
+				console.log("error:" + rtcode.v);
+			}
+
+			rtcode = asc("ddefine", "cmumodel", "/codedump.txt");
+			if (rtcode.e == 0) {
+				console.log("output of model type is in:","/codedump.txt");
+				// dump to string or suck it in and return it or filename
+			} else {
+				console.log("error:" + rtcode.v);
+			}
+
+			rtcode = asc("ddefine", "solver_int", "/codedump.txt");
+			if (rtcode.e == 0) {
+				console.log("output of solver_int code is in:","/codedump.txt");
+			} else {
+				console.log("error:" + rtcode.v);
+			}
+
+			rtcode = asc("ddiffdefine", "solver_binary", "/codedump.txt");
+			if (rtcode.e == 0) {
+				// dump to string or suck it in and return it or filename
+				console.log("output of solver_binary new code is in:","/codedump.txt");
+			} else {
+				console.log("error:" + rtcode.v);
+			}
+
+			rtcode = asc("dgetparts", "MODEL", "vesselPlot");
+			if (rtcode.e == 0) {
+				console.log("output of vesselPlot submodels is in:","/codedump.txt");
+				// dump to string or suck it in and return it or filename
+			} else {
+				console.log("error:" + rtcode.v);
+			}
+
+			rtcode = asc("dgetparts", "ATOM", "vesselPlot");
+			if (rtcode.e == 0) {
+				console.log("output of vesselPlot variable types is in:","/codedump.txt");
+			} else {
+				console.log("error:" + rtcode.v);
+			}
+
+			rtcode = asc("disroot_type", "real");
+			if (rtcode.e == 0) {
+				console.log("real is root type=", rtcode.v);
+			} else {
+				console.log("error:" + rtcode.v);
+			}
+
+			rtcode = asc("disroot_type", "solver_var");
+			if (rtcode.e == 0) {
+				console.log("solver_var is root type=", rtcode.v);
+			} else {
+				console.log("error:" + rtcode.v);
+			}
+
+			rtcode = asc("drefinement_tree", "factor");
+			// convert tree to json
+			if (rtcode.e == 0) {
+				console.log("type tree of 'factor' is:", rtcode.v);
+			} else {
+				console.log("error:" + rtcode.v);
+			}
+
+			rtcode = asc("drefines_me", "real");
+			if (rtcode.e == 0) {
+				console.log("type children of real are:", rtcode.v);
+			} else {
+				console.log("error:" + rtcode.v);
+			}
+
+			rtcode = asc("drefines_meall", "real");
+			if (rtcode.e == 0) {
+				console.log("all type descendants of real as list are:", rtcode.v);
+			} else {
+				console.log("error:" + rtcode.v);
+			}
+
+			rtcode = asc("hier", "solver_binary");
+			if (rtcode.e == 0) {
+				console.log("all type ancestors of solver_binary are:", rtcode.v);
+			} else {
+				console.log("error:" + rtcode.v);
+			}
+
+			rtcode = asc("libr_extract_type", "cmumodel", "/models/basemodel.a4l","-s");
+			// alternates: libr_extract_type [-c] <type> [source_file] [-s,destination_file]
+			// fixme
+			if (rtcode.e == 0) {
+				console.log("code for cmumodel is ", rtcode.v);
+			} else {
+				console.log("error:" + rtcode.v);
+			}
+
+			model_string = "MODEL catch_Word_model2 (* Bill Gates sacrificial goat *); \
+(* This MODEL does nothing. \
+ * Normally catch_Word_model just gets parsed and ignored. \
+ * \
+ * If the user has tried to read a Microsoft Word binary file, Tcl file, \
+ * or some other piece of junk as if it were an ASCEND MODEL \
+ * source file, then catch_Word_model will die on an unknown \
+ * syntax error. \
+ * While catch_Word_model is dying the parser returns a good \
+ * starting condition. \
+ * \
+ * Here is the message of recovery when this MODEL fails: \
+Asc-Error: Model definition \"catch_Word_model\" abandoned due to syntax errors. \
+Asc-Error: Rejected \"catch_Word_model\" at line basemodel.a4l:62. \
+ \
+        @TODO document how this works \
+ *) \
+END catch_Word_model2;";
+			rtcode = asc("libr_parsestring", model_string);
+			if (rtcode.e == 0) {
+				console.log("string parsed to module name:", rtcode.v);
+			} else {
+				console.log("error:" + rtcode.v);
+			}
+
+// sim_BinTokenSetOptions
+// libr_hide_type $TYPE $PARTNAME (exclude PARTNAME from listing ot TYPE)
+// libr_type_is_shown
+// libr_unhide_type
+// libr_query
+		}
+	</script>
+	<button onclick="run_ascend();">try ascend interpreter</button>
+</body>
+
+</html>

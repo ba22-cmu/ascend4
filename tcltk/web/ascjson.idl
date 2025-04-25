@@ -44,9 +44,9 @@ interface ascjson {
  [Const] rc libr_type_is_shown (DOMString vargv) ;
 
  [Const] rc libr_types_in_module (DOMString vargv) ;
-/*
- [Const] rc libr_extract_type (DOMString vargv) ;
 
+ [Const] rc libr_extract_type (DOMString vargv) ;
+/*
  [Const] rc qlfdid (DOMString vargv) ;
 
  [Const] rc bgetproc (DOMString vargv) ;
