@@ -214,7 +214,7 @@ rcp ascjson::Asc_LibrReadCmdHC (const char *vargv)
 
 rcp ascjson::Asc_LibrModuleInfoCmdHC (const char *vargv) 
 {
-	wrap_dstring(Asc_LibrModuleInfoCmdDS, SVcstr);
+	wrap_dstring(Asc_LibrModuleInfoCmdDS, SVjson);
 }
 
 rcp ascjson::Asc_LibrDestroyTypesCmdHC (const char *vargv) 

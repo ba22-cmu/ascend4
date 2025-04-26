@@ -141,7 +141,7 @@ int AscDriver(int argc, CONST char **argv)
 
 	// next line depends on ASCEND_LIBRARY env var defaulted right in ascjson.cpp
 	// or there being something in user env that overrides it.
-	const char *read_file = "librread\vbasemodel.a4l";
+	const char *read_file = "librread\vvesselPlot.a4c";
 	auto r2 = world->Asc_LibrReadCmdHC(read_file);
 	printf("%d\n", r2->e);
 	printf("%s\n", r2->v);
@@ -153,7 +153,7 @@ int AscDriver(int argc, CONST char **argv)
 	printf("%s\n", r3->v);
 	// should return testcmumodel cmumodel your_site_models catch_Word_model as a vtab list
 
-	const char *minfo = Asc_LibrModuleInfoCmdHN "\vbasemodel.a4l<0>";
+	const char *minfo = Asc_LibrModuleInfoCmdHN "\vbasemodel.a4l<0>\vvesselPlot.a4c<0>";
 	auto r4 = world->Asc_LibrModuleInfoCmdHC(minfo);
 	printf("%d\n", r4->e);
 	printf("%s\n", r4->v);

@@ -411,24 +411,49 @@ int ascjson::Asc_LibrModuleInfoCmdDS( Asc_DString *hptr, int argc, CONST84 char 
     return HELP_ERROR;
   }
 
+#ifndef TCLLIST
+  /* json format */
+  Asc_DStringAppend(hptr,"[",1);
+  for( i = 1; i < argc; i++ ) {
+    if((mod = Asc_GetModuleByName(argv[i])) != NULL ) {
+      Asc_DStringAppend3(hptr,"{\"name\":\"", SCP(Asc_ModuleName(mod)),"\",",HALL);
+      Asc_DStringAppend3(hptr,"\"best_name\":\"", SCP(Asc_ModuleBestName(mod)),"\",",HALL);
+      string = Asc_ModuleString(mod);
+      if (string == NULL) {
+	char *ts = asctime(Asc_ModuleTimeModified(mod));
+	char *lineend = strchr(ts,'\n');
+        if (lineend) {
+		*lineend = '\0';
+	}
+        Asc_DStringAppend3(hptr,"\"time_modified\":\"", ts, "\"}",HALL);
+      } else {
+        sprintf(intbuf,"%d",(int)Asc_ModuleStringIndex(mod));
+        Asc_DStringAppend3(hptr,"\"index\":\"", intbuf, "\",",HALL);
+        Asc_DStringAppend3(hptr,"\"str\":\"", string, "\"}",HALL);
+      }
+      if (i < argc-1) {
+        Asc_DStringAppend(hptr,",",1);
+      }
+    }
+  }
+  Asc_DStringAppend(hptr,"]",1);
+#else
   for( i = 1; i < argc; i++ ) {
     if((mod = Asc_GetModuleByName(argv[i])) != NULL ) {
       VTcl_AppendElement(hptr, SCP(Asc_ModuleName(mod)));
-
       VTcl_AppendElement(hptr, SCP(Asc_ModuleBestName(mod)));
       string = Asc_ModuleString(mod);
       if (string == NULL) {
         VTcl_AppendElement(hptr, asctime(Asc_ModuleTimeModified(mod)));
-
         VTcl_AppendElement(hptr, "");
       } else {
         sprintf(intbuf,"%d",(int)Asc_ModuleStringIndex(mod));
         VTcl_AppendElement(hptr, intbuf);
-
         VTcl_AppendElement(hptr, string);
       }
     }
   }
+#endif
   return HELP_OK;
 }
 
