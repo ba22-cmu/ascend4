@@ -687,7 +687,7 @@ rcp ascjson::set_slv_parmsnew (const char *vargv)
 
 rcp ascjson::slv_get_parmsnew (const char *vargv) 
 {
-	wrap_dstring( Asc_SolvGetSlvParmsNew , SVcstr);
+	wrap_dstring( Asc_SolvGetSlvParmsNew , SVjson);
 }
 
 rcp ascjson::slv_get_insttype (const char *vargv) 
