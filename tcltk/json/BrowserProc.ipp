@@ -321,8 +321,7 @@ int ascjson::Asc_BrowSimListCmd(Asc_DString *hptr, int argc, CONST84 char *argv[
   return HELP_OK;
 }
 
-int ascjson::Asc_BrowSimTypeCmd(Asc_DString *hptr,
-                   int argc, CONST84 char *argv[])
+int ascjson::Asc_BrowSimTypeCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct Instance *sptr;
 
@@ -817,8 +816,7 @@ int BrowOperands(Asc_DString *hptr, struct Instance *i)
   return HELP_OK;
 }
 
-int ascjson::Asc_BrowInstQueryCmd(Asc_DString *hptr,
-                     int argc, CONST84 char *argv[])
+int ascjson::Asc_BrowInstQueryCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct Instance *i;
   struct Instance *p;
@@ -1077,8 +1075,7 @@ static struct Instance *BrowInstanceMerge(struct Instance *i1,
  * The instance that was kept from the merge will the corresponding,
  * non-NULL pointer.
  */
-int ascjson::Asc_BrowInstanceMergeCmd(Asc_DString *hptr,
-                         int argc, CONST84 char *argv[])
+int ascjson::Asc_BrowInstanceMergeCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct Instance *result;
   struct Instance *i1, *i2;
@@ -1138,8 +1135,7 @@ int ascjson::Asc_BrowInstanceMergeCmd(Asc_DString *hptr,
  * and perhaps g_cursim->root, but not much else with the current setup.
  * Handles would help.
  */
-int ascjson::Asc_BrowInstanceRefineCmd(Asc_DString *hptr,
-                          int argc, CONST84 char *argv[])
+int ascjson::Asc_BrowInstanceRefineCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   struct TypeDescription *desc, *desc1, *desc2;
   struct Instance *i, *top, *inst;

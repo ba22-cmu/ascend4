@@ -552,17 +552,17 @@ rcp ascjson::file_by_type (const char *vargv)
 
 rcp ascjson::dchild (const char *vargv) 
 {
-	wrap_dstring(Asc_DispChildOneCmd, SVcstr);
+	wrap_dstring(Asc_DispChildOneCmd, SVvtab);
 }
 
 rcp ascjson::drefines_me (const char *vargv) 
 {
-	wrap_dstring(Asc_DispRefinesMeCmd, SVcstr);
+	wrap_dstring(Asc_DispRefinesMeCmd, SVvtab);
 }
 
 rcp ascjson::drefines_meall (const char *vargv) 
 {
-	wrap_dstring(Asc_DispRefinesMeCmd, SVcstr);
+	wrap_dstring(Asc_DispRefinesMeCmd, SVvtab);
 	// Asc_DispRefinesMeCmd  -all
 }
 
@@ -573,7 +573,7 @@ rcp ascjson::drefinement_tree (const char *vargv)
 
 rcp ascjson::dgetparts (const char *vargv) 
 {
-	wrap_dstring(Asc_DispTypePartsCmd, SVcstr);
+	wrap_dstring(Asc_DispTypePartsCmd, SVvtab);
 }
 
 rcp ascjson::disroot_type (const char *vargv) 
