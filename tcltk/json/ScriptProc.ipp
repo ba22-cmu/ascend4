@@ -293,6 +293,7 @@ int ascjson::Asc_TimeCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
   sprintf(tmps,"%ld",(long)CLOCKS_PER_SEC);
   VTcl_AppendElement(hptr,tmps);
 
+  VAEstrip(hptr);
   return HELP_OK;
 #endif
 }

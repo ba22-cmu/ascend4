@@ -3,14 +3,22 @@
 #include <string>
 #include <cstdlib>
 
+enum MealType { rice, noodles, other };
+class Meal {
+	public:
+		MealType mtype;
+		double  size;
+};
 
-#if 0
+
+#if 1
 enum vtype {
 	SVjson,
 	SVjson5,
-	SVcstr
+	SVcstr,
+	SVvtab
 };
-#define enum
+#define ENUM enum
 #else
 typedef int vtype;
 #define SVjson 0

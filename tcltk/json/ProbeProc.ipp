@@ -541,6 +541,7 @@ void ascjson::ProbeAppendAll(Asc_DString *hptr, struct gl_list_t *p)
       e = (struct ProbeEntry *)gl_fetch(p,c);
       AppendEntryItem(hptr,e);
     }
+    VAEstrip(hptr);
   }
 }
 
@@ -567,6 +568,7 @@ void DefineProbeFilters(Asc_DString *hptr)
   VTcl_AppendElement(hptr,"VisitIntegerConstants/Collect integer constants");
   VTcl_AppendElement(hptr,"VisitRealConstants/Collect real constants");
   VTcl_AppendElement(hptr,"VisitSymbolConstants/Collect symbol constants");
+  VAEstrip(hptr);
 }
 
 static
@@ -898,6 +900,7 @@ int ascjson::Asc_ProbeCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
   }
 #undef ParseCollectionIndex
 #undef ParseCollectionNumber
+  VAEstrip(hptr);
   return HELP_OK;
 }
 

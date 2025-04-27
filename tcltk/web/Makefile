@@ -32,9 +32,9 @@ RTEMFLAGS= -g -sMODULARIZE  -s'EXPORT_NAME="createMyModule"'
 RTPOST= --extern-post-js rt_post.js
 RTPOST=
 
+# -DMODULE_DEBUG  (for compiler file resolver)
 lib: $(CXXSRCS) $(CXXHDRS) $(CSRCS) $(CHDRS) web_glue.js ascjson_glue_wrapper.cc
 	$(EM) -I../.. -I. $(CFLAGS) $(EXP) $(CXXSRCS) $(CSRCS) \
-		-DMODULE_DEBUG \
 		ascjson_glue_wrapper.cc \
 		--post-js web_glue.js \
 		-o output.js $(EMFLAGS) $(EMBEDS)

@@ -56,6 +56,7 @@ int ascjson::Asc_BrowQlfdidSearchCmdDS(Asc_DString *hptr, int argc, CONST84 char
       se = (SearchEntry *)gl_fetch(search_list,c);
       VTcl_AppendElement(hptr, se->name);
     }
+    VAEstrip(hptr);
     Asc_SearchListDestroy(search_list);
     return HELP_OK;
   }

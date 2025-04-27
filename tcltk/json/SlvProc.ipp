@@ -198,6 +198,7 @@ static void DoVarAnalyze(Asc_DString *hptr,
       VTcl_AppendElement(hptr,tmp);
     }
   }
+  VAEstrip(hptr);
 }
 
 
@@ -229,6 +230,7 @@ static void DoRelAnalyze(Asc_DString *hptr,
       b_result = b_invalid;
     }
   }
+  VAEstrip(hptr);
 }
 
 
@@ -606,6 +608,7 @@ int MonChange(struct SlvMonitor *m, Asc_DString *hptr,
         VTcl_AppendElement(hptr,buf);
       }
     }
+    VAEstrip(hptr);
     return  HELP_OK;
   case 'r':
     if (m->updated & MON_RELCHANGE) {
@@ -639,6 +642,7 @@ int MonChange(struct SlvMonitor *m, Asc_DString *hptr,
         VTcl_AppendElement(hptr,buf);
       }
     }
+    VAEstrip(hptr);
     return  HELP_OK;
   default:
     /* whine about bad arg to change */
@@ -792,6 +796,7 @@ int MonPlotData (struct SlvMonitor *m, Asc_DString *hptr,
         VTcl_AppendElement(hptr,buf);
       }
     }
+    VAEstrip(hptr);
     return HELP_OK;
   case 's':
   /* plot variable changes in the scaled space where varmax is the largest
@@ -823,6 +828,7 @@ int MonPlotData (struct SlvMonitor *m, Asc_DString *hptr,
         sprintf(buf,"%d %d %d",px,center,i); /* do faster with tcl objects */
         VTcl_AppendElement(hptr,buf);
       }
+      VAEstrip(hptr);
       return HELP_OK;
     }
     /* using the last scaled values, calculate all deltas.
@@ -853,6 +859,7 @@ int MonPlotData (struct SlvMonitor *m, Asc_DString *hptr,
         VTcl_AppendElement(hptr,buf);
       }
     }
+    VAEstrip(hptr);
     return HELP_OK;
   case 'r':
   /* log representation of scaled residuals */
@@ -893,6 +900,7 @@ int MonPlotData (struct SlvMonitor *m, Asc_DString *hptr,
         VTcl_AppendElement(hptr,buf);
       }
     }
+    VAEstrip(hptr);
     return  HELP_OK;
   default:
     /* whine about bad arg */

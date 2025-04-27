@@ -161,6 +161,7 @@ int ascjson::Asc_SolvGetModKids(Asc_DString *hptr, int argc, CONST84 char *argv[
         break;
     }
   }
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -398,71 +399,79 @@ int ascjson::Asc_SolvGetSlvParmsNew(Asc_DString *hptr, int argc, CONST84 char *a
   slv_get_default_parameters(solver,&p);
   tmps=ASC_NEW_ARRAY(char,MAXIMUM_NUMERIC_LENGTH+1);
 
+  Asc_DStringAppend(hptr,"[", 1);
   for (i = 0; i < p.num_parms; i++) {
-    VTcl_AppendElement(hptr,"New_Parm");
+    Asc_DStringAppend(hptr,"{\"type\":\"",HALL);
     switch (p.parms[i].type) {
     case int_parm:
-      VTcl_AppendElement(hptr,"int_parm");
+      Asc_DStringAppend(hptr,"int_parm\",", HALL);
       break;
     case bool_parm:
-      VTcl_AppendElement(hptr,"bool_parm");
+      Asc_DStringAppend(hptr,"bool_parm\",", HALL);
       break;
     case real_parm:
-      VTcl_AppendElement(hptr,"real_parm");
+      Asc_DStringAppend(hptr,"real_parm\",", HALL);
       break;
     case char_parm:
-      VTcl_AppendElement(hptr,"char_parm");
+      Asc_DStringAppend(hptr,"char_parm\",", HALL);
       break;
     default:
-      VTcl_AppendElement(hptr,"error");
+      Asc_DStringAppend(hptr,"error\",", HALL);
       continue;
     }
 
-    VTcl_AppendElement(hptr,p.parms[i].name);
-    VTcl_AppendElement(hptr,p.parms[i].interface_label);
+    Asc_DStringAppend5(hptr,"\"name\":\"", p.parms[i].name, "\","
+	    "\"interface_label\":\"", p.parms[i].interface_label, "\",", HALL);
 
     switch (p.parms[i].type) {
     case int_parm:
-      sprintf(tmps,"%d",p.parms[i].info.i.value);
-      VTcl_AppendElement(hptr,tmps);
-      sprintf(tmps,"%d",p.parms[i].info.i.high);
-      VTcl_AppendElement(hptr,tmps);
-      sprintf(tmps,"%d",p.parms[i].info.i.low);
-      VTcl_AppendElement(hptr,tmps);
+      sprintf(tmps,"\"value\":%d,",p.parms[i].info.i.value);
+      Asc_DStringAppend(hptr,tmps,HALL);
+      sprintf(tmps,"\"high\":%d,",p.parms[i].info.i.high);
+      Asc_DStringAppend(hptr,tmps, HALL);
+      sprintf(tmps,"\"low\":%d,",p.parms[i].info.i.low);
+      Asc_DStringAppend(hptr,tmps, HALL);
       break;
     case bool_parm:
-      sprintf(tmps,"%d",p.parms[i].info.b.value);
-      VTcl_AppendElement(hptr,tmps);
-      sprintf(tmps,"%d",p.parms[i].info.b.high);
-      VTcl_AppendElement(hptr,tmps);
-      sprintf(tmps,"%d",p.parms[i].info.b.low);
-      VTcl_AppendElement(hptr,tmps);
+      sprintf(tmps,"\"value\":%d,",p.parms[i].info.b.value);
+      Asc_DStringAppend(hptr,tmps, HALL);
+      sprintf(tmps,"\"high\":%d,",p.parms[i].info.b.high);
+      Asc_DStringAppend(hptr,tmps, HALL);
+      sprintf(tmps,"\"low\":%d,",p.parms[i].info.b.low);
+      Asc_DStringAppend(hptr,tmps, HALL);
       break;
     case real_parm:
-      sprintf(tmps,"%.6e",p.parms[i].info.r.value);
-      VTcl_AppendElement(hptr,tmps);
-      sprintf(tmps,"%.6e",p.parms[i].info.r.high);
-      VTcl_AppendElement(hptr,tmps);
-      sprintf(tmps,"%.6e",p.parms[i].info.r.low);
-      VTcl_AppendElement(hptr,tmps);
+      sprintf(tmps,"\"value\":%.6e,",p.parms[i].info.r.value);
+      Asc_DStringAppend(hptr,tmps, HALL);
+      sprintf(tmps,"\"high\":%.6e,",p.parms[i].info.r.high);
+      Asc_DStringAppend(hptr,tmps, HALL);
+      sprintf(tmps,"\"low\":%.6e,",p.parms[i].info.r.low);
+      Asc_DStringAppend(hptr,tmps, HALL);
       break;
     case char_parm:
-      VTcl_AppendElement(hptr,p.parms[i].info.c.value);
-      sprintf(tmps,"%d",p.parms[i].info.c.high);
-      VTcl_AppendElement(hptr,tmps);
+      Asc_DStringAppend3(hptr, "\"value\":\"", p.parms[i].info.c.value, "\",", HALL);
+      Asc_DStringAppend(hptr, "\"option_values\":[", HALL);
       for (j = 0; j < p.parms[i].info.c.high; j++) {
-        VTcl_AppendElement(hptr,p.parms[i].info.c.argv[j]);
+        Asc_DStringAppend3(hptr,"\"", p.parms[i].info.c.argv[j], "\"", HALL);
+	if (j < p.parms[i].info.c.high - 1) {
+          Asc_DStringAppend(hptr, ",", 1);
+	}
       }
+      Asc_DStringAppend(hptr, "],", HALL);
       break;
     default:
       FPRINTF(ASCERR,  "slv_get_parmsnew found unrecognized");
       FPRINTF(ASCERR,  " parameter type\n");
       break;
     }
-    sprintf(tmps,"%d",p.parms[i].display);
-    VTcl_AppendElement(hptr,tmps);
-    VTcl_AppendElement(hptr,p.parms[i].description);
+    sprintf(tmps,"\"display\":%d,",p.parms[i].display);
+    Asc_DStringAppend(hptr,tmps,HALL);
+    Asc_DStringAppend3(hptr,"\"description\":\"",p.parms[i].description, "\"}",HALL);
+    if (i < p.num_parms-1) {
+      Asc_DStringAppend(hptr,",", 1);
+    }
   }
+  Asc_DStringAppend(hptr,"]", 1);
   slv_destroy_parms(&p);
   ascfree(tmps);
   return HELP_OK;
@@ -657,6 +666,7 @@ int ascjson::Asc_SolvGetSlvParms(Asc_DString *hptr, int argc, CONST84 char *argv
   ascfree(tmps);
   CONSOLE_DEBUG("...");
   ::slv_select_solver(g_solvsys_cur,cursolver);
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -934,6 +944,7 @@ int ascjson::Asc_SolvGetInstType(Asc_DString *hptr, int argc, CONST84 char *argv
   }
   it=(char *)InstanceType(g_solvinst_cur);
   VTcl_AppendElement(hptr,it);
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -1000,8 +1011,10 @@ int ascjson::Asc_SolvGetSlvStatPage(Asc_DString *hptr, int argc, CONST84 char *a
   sprintf(tmps,"%.10g",s.block.residual);
   VTcl_AppendElement(hptr,tmps);
   ascfree(tmps);
+  VAEstrip(hptr);
   return HELP_OK;
 }
+
 int ascjson::Asc_SolvGetSlvCostPage(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   slv_status_t s;
@@ -1046,6 +1059,7 @@ int ascjson::Asc_SolvGetSlvCostPage(Asc_DString *hptr, int argc, CONST84 char *a
       sprintf(tmps, "%.8g}",s.cost[i].jactime);
       Asc_DStringAppend(hptr,tmps,HALL);
     }
+    VAEstrip(hptr);
     ascfree(tmps);
   }
   return HELP_OK;
@@ -1312,6 +1326,7 @@ int ascjson::Asc_SolvGetVRCounts(Asc_DString *hptr, int argc, CONST84 char *argv
   tmpi = ::slv_count_solvers_unattached(g_solvsys_cur,&vfilter);
   sprintf(tmps,"%d",tmpi);
   VTcl_AppendElement(hptr,tmps);
+  VAEstrip(hptr);
 
   ascfree(tmps);
   return HELP_OK;
@@ -1551,6 +1566,7 @@ int ascjson::Asc_SolvAvailSolver(Asc_DString *hptr, int argc, CONST84 char *argv
 	S = (SlvFunctionsT *)gl_fetch(L,i);
     VTcl_AppendElement(hptr,S->name);
   }
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -1575,6 +1591,7 @@ int ascjson::Asc_SolvSolverNum(Asc_DString *hptr , int argc, CONST84 char *argv[
   }else{
     sprintf(buf,"%d",solver->number);
     VTcl_AppendElement(hptr,&buf[0]);
+    VAEstrip(hptr);
     return HELP_OK;
   }
   /* not reached */
@@ -1598,6 +1615,7 @@ int ascjson::Asc_SolvSolverName(Asc_DString *hptr , int argc, CONST84 char *argv
 		return HELP_ERROR;
 	}else{
 		VTcl_AppendElement(hptr,solver->name);
+                VAEstrip(hptr);
 		return HELP_OK;
 	}
 }
@@ -1692,6 +1710,7 @@ int ascjson::Asc_SolvSelectSolver(Asc_DString *hptr, int argc, CONST84 char *arg
     }
     sprintf(num,"%d",i);
     VTcl_AppendElement(hptr,&num[0]);
+    VAEstrip(hptr);
     return HELP_OK;
   }
   /* not reached */
@@ -1717,6 +1736,7 @@ int ascjson::Asc_SolvGetSelectedSolver(Asc_DString *hptr, int argc, CONST84 char
   solver =  ::slv_get_selected_solver(g_solvsys_cur);
   sprintf(tmps,"%d", solver);
   VTcl_AppendElement(hptr,tmps);
+  VAEstrip(hptr);
   ascfree(tmps);
   return HELP_OK;
 }
@@ -1843,6 +1863,7 @@ int ascjson::Asc_SolvMakeIndependent(Asc_DString *hptr, int argc, CONST84 char *
   if (unassvars) {
     ascfree(unassvars);
   }
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -2245,6 +2266,7 @@ int ascjson::Asc_SolvHelpList(Asc_DString *hptr,
     VTcl_AppendElement(hptr,tmps);
     ascfree(tmps);
   }
+  VAEstrip(hptr);
   return HELP_OK;
 }
 

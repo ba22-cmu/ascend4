@@ -167,6 +167,7 @@ int ascjson::Asc_DebuGetBlkOfVar(Asc_DString *hptr, int argc, CONST84 char *argv
     VTcl_AppendElement(hptr,tmps);
     ascfree(tmps);
   }
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -249,6 +250,7 @@ int ascjson::Asc_DebuGetBlkOfEqn(Asc_DString *hptr, int argc, CONST84 char *argv
     VTcl_AppendElement(hptr,tmps);
     ascfree(tmps);
   }
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -354,6 +356,7 @@ int ascjson::Asc_DebuGetEqnOfVar(Asc_DString *hptr, int argc, CONST84 char *argv
     VTcl_AppendElement(hptr,tmps);
   }
   ascfree(tmps);
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -393,8 +396,9 @@ int ascjson::Asc_DebuGetVarPartition(Asc_DString *hptr, int argc, CONST84 char *
         sprintf(tmps,"%d",mtx_col_to_org(mtx,reg.col.low));
         VTcl_AppendElement(hptr,tmps);
       }
-      sprintf(tmps,"/"); /* add block separator w/out extra whitespace */
-      Asc_DStringAppend(hptr,tmps,HALL);
+      VAEstrip(hptr);
+      if (numblock < lastblock-1)
+	      Asc_DStringAppend(hptr,"/",1);
     }
   } else {
     struct var_variable **vp;
@@ -407,6 +411,7 @@ int ascjson::Asc_DebuGetVarPartition(Asc_DString *hptr, int argc, CONST84 char *
           VTcl_AppendElement(hptr,tmps);
         } /* all in one block, no / needed */
       }
+      VAEstrip(hptr);
     }
   }
   ascfree(tmps);
@@ -449,8 +454,10 @@ int ascjson::Asc_DebuGetEqnPartition(Asc_DString *hptr, int argc, CONST84 char *
         sprintf(tmps,"%d",mtx_row_to_org(mtx,reg.row.low));
         VTcl_AppendElement(hptr,tmps);
       }
-      sprintf(tmps,"/"); /* add block separator w/out extra whitespace */
-      Asc_DStringAppend(hptr,tmps,HALL);
+      VAEstrip(hptr);
+      /* add block separator w/out extra whitespace */
+      if (numblock < lastblock-1)
+	      Asc_DStringAppend(hptr,"/",1);
     }
   } else {
     struct rel_relation **rp;
@@ -463,6 +470,7 @@ int ascjson::Asc_DebuGetEqnPartition(Asc_DString *hptr, int argc, CONST84 char *
           VTcl_AppendElement(hptr,tmps);
         } /* all in one block, no / needed */
       }
+      VAEstrip(hptr);
     }
   }
   ascfree(tmps);
@@ -564,6 +572,7 @@ int ascjson::Asc_DebuListVars(Asc_DString *hptr, int argc, CONST84 char *argv[])
       VTcl_AppendElement(hptr,&tmps[0]);
     }
   }
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -659,6 +668,7 @@ int ascjson::Asc_DebuListRels(Asc_DString *hptr, int argc, CONST84 char *argv[])
       VTcl_AppendElement(hptr,&tmps[0]);
     }
   }
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -886,6 +896,7 @@ int ascjson::Asc_DebuWriteVar(Asc_DString *hptr, int argc, CONST84 char *argv[])
       default: break;
     }
   }
+  VAEstrip(hptr);
   if (dev<2) {
     FPRINTF(fp,"\n");
   }
@@ -1051,6 +1062,7 @@ int ascjson::Asc_DebuWriteRel(Asc_DString *hptr, int argc, CONST84 char *argv[])
       default: break;
     }
   }
+  VAEstrip(hptr);
   if (dev<2) {
     FPRINTF(fp,"\n");
   }
@@ -1183,6 +1195,7 @@ int ascjson::Asc_DebuWriteUnattachedVar(Asc_DString *hptr, int argc, CONST84 cha
       }
     }
   }
+  VAEstrip(hptr);
 
   return HELP_OK;
 }
@@ -1349,6 +1362,7 @@ int ascjson::Asc_DebuWriteObj(Asc_DString *hptr, int argc, CONST84 char *argv[])
   if (dev<2) {
     FPRINTF(fp,"\n");
   }
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -1609,6 +1623,7 @@ int ascjson::Asc_DebuGetIncidence(Asc_DString *hptr, int argc, CONST84 char *arg
   if (tmps) {
     ascfree(tmps);
   }
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -1656,6 +1671,7 @@ int ascjson::Asc_DebuGetOrder(Asc_DString *hptr, int argc, CONST84 char **argv)
     sprintf(&num[0],"%d",ndx);
     VTcl_AppendElement(hptr,(char *)&num[0]);
   }
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -3023,6 +3039,7 @@ int ascjson::Asc_DebuCheckRelFp(Asc_DString *hptr, int argc, CONST84 char *argv[
       VTcl_AppendElement(hptr, tmps);
     }
   }
+  VAEstrip(hptr);
 #ifdef ASC_SIGNAL_TRAPS
   Asc_SignalHandlerPop(SIGFPE,SIG_IGN);
 #endif
@@ -3420,6 +3437,7 @@ int ascjson::Asc_DebuHelpList(Asc_DString *hptr, int argc, CONST84 char *argv[])
     sprintf(tmps,"dbghelp");
     VTcl_AppendElement(hptr,tmps);
     ascfree(tmps);
+    VAEstrip(hptr);
   }
   return HELP_OK;
 }

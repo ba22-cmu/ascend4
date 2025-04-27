@@ -61,6 +61,7 @@ char *file_to_string(FILE *f);
 #define VTcl_AppendElement(a, b) \
 	Asc_DStringAppend(a, (b ? b : ""), HALL); \
 	Asc_DStringAppend(a, "\v", 1)
+#define VAEstrip(a) Asc_DStringStrip(a,"\v")
 
 /// split str on vtab and return data in *argvP. call must free *argvP.
 int VTcl_SplitList(void *i, const char *str, int *argcP, char ***argvP);
@@ -270,5 +271,8 @@ extern "C" {
 #include <ascend/integrator/samplelist.h>
 
 }
+
+/// remove all characters in stripchars from end of dstring.
+void Asc_DStringStrip(Asc_DString *ds, const char * stripchars);
 
 #endif // ascjson_util_h

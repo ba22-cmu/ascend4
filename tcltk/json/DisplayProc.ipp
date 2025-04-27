@@ -100,6 +100,7 @@ int ascjson::Asc_DispDefineCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]
         // PRINTF("\t%s\n",SCP(GetName(desc)));
         VTcl_AppendElement(hptr,SCP(GetName(desc)));
       }
+      VAEstrip(hptr);
       return HELP_OK;
     } else {
       Asc_DStringSet(hptr, "Strange Display Error");
@@ -225,6 +226,7 @@ int ascjson::Asc_DispTypePartsCmd(Asc_DString *hptr, int argc, CONST84 char *arg
     }
     oldname = name;
   }
+  VAEstrip(hptr);
   gl_destroy(names);
   return HELP_OK;
 }
@@ -262,6 +264,7 @@ int ascjson::Asc_DispQueryCmd(Asc_DString *hptr,
         return HELP_OK;
       }
     }
+    VAEstrip(hptr);
     return HELP_OK;
   } else {
     FPRINTF(stderr,"Not yet supported\n");
@@ -292,6 +295,7 @@ int ascjson::Asc_DispHierarchyCmd(Asc_DString *hptr,
       c++;
     }
   } while (refines!=NULL);
+  VAEstrip(hptr);
   if(c==0) {
     Asc_DStringFree(hptr);
   }
@@ -330,8 +334,7 @@ int ascjson::Asc_DispFileByTypeCmd(Asc_DString *hptr,
   return HELP_OK;
 }
 
-int ascjson::Asc_DispChildOneCmd(Asc_DString *hptr,
-                     int argc, CONST84 char *argv[])
+int ascjson::Asc_DispChildOneCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   CONST struct TypeDescription *desc;
   ChildListPtr children;
@@ -368,6 +371,7 @@ int ascjson::Asc_DispChildOneCmd(Asc_DString *hptr,
   } else {
     VTcl_AppendElement(hptr,(char *)SCP(ChildStrPtr(children,c)));
   }
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -417,6 +421,7 @@ int ascjson::Asc_DispRefinesMeCmd(Asc_DString *hptr,
       VTcl_AppendElement(hptr,(char *)SCP(refname));
     }
   }
+  VAEstrip(hptr);
   gl_destroy(refine_me);
   return HELP_OK;
 }

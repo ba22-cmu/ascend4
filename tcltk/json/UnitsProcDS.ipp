@@ -1059,6 +1059,7 @@ int ascjson::Asc_UnitGetBaseUnitsDS(Asc_DString *hptr,
       VTcl_AppendElement(hptr,(char *)"undefined!");
     }
   }
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -1134,6 +1135,7 @@ int ascjson::Asc_UnitDumpDS(Asc_DString *hptr,
   } else {
     DumpUnits(fp);
   }
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -1311,6 +1313,7 @@ int ascjson::Asc_UnitMatchBaseDimDS(Asc_DString *hptr, int argc, CONST84 char *a
       VTcl_AppendElement(hptr,
         (char *)UnitsDescription((struct Units *)gl_fetch(ulist,c)));
     }
+    VAEstrip(hptr);
     gl_destroy(ulist);
   } else {
     Asc_DStringAppend(hptr," called from u_frombasedim", HALL);
@@ -1396,6 +1399,7 @@ int ascjson::Asc_UnitGetAtomListDS(Asc_DString *hptr,
     Asc_BrowWriteDimensions(a,GetRealDimens(desc));
     VTcl_AppendElement(hptr, a);
   }
+  VAEstrip(hptr);
   gl_destroy(alist);
   return HELP_OK;
 }
@@ -1545,6 +1549,7 @@ int ascjson::Asc_UnitGetAtomsForUnitDS(Asc_DString *hptr,
     VTcl_AppendElement(hptr,(char *)SCP(GetName(desc)));
   }
   gl_destroy(blist);
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -1676,6 +1681,7 @@ int ascjson::Asc_UnitGetListDS(Asc_DString *hptr, int argc, CONST84 char *argv[]
   check_DU_set();
   unitshptr = hptr;
   gl_iterate(DUList,(void (*)(VOIDPTR))Unit_GetUserSetDS);
+  VAEstrip(hptr);
   return HELP_OK;
 }
 int ascjson::Asc_UnitClearUserDS(Asc_DString *hptr, int argc, CONST84 char *argv[])
@@ -1727,6 +1733,7 @@ int ascjson::Asc_UnitGetValDS(Asc_DString *hptr, int argc, CONST84 char *argv[])
     Asc_DStringSet(hptr, "u_getval called on undimensioned object.");
     return HELP_ERROR;
   }
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -1754,6 +1761,7 @@ int ascjson::Asc_UnitBrowGetValDS(Asc_DString *hptr, int argc, CONST84 char *arg
     Asc_DStringSet(hptr, "u_browgetval called on undimensioned object.");
     return HELP_ERROR;
   }
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -1792,6 +1800,7 @@ int ascjson::Asc_UnitSlvGetRelValDS(Asc_DString *hptr, int argc, CONST84 char *a
     Asc_DStringSet(hptr, "u_slvgetrelval called on wierd object.");
     return HELP_ERROR;
   }
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -1830,6 +1839,7 @@ int ascjson::Asc_UnitSlvGetVarValDS(Asc_DString *hptr, int argc, CONST84 char *a
     Asc_DStringSet(hptr, "u_slvgetrelval called on wierd object.");
     return HELP_ERROR;
   }
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -1842,17 +1852,20 @@ int ascjson::Asc_UnitSlvGetObjValDS(Asc_DString *hptr,
 
   if ( argc != 2 ) {
     VTcl_AppendElement(hptr,"u_slvgetobjval expects solver objective index.");
+    VAEstrip(hptr);
     return HELP_ERROR;
   }
   if (g_solvsys_cur==NULL) {
     FPRINTF(stderr,"u_slvgetobjval called with NULL pointer\n");
     VTcl_AppendElement(hptr,"u_slvgetobjval called without slv_system");
+    VAEstrip(hptr);
     return HELP_ERROR;
   }
   rp = slv_get_solvers_obj_list(g_solvsys_cur);
   if (!rp) {
     FPRINTF(stderr,  "NULL objective list found in u_slvgetobjval\n");
     VTcl_AppendElement(hptr,"u_slvgetobjval called with null objlist");
+    VAEstrip(hptr);
     return HELP_ERROR;
   }
   maxobj = (int32)slv_get_num_solvers_objs(g_solvsys_cur);
@@ -2024,6 +2037,7 @@ int ascjson::Asc_UnitHelpListDS(Asc_DString *hptr, int argc, CONST84 char *argv[
     VTcl_AppendElement(hptr,tmps);
     ascfree(tmps);
   }
+  VAEstrip(hptr);
   return HELP_OK;
 }
 

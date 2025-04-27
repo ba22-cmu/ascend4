@@ -76,6 +76,7 @@ int ascjson::Asc_LibrOptionsCmdDS( Asc_DString *hptr,
       sprintf(buf,"%s %d",GOL[i].option_name, *(GOL[i].option_ptr));
       VTcl_AppendElement(hptr,buf);
     }
+    VAEstrip(hptr);
     return HELP_OK;
   }
   if (argc == 2) {
@@ -215,6 +216,7 @@ int LibrModuleList(Asc_DString *hptr, int module_type)
   for( c = gl_length(ml); c > 0; c-- ) {
     VTcl_AppendElement(hptr, (char *)gl_fetch( ml, c ));
   }
+  VAEstrip(hptr);
   gl_destroy(ml);
   return HELP_OK;
 }
@@ -235,6 +237,7 @@ int LibrModelDefinitionMethods(Asc_DString *hptr)
     VTcl_AppendElement(hptr,
         (char *)SCP(ProcName((struct InitProcedure *)gl_fetch(pl,c))));
   }
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -274,6 +277,7 @@ int ascjson::Asc_LibrTypeListCmdDS( Asc_DString *hptr,
   for( c = 1; c <= len; c++ ) {
     VTcl_AppendElement(hptr, (char*)gl_fetch(dl,c));
   }
+  VAEstrip(hptr);
   gl_destroy(dl);
   return HELP_OK;
 }
@@ -327,6 +331,7 @@ int LibrRootTypes(Asc_DString *hptr)
   lroottypeshptr = hptr;
   gl_iterate(deflist,(void (*)(VOIDPTR))AddRootName);
   gl_destroy(deflist);
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -344,6 +349,7 @@ int LibrCatalog(Asc_DString *hptr)
      (char*)SCP(GetName((CONST struct TypeDescription *)gl_fetch(deflist,c))));
   }
   gl_destroy(deflist);
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -453,6 +459,7 @@ int ascjson::Asc_LibrModuleInfoCmdDS( Asc_DString *hptr, int argc, CONST84 char 
       }
     }
   }
+  VAEstrip(hptr);
 #endif
   return HELP_OK;
 }
@@ -572,6 +579,7 @@ int LibrGetFundamentals(Asc_DString *hptr)
     name = GetName(type);
     VTcl_AppendElement(hptr,(char *)SCP(name));
   }
+  VAEstrip(hptr);
   gl_destroy(fundies);
   return HELP_OK;
 }
@@ -609,6 +617,7 @@ int LibrFileExtsCmd(Asc_DString *hptr)
   for (i = 0; i <  MOD_FILE_EXTS; i++) {
     VTcl_AppendElement(hptr,(char *)g_alt_ending[i]);
   }
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -633,6 +642,7 @@ int LibrTypeChildren(Asc_DString *hptr, struct TypeDescription *desc)
   for(c=1;c<=nch;c++) {
     VTcl_AppendElement(hptr,(char *)SCP(ChildStrPtr(children,c)));
   }
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -690,6 +700,7 @@ int LibrMethods(Asc_DString *hptr, struct TypeDescription *desc)
       VTcl_AppendElement(hptr,(char *)SCP(ProcName(ip)));
     }
   }
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -706,6 +717,7 @@ int LibrNoteDBList(Asc_DString *hptr)
       len--;
     }
   }
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -725,6 +737,7 @@ int LibrNoteLangs(Asc_DString *hptr, symchar *dbid)
     VTcl_AppendElement(hptr,(char *)SCP(gl_fetch(langs,len)));
     len--;
   }
+  VAEstrip(hptr);
   gl_destroy(langs);
   return HELP_OK;
 }

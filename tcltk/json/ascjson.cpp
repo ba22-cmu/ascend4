@@ -81,8 +81,9 @@ static void banner()
   ASC_FPRINTF(stdout,"Copyright(C) 1990, 1993, 1994 Thomas Guthrie Epperly\n");
   // ASC_FPRINTF(stdout,"Built %s %s %s\n\n",__DATE__,__TIME__,build_name);
   ASC_FPRINTF(stdout,"ASCEND comes with ABSOLUTELY NO WARRANTY, and is free software that you may\n");
-  ASC_FPRINTF(stdout,"redistribute within the conditions of the GNU General Public License. See the\n");
-  ASC_FPRINTF(stdout,"included file 'LICENSE.txt' for full details.\n\n");
+  ASC_FPRINTF(stdout,"redistribute within the conditions of the GNU General Public License version 2. See the\n");
+  ASC_FPRINTF(stdout,"included file 'LICENSE.txt' for full details.\n");
+  ASC_FPRINTF(stdout,"JSON Interface Copyright(C) 2025, Ben Allan\n\n");
 }
 
 static
@@ -1358,4 +1359,29 @@ int JTcl_GetBool(void *i, const char* str, int *lptr)
 			break;
 	}
 	return HELP_OK;
+}
+
+static int inchars(const char *charset, char check)
+{
+	if (!charset)
+		return 0;
+	int i = 0;
+	while (charset[i] != '\0')
+		if (charset[i] == check)
+			return 1;
+		else
+			i++;
+	return 0;
+}
+
+void Asc_DStringStrip(Asc_DString *ds, const char * stripchars)
+{
+	if (!ds || !stripchars)
+		return;
+	while (ds->length > 0 && inchars(stripchars, ds->string[ds->length-1])) {
+		/// [ a,a,a,a,a,a,d,nul]  -->
+		/// [ a,a,a,a,a,a,nul,nul]
+		ds->string[ds->length - 1] = '\0';
+		ds->length -= 1;
+	}
 }

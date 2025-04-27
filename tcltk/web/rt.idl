@@ -1,6 +1,22 @@
+enum MealType { "rice", "noodles", "other" };
+
+interface Meal {
+  readonly attribute MealType mtype;
+  readonly attribute double size;     // in grams
+};
+
+enum vtype {
+        "vtype::SVjson",
+        "vtype::SVjson5",
+        "vtype::SVcstr",
+        "vtype::SVvtab"
+};
+
 interface rc {
 	void rc();
 	readonly attribute long e;
 	[Const] readonly attribute DOMString v;
-	readonly attribute long t;
+	//readonly attribute long t;
+	attribute vtype t;
 };
+

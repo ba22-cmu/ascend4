@@ -128,6 +128,12 @@ int AscDriver(int argc, CONST char **argv)
 {
 
   // Tcl_FindExecutable(argv[0]); // /proc/self/exe readlink under linux
+	Asc_DString d;
+	Asc_DStringInit(&d);
+	Asc_DStringSet(&d,"bob\t\v");
+	printf("%d %s\n",Asc_DStringLength(&d),Asc_DStringValue(&d));
+	Asc_DStringStrip(&d,"\t\v");
+	printf("%d %s\n",Asc_DStringLength(&d),Asc_DStringValue(&d));
 
   /*
    *  Create the interpreter

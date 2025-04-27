@@ -318,6 +318,7 @@ int ascjson::Asc_BrowSimListCmd(Asc_DString *hptr, int argc, CONST84 char *argv[
       VTcl_AppendElement(hptr,(char *)SCP(GetSimulationName(sptr)));
     }
   }
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -809,6 +810,7 @@ int BrowOperands(Asc_DString *hptr, struct Instance *i)
       continue;
     }
     VTcl_AppendElement(hptr,name);
+    VAEstrip(hptr);
     ascfree(name);
   }
   gl_destroy(ol);
@@ -991,6 +993,7 @@ int ascjson::Asc_BrowInstQueryCmd(Asc_DString *hptr, int argc, CONST84 char *arg
         }
       }
       ascfree(tmps);
+      VAEstrip(hptr);
       return HELP_OK;
     } else {
       Asc_DStringSet(hptr, "0");
@@ -1020,6 +1023,7 @@ int ascjson::Asc_BrowInstQueryCmd(Asc_DString *hptr, int argc, CONST84 char *arg
         }
       }
       ascfree(tmps);
+      VAEstrip(hptr);
       return HELP_OK;
     }
   }
