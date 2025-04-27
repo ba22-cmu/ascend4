@@ -21,6 +21,7 @@ EXP=-sEXPORTED_FUNCTIONS=@./nm_glue.txt -sEXPORTED_FUNCTIONS=_AscDriver
 EXP=-sEXPORT_KEEPALIVE
 EXP=-sFORCE_FILESYSTEM -sEXPORTED_RUNTIME_METHODS=FS
 EMFLAGS= -O0 -g -gsource-map -sMODULARIZE=1  -sENVIRONMENT=web -s'EXPORT_NAME="createModule"'
+#EMFLAGS= -O0 -g -sMODULARIZE=1  -sENVIRONMENT=web -s'EXPORT_NAME="createModule"'
 HTEMFLAGS= -O0 -g  -sENVIRONMENT=web #--emit-symbol-map
 EMBEDS= --embed-file $(MODELS)@/models -lidbfs.js
 
