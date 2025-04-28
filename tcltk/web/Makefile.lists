@@ -256,6 +256,10 @@ CSRCS_CORE = \
 ../../ascend/compiler/procframe.c \
 ../../ascend/compiler/case.c
 
+CSRCS_SOLVERS = \
+../../solvers/static_solvers.c \
+../../solvers/qrslv/qrslv.c 
+
 CSRCS_INTEGRATOR = \
 ../../ascend/integrator/integrator.c \
 ../../ascend/integrator/aww.c \

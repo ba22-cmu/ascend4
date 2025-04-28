@@ -44,7 +44,7 @@ struct Instance *ascjson::g_solvinst_root=NULL, /* root instan (child of simulat
 slv_system_t ascjson::g_solvsys_cur=NULL;        /* a pointer to slv_system_structure */
 slv_system_t ascjson::g_browsys_cur=NULL;        /* a pointer to slv_system_structure */
 
-void Asc_SolvMemoryCleanup()
+void ascjson::Asc_SolvMemoryCleanup()
 {
   system_free_reused_mem();
 }
@@ -1885,6 +1885,7 @@ int ascjson::Asc_SolvImportQlfdid(Asc_DString *hptr ,int argc, CONST84 char *arg
 
   status=Asc_BrowQlfdidSearchCmdDS(hptr, (int)2, argv);
   temp = Asc_DStringResult(hptr);
+  fprintf(stderr,"slvimportiname: %s\n",temp);
 
   if (status==HELP_OK) {
     /* catch inst ptr */
@@ -1975,6 +1976,9 @@ int ascjson::Asc_SolvImportQlfdid(Asc_DString *hptr ,int argc, CONST84 char *arg
     if (g_solvinst_cur == solvinst_pot && g_compiler_counter == 0
         && g_solvinst_cur != NULL) {
       prevs = ::slv_get_selected_solver(g_solvsys_cur);
+      if (solver_engine(prevs) == NULL) {
+	      prevs = slv_lookup_client("QRSlv"); // should take this from envvar
+      }
       CONSOLE_DEBUG("...");
       ::slv_select_solver(g_solvsys_cur,prevs);
       Asc_DStringSet(hptr, "Solver instance created.");
@@ -1989,6 +1993,9 @@ int ascjson::Asc_SolvImportQlfdid(Asc_DString *hptr ,int argc, CONST84 char *arg
     g_solvinst_root=solvinst_root_pot;
     if (g_solvsys_cur != NULL) {
       prevs = ::slv_get_selected_solver(g_solvsys_cur);
+      if (solver_engine(prevs) == NULL) {
+	      prevs = slv_lookup_client("QRSlv"); // should take this from envvar
+      }
       systmp=g_solvsys_cur;
       system_destroy(systmp);
       g_solvsys_cur = NULL;

@@ -430,7 +430,7 @@ extern int Asc_SolvSolverName(ClientData cdata, Tcl_Interp *interp,
                                int argc, CONST84 char *argv[]);
 /**<
 	Returns solver name for given number.
-	Registered as: slv_name <name>
+	Registered as: slv_name <number>
 */
 
 extern int Asc_SolvLinsolNames(ClientData cdata, Tcl_Interp *interp,

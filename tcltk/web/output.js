@@ -5096,6 +5096,7 @@ var _emscripten_bind_rc___destroy___0 = Module['_emscripten_bind_rc___destroy___
 var _emscripten_bind_ascjson_ascjson_0 = Module['_emscripten_bind_ascjson_ascjson_0'] = createExportWrapper('emscripten_bind_ascjson_ascjson_0', 0);
 var _emscripten_bind_ascjson_config_1 = Module['_emscripten_bind_ascjson_config_1'] = createExportWrapper('emscripten_bind_ascjson_config_1', 2);
 var _emscripten_bind_ascjson_libr_query_1 = Module['_emscripten_bind_ascjson_libr_query_1'] = createExportWrapper('emscripten_bind_ascjson_libr_query_1', 2);
+var _emscripten_bind_ascjson_asc_compiler_option_1 = Module['_emscripten_bind_ascjson_asc_compiler_option_1'] = createExportWrapper('emscripten_bind_ascjson_asc_compiler_option_1', 2);
 var _emscripten_bind_ascjson_libr_parsestring_1 = Module['_emscripten_bind_ascjson_libr_parsestring_1'] = createExportWrapper('emscripten_bind_ascjson_libr_parsestring_1', 2);
 var _emscripten_bind_ascjson_librread_1 = Module['_emscripten_bind_ascjson_librread_1'] = createExportWrapper('emscripten_bind_ascjson_librread_1', 2);
 var _emscripten_bind_ascjson_libr_moduleinfo_1 = Module['_emscripten_bind_ascjson_libr_moduleinfo_1'] = createExportWrapper('emscripten_bind_ascjson_libr_moduleinfo_1', 2);
@@ -5105,6 +5106,50 @@ var _emscripten_bind_ascjson_libr_unhide_type_1 = Module['_emscripten_bind_ascjs
 var _emscripten_bind_ascjson_libr_type_is_shown_1 = Module['_emscripten_bind_ascjson_libr_type_is_shown_1'] = createExportWrapper('emscripten_bind_ascjson_libr_type_is_shown_1', 2);
 var _emscripten_bind_ascjson_libr_types_in_module_1 = Module['_emscripten_bind_ascjson_libr_types_in_module_1'] = createExportWrapper('emscripten_bind_ascjson_libr_types_in_module_1', 2);
 var _emscripten_bind_ascjson_libr_extract_type_1 = Module['_emscripten_bind_ascjson_libr_extract_type_1'] = createExportWrapper('emscripten_bind_ascjson_libr_extract_type_1', 2);
+var _emscripten_bind_ascjson_qlfdid_1 = Module['_emscripten_bind_ascjson_qlfdid_1'] = createExportWrapper('emscripten_bind_ascjson_qlfdid_1', 2);
+var _emscripten_bind_ascjson_bgetproc_1 = Module['_emscripten_bind_ascjson_bgetproc_1'] = createExportWrapper('emscripten_bind_ascjson_bgetproc_1', 2);
+var _emscripten_bind_ascjson_brow_runmethod_1 = Module['_emscripten_bind_ascjson_brow_runmethod_1'] = createExportWrapper('emscripten_bind_ascjson_brow_runmethod_1', 2);
+var _emscripten_bind_ascjson_brow_assign_1 = Module['_emscripten_bind_ascjson_brow_assign_1'] = createExportWrapper('emscripten_bind_ascjson_brow_assign_1', 2);
+var _emscripten_bind_ascjson_qassgn3_1 = Module['_emscripten_bind_ascjson_qassgn3_1'] = createExportWrapper('emscripten_bind_ascjson_qassgn3_1', 2);
+var _emscripten_bind_ascjson_x__brow_iname_1 = Module['_emscripten_bind_ascjson_x__brow_iname_1'] = createExportWrapper('emscripten_bind_ascjson_x__brow_iname_1', 2);
+var _emscripten_bind_ascjson_x__brow_isrelation_1 = Module['_emscripten_bind_ascjson_x__brow_isrelation_1'] = createExportWrapper('emscripten_bind_ascjson_x__brow_isrelation_1', 2);
+var _emscripten_bind_ascjson_x__brow_ismodel_1 = Module['_emscripten_bind_ascjson_x__brow_ismodel_1'] = createExportWrapper('emscripten_bind_ascjson_x__brow_ismodel_1', 2);
+var _emscripten_bind_ascjson_bgetrels_1 = Module['_emscripten_bind_ascjson_bgetrels_1'] = createExportWrapper('emscripten_bind_ascjson_bgetrels_1', 2);
+var _emscripten_bind_ascjson_bgetrelspf_1 = Module['_emscripten_bind_ascjson_bgetrelspf_1'] = createExportWrapper('emscripten_bind_ascjson_bgetrelspf_1', 2);
+var _emscripten_bind_ascjson_x__brow_relsforatom_1 = Module['_emscripten_bind_ascjson_x__brow_relsforatom_1'] = createExportWrapper('emscripten_bind_ascjson_x__brow_relsforatom_1', 2);
+var _emscripten_bind_ascjson_x__brow_islogrel_1 = Module['_emscripten_bind_ascjson_x__brow_islogrel_1'] = createExportWrapper('emscripten_bind_ascjson_x__brow_islogrel_1', 2);
+var _emscripten_bind_ascjson_bgetlogrels_1 = Module['_emscripten_bind_ascjson_bgetlogrels_1'] = createExportWrapper('emscripten_bind_ascjson_bgetlogrels_1', 2);
+var _emscripten_bind_ascjson_bgetlogrelspf_1 = Module['_emscripten_bind_ascjson_bgetlogrelspf_1'] = createExportWrapper('emscripten_bind_ascjson_bgetlogrelspf_1', 2);
+var _emscripten_bind_ascjson_x__brow_logrelsforatom_1 = Module['_emscripten_bind_ascjson_x__brow_logrelsforatom_1'] = createExportWrapper('emscripten_bind_ascjson_x__brow_logrelsforatom_1', 2);
+var _emscripten_bind_ascjson_bgetcondrels_1 = Module['_emscripten_bind_ascjson_bgetcondrels_1'] = createExportWrapper('emscripten_bind_ascjson_bgetcondrels_1', 2);
+var _emscripten_bind_ascjson_bgetcondlogrels_1 = Module['_emscripten_bind_ascjson_bgetcondlogrels_1'] = createExportWrapper('emscripten_bind_ascjson_bgetcondlogrels_1', 2);
+var _emscripten_bind_ascjson_x__brow_iswhen_1 = Module['_emscripten_bind_ascjson_x__brow_iswhen_1'] = createExportWrapper('emscripten_bind_ascjson_x__brow_iswhen_1', 2);
+var _emscripten_bind_ascjson_x__brow_isinstanceinwhen_1 = Module['_emscripten_bind_ascjson_x__brow_isinstanceinwhen_1'] = createExportWrapper('emscripten_bind_ascjson_x__brow_isinstanceinwhen_1', 2);
+var _emscripten_bind_ascjson_bgetwhens_1 = Module['_emscripten_bind_ascjson_bgetwhens_1'] = createExportWrapper('emscripten_bind_ascjson_bgetwhens_1', 2);
+var _emscripten_bind_ascjson_x__brow_whensforinstance_1 = Module['_emscripten_bind_ascjson_x__brow_whensforinstance_1'] = createExportWrapper('emscripten_bind_ascjson_x__brow_whensforinstance_1', 2);
+var _emscripten_bind_ascjson_bwritependings_1 = Module['_emscripten_bind_ascjson_bwritependings_1'] = createExportWrapper('emscripten_bind_ascjson_bwritependings_1', 2);
+var _emscripten_bind_ascjson_bnumpendings_1 = Module['_emscripten_bind_ascjson_bnumpendings_1'] = createExportWrapper('emscripten_bind_ascjson_bnumpendings_1', 2);
+var _emscripten_bind_ascjson_count_names_1 = Module['_emscripten_bind_ascjson_count_names_1'] = createExportWrapper('emscripten_bind_ascjson_count_names_1', 2);
+var _emscripten_bind_ascjson_aliases_1 = Module['_emscripten_bind_ascjson_aliases_1'] = createExportWrapper('emscripten_bind_ascjson_aliases_1', 2);
+var _emscripten_bind_ascjson_isas_1 = Module['_emscripten_bind_ascjson_isas_1'] = createExportWrapper('emscripten_bind_ascjson_isas_1', 2);
+var _emscripten_bind_ascjson_cliques_1 = Module['_emscripten_bind_ascjson_cliques_1'] = createExportWrapper('emscripten_bind_ascjson_cliques_1', 2);
+var _emscripten_bind_ascjson_brow_child_list_1 = Module['_emscripten_bind_ascjson_brow_child_list_1'] = createExportWrapper('emscripten_bind_ascjson_brow_child_list_1', 2);
+var _emscripten_bind_ascjson_bmerge_1 = Module['_emscripten_bind_ascjson_bmerge_1'] = createExportWrapper('emscripten_bind_ascjson_bmerge_1', 2);
+var _emscripten_bind_ascjson_brefine_1 = Module['_emscripten_bind_ascjson_brefine_1'] = createExportWrapper('emscripten_bind_ascjson_brefine_1', 2);
+var _emscripten_bind_ascjson_bmakealike_1 = Module['_emscripten_bind_ascjson_bmakealike_1'] = createExportWrapper('emscripten_bind_ascjson_bmakealike_1', 2);
+var _emscripten_bind_ascjson_b_isplottable_1 = Module['_emscripten_bind_ascjson_b_isplottable_1'] = createExportWrapper('emscripten_bind_ascjson_b_isplottable_1', 2);
+var _emscripten_bind_ascjson_b_prepplotfile_1 = Module['_emscripten_bind_ascjson_b_prepplotfile_1'] = createExportWrapper('emscripten_bind_ascjson_b_prepplotfile_1', 2);
+var _emscripten_bind_ascjson_free_all_vars_1 = Module['_emscripten_bind_ascjson_free_all_vars_1'] = createExportWrapper('emscripten_bind_ascjson_free_all_vars_1', 2);
+var _emscripten_bind_ascjson_Asc_SimBinTokenSetOptionsHC_1 = Module['_emscripten_bind_ascjson_Asc_SimBinTokenSetOptionsHC_1'] = createExportWrapper('emscripten_bind_ascjson_Asc_SimBinTokenSetOptionsHC_1', 2);
+var _emscripten_bind_ascjson_sims_1 = Module['_emscripten_bind_ascjson_sims_1'] = createExportWrapper('emscripten_bind_ascjson_sims_1', 2);
+var _emscripten_bind_ascjson_sim_instantiate_1 = Module['_emscripten_bind_ascjson_sim_instantiate_1'] = createExportWrapper('emscripten_bind_ascjson_sim_instantiate_1', 2);
+var _emscripten_bind_ascjson_sim_unique_1 = Module['_emscripten_bind_ascjson_sim_unique_1'] = createExportWrapper('emscripten_bind_ascjson_sim_unique_1', 2);
+var _emscripten_bind_ascjson_sim_reinstantiate_1 = Module['_emscripten_bind_ascjson_sim_reinstantiate_1'] = createExportWrapper('emscripten_bind_ascjson_sim_reinstantiate_1', 2);
+var _emscripten_bind_ascjson_x__sims_copy_1 = Module['_emscripten_bind_ascjson_x__sims_copy_1'] = createExportWrapper('emscripten_bind_ascjson_x__sims_copy_1', 2);
+var _emscripten_bind_ascjson_x__sims_proto_1 = Module['_emscripten_bind_ascjson_x__sims_proto_1'] = createExportWrapper('emscripten_bind_ascjson_x__sims_proto_1', 2);
+var _emscripten_bind_ascjson_x__sims_saveinst_1 = Module['_emscripten_bind_ascjson_x__sims_saveinst_1'] = createExportWrapper('emscripten_bind_ascjson_x__sims_saveinst_1', 2);
+var _emscripten_bind_ascjson_sim_destroy_1 = Module['_emscripten_bind_ascjson_sim_destroy_1'] = createExportWrapper('emscripten_bind_ascjson_sim_destroy_1', 2);
+var _emscripten_bind_ascjson_simlistpending_1 = Module['_emscripten_bind_ascjson_simlistpending_1'] = createExportWrapper('emscripten_bind_ascjson_simlistpending_1', 2);
 var _emscripten_bind_ascjson_ddefine_1 = Module['_emscripten_bind_ascjson_ddefine_1'] = createExportWrapper('emscripten_bind_ascjson_ddefine_1', 2);
 var _emscripten_bind_ascjson_ddiffdefine_1 = Module['_emscripten_bind_ascjson_ddiffdefine_1'] = createExportWrapper('emscripten_bind_ascjson_ddiffdefine_1', 2);
 var _emscripten_bind_ascjson_disp_1 = Module['_emscripten_bind_ascjson_disp_1'] = createExportWrapper('emscripten_bind_ascjson_disp_1', 2);
@@ -5116,6 +5161,15 @@ var _emscripten_bind_ascjson_drefines_meall_1 = Module['_emscripten_bind_ascjson
 var _emscripten_bind_ascjson_drefinement_tree_1 = Module['_emscripten_bind_ascjson_drefinement_tree_1'] = createExportWrapper('emscripten_bind_ascjson_drefinement_tree_1', 2);
 var _emscripten_bind_ascjson_dgetparts_1 = Module['_emscripten_bind_ascjson_dgetparts_1'] = createExportWrapper('emscripten_bind_ascjson_dgetparts_1', 2);
 var _emscripten_bind_ascjson_disroot_type_1 = Module['_emscripten_bind_ascjson_disroot_type_1'] = createExportWrapper('emscripten_bind_ascjson_disroot_type_1', 2);
+var _emscripten_bind_ascjson_x__probe_1 = Module['_emscripten_bind_ascjson_x__probe_1'] = createExportWrapper('emscripten_bind_ascjson_x__probe_1', 2);
+var _emscripten_bind_ascjson_x__var_analyze_1 = Module['_emscripten_bind_ascjson_x__var_analyze_1'] = createExportWrapper('emscripten_bind_ascjson_x__var_analyze_1', 2);
+var _emscripten_bind_ascjson_x__rel_analyze_1 = Module['_emscripten_bind_ascjson_x__rel_analyze_1'] = createExportWrapper('emscripten_bind_ascjson_x__rel_analyze_1', 2);
+var _emscripten_bind_ascjson_x__userdata_init_1 = Module['_emscripten_bind_ascjson_x__userdata_init_1'] = createExportWrapper('emscripten_bind_ascjson_x__userdata_init_1', 2);
+var _emscripten_bind_ascjson_x__userdata_create_1 = Module['_emscripten_bind_ascjson_x__userdata_create_1'] = createExportWrapper('emscripten_bind_ascjson_x__userdata_create_1', 2);
+var _emscripten_bind_ascjson_x__userdata_destroy_1 = Module['_emscripten_bind_ascjson_x__userdata_destroy_1'] = createExportWrapper('emscripten_bind_ascjson_x__userdata_destroy_1', 2);
+var _emscripten_bind_ascjson_x__userdata_save_1 = Module['_emscripten_bind_ascjson_x__userdata_save_1'] = createExportWrapper('emscripten_bind_ascjson_x__userdata_save_1', 2);
+var _emscripten_bind_ascjson_x__userdata_restore_1 = Module['_emscripten_bind_ascjson_x__userdata_restore_1'] = createExportWrapper('emscripten_bind_ascjson_x__userdata_restore_1', 2);
+var _emscripten_bind_ascjson_x__userdata_query_1 = Module['_emscripten_bind_ascjson_x__userdata_query_1'] = createExportWrapper('emscripten_bind_ascjson_x__userdata_query_1', 2);
 var _emscripten_bind_ascjson_x__userdata_print_1 = Module['_emscripten_bind_ascjson_x__userdata_print_1'] = createExportWrapper('emscripten_bind_ascjson_x__userdata_print_1', 2);
 var _emscripten_bind_ascjson_get_model_children_1 = Module['_emscripten_bind_ascjson_get_model_children_1'] = createExportWrapper('emscripten_bind_ascjson_get_model_children_1', 2);
 var _emscripten_bind_ascjson_slv_checksim_1 = Module['_emscripten_bind_ascjson_slv_checksim_1'] = createExportWrapper('emscripten_bind_ascjson_slv_checksim_1', 2);
@@ -5237,7 +5291,7 @@ var _emscripten_stack_get_end = wasmExports['emscripten_stack_get_end']
 var __emscripten_stack_restore = wasmExports['_emscripten_stack_restore']
 var __emscripten_stack_alloc = wasmExports['_emscripten_stack_alloc']
 var _emscripten_stack_get_current = wasmExports['emscripten_stack_get_current']
-var ___emscripten_embedded_file_data = Module['___emscripten_embedded_file_data'] = 520444;
+var ___emscripten_embedded_file_data = Module['___emscripten_embedded_file_data'] = 538924;
 function invoke_iiii(index,a1,a2,a3) {
   var sp = stackSave();
   try {
@@ -5795,6 +5849,15 @@ ascjson.prototype['libr_query'] = ascjson.prototype.libr_query = function(vargv)
 };
 
 /** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['asc_compiler_option'] = ascjson.prototype.asc_compiler_option = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_asc_compiler_option_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
 ascjson.prototype['libr_parsestring'] = ascjson.prototype.libr_parsestring = function(vargv) {
   var self = this.ptr;
   ensureCache.prepare();
@@ -5873,6 +5936,402 @@ ascjson.prototype['libr_extract_type'] = ascjson.prototype.libr_extract_type = f
   if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
   else vargv = ensureString(vargv);
   return wrapPointer(_emscripten_bind_ascjson_libr_extract_type_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['qlfdid'] = ascjson.prototype.qlfdid = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_qlfdid_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['bgetproc'] = ascjson.prototype.bgetproc = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_bgetproc_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['brow_runmethod'] = ascjson.prototype.brow_runmethod = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_brow_runmethod_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['brow_assign'] = ascjson.prototype.brow_assign = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_brow_assign_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['qassgn3'] = ascjson.prototype.qassgn3 = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_qassgn3_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['x__brow_iname'] = ascjson.prototype.x__brow_iname = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_x__brow_iname_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['x__brow_isrelation'] = ascjson.prototype.x__brow_isrelation = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_x__brow_isrelation_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['x__brow_ismodel'] = ascjson.prototype.x__brow_ismodel = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_x__brow_ismodel_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['bgetrels'] = ascjson.prototype.bgetrels = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_bgetrels_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['bgetrelspf'] = ascjson.prototype.bgetrelspf = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_bgetrelspf_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['x__brow_relsforatom'] = ascjson.prototype.x__brow_relsforatom = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_x__brow_relsforatom_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['x__brow_islogrel'] = ascjson.prototype.x__brow_islogrel = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_x__brow_islogrel_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['bgetlogrels'] = ascjson.prototype.bgetlogrels = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_bgetlogrels_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['bgetlogrelspf'] = ascjson.prototype.bgetlogrelspf = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_bgetlogrelspf_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['x__brow_logrelsforatom'] = ascjson.prototype.x__brow_logrelsforatom = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_x__brow_logrelsforatom_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['bgetcondrels'] = ascjson.prototype.bgetcondrels = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_bgetcondrels_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['bgetcondlogrels'] = ascjson.prototype.bgetcondlogrels = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_bgetcondlogrels_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['x__brow_iswhen'] = ascjson.prototype.x__brow_iswhen = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_x__brow_iswhen_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['x__brow_isinstanceinwhen'] = ascjson.prototype.x__brow_isinstanceinwhen = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_x__brow_isinstanceinwhen_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['bgetwhens'] = ascjson.prototype.bgetwhens = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_bgetwhens_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['x__brow_whensforinstance'] = ascjson.prototype.x__brow_whensforinstance = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_x__brow_whensforinstance_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['bwritependings'] = ascjson.prototype.bwritependings = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_bwritependings_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['bnumpendings'] = ascjson.prototype.bnumpendings = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_bnumpendings_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['count_names'] = ascjson.prototype.count_names = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_count_names_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['aliases'] = ascjson.prototype.aliases = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_aliases_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['isas'] = ascjson.prototype.isas = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_isas_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['cliques'] = ascjson.prototype.cliques = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_cliques_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['brow_child_list'] = ascjson.prototype.brow_child_list = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_brow_child_list_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['bmerge'] = ascjson.prototype.bmerge = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_bmerge_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['brefine'] = ascjson.prototype.brefine = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_brefine_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['bmakealike'] = ascjson.prototype.bmakealike = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_bmakealike_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['b_isplottable'] = ascjson.prototype.b_isplottable = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_b_isplottable_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['b_prepplotfile'] = ascjson.prototype.b_prepplotfile = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_b_prepplotfile_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['free_all_vars'] = ascjson.prototype.free_all_vars = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_free_all_vars_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['Asc_SimBinTokenSetOptionsHC'] = ascjson.prototype.Asc_SimBinTokenSetOptionsHC = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_Asc_SimBinTokenSetOptionsHC_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['sims'] = ascjson.prototype.sims = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_sims_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['sim_instantiate'] = ascjson.prototype.sim_instantiate = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_sim_instantiate_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['sim_unique'] = ascjson.prototype.sim_unique = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_sim_unique_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['sim_reinstantiate'] = ascjson.prototype.sim_reinstantiate = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_sim_reinstantiate_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['x__sims_copy'] = ascjson.prototype.x__sims_copy = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_x__sims_copy_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['x__sims_proto'] = ascjson.prototype.x__sims_proto = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_x__sims_proto_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['x__sims_saveinst'] = ascjson.prototype.x__sims_saveinst = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_x__sims_saveinst_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['sim_destroy'] = ascjson.prototype.sim_destroy = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_sim_destroy_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['simlistpending'] = ascjson.prototype.simlistpending = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_simlistpending_1(self, vargv), rc);
 };
 
 /** @suppress {undefinedVars, duplicate} @this{Object} */
@@ -5972,6 +6431,87 @@ ascjson.prototype['disroot_type'] = ascjson.prototype.disroot_type = function(va
   if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
   else vargv = ensureString(vargv);
   return wrapPointer(_emscripten_bind_ascjson_disroot_type_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['x__probe'] = ascjson.prototype.x__probe = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_x__probe_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['x__var_analyze'] = ascjson.prototype.x__var_analyze = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_x__var_analyze_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['x__rel_analyze'] = ascjson.prototype.x__rel_analyze = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_x__rel_analyze_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['x__userdata_init'] = ascjson.prototype.x__userdata_init = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_x__userdata_init_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['x__userdata_create'] = ascjson.prototype.x__userdata_create = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_x__userdata_create_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['x__userdata_destroy'] = ascjson.prototype.x__userdata_destroy = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_x__userdata_destroy_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['x__userdata_save'] = ascjson.prototype.x__userdata_save = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_x__userdata_save_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['x__userdata_restore'] = ascjson.prototype.x__userdata_restore = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_x__userdata_restore_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['x__userdata_query'] = ascjson.prototype.x__userdata_query = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_x__userdata_query_1(self, vargv), rc);
 };
 
 /** @suppress {undefinedVars, duplicate} @this{Object} */

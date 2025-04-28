@@ -32,8 +32,60 @@
 		/// Call the method (must also be quoted) with all the string args.
 		/// This eliminates manually building the vtab string.
 		function asc(method, ...rest) {
+			console.log("Calling ascend: ", method);
+			console.log("rest before is:", rest);
 			rest.unshift(method);
+			console.log("rest after is:", rest);
 			return world[method](rest.join("\v"));
+		}
+		function check_world(...rest) {
+			o = world;
+			for (c of rest) {
+				if (!(c in o)) {
+					o[c] = {};
+				}
+				o = o[c];
+			}
+		}
+
+		// fixme: how do we add variables to world object? JS question
+		function Solve_set_SolverRegisteredNumbers() {
+			rc = asc("slv_available");
+			console.log("slvavail: ",rc.v);
+			solver_names = rc.v.split("\v");
+			for (const s of solver_names) {
+				r = asc("slv_number", s);
+				// verify ui controller state tree uc is there, or make it
+				check_world("uc","solver");
+				// world.uc.solver maps to ascSolvVect in tcl
+				world.uc.solver[s] = r.v;
+				console.log("REGISTERED SOLVER ",s," as number ",
+					world.uc.solver[s]);
+			}
+		}
+		function Solve_Import(qlfdid) {
+			rc = asc("slv_import_qlfdid", qlfdid, "test");
+			if (rc.e != 0) {
+				check_world("uc","solverstat");
+				world.uc.solverstat["importerror"] = "Instance not a complete model instance.";
+				return 1;
+			}
+			check_world("uc","solver");
+			world.uc.solver["simname"] = qlfdid.split(".")[0];
+  			// import valid system: builds rel/var/obj lists
+			r = asc("slv_import_qlfdid", qlfdid);
+			if (r.e != 0) {
+				console.log("slv import error: ",r.v);
+				return
+			}
+			r = asc("slv_get_pathname");
+			if (r.e != 0) {
+				console.log("slv pathname error: ",r.v);
+				return
+			} else {
+				console.log("slv imported instance", r.v);
+			}
+  			world.uc.solver["instname"] = r.v;
 		}
 		function run_ascend() {
 			console.log("called run_ascend")
@@ -44,6 +96,7 @@
 			}
 			// rt2 = asc("librread", "/models/system.a4l");
 			rt2 = asc("librread", "/models/basemodel.a4l");
+			rt22 = asc("librread", "/models/atoms.a4l");
 			rt1 = asc("libr_destroy_types");
 			console.log(rt1.e);
 			console.log(rt1.v);
@@ -232,6 +285,19 @@ END catch_Word_model2;";
 				console.log("error:" + rtcode.v);
 			}
 
+			Solve_set_SolverRegisteredNumbers();
+
+			rc = asc("asc_compiler_option", "-useCopyAnon", "0");
+			if (rc.e != 0) {
+				console.log("failed: asc_compiler_option", "-useCopyAnon", "0", rc.v);
+				return;
+			}
+			r = asc("sim_instantiate", "vp", "vesselPlot");
+			if (r.e != 0 ) {
+				console.log("create vp failed: ", r.v);
+			} else {
+				Solve_Import("vp");
+			}
 // sim_BinTokenSetOptions
 // libr_hide_type $TYPE $PARTNAME (exclude PARTNAME from listing ot TYPE)
 // libr_type_is_shown

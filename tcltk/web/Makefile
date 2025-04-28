@@ -8,7 +8,7 @@ EM=$(HOME)/emsdk/upstream/emscripten/emcc
 #CXXSRCS,CXXHDRS defined in ../json/Makefile.lists
 #CSRCS_CORE, CHDRS_ALL defined in Makefile.lists
 
-CSRCS = $(CSRCS_CORE) $(CSRCS_PACKAGES)
+CSRCS = $(CSRCS_CORE) $(CSRCS_PACKAGES) $(CSRCS_SOLVERS)
 CHDRS = $(CSRCS_ALL) 
 
 RTSRCS = ../json/rt.cc rt_glue_wrapper.cc

@@ -270,6 +270,8 @@ extern "C" {
 #include <ascend/integrator/integrator.h>
 #include <ascend/integrator/samplelist.h>
 
+#include <solvers/static_solvers.h>
+
 }
 
 /// remove all characters in stripchars from end of dstring.

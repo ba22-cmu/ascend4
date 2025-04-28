@@ -26,7 +26,7 @@ interface ascjson {
 
  [Const] rc libr_query (DOMString vargv);
 
-// [Const] rc asc_compiler_option (DOMString vargv) ;
+ [Const] rc asc_compiler_option (DOMString vargv) ;
 
  [Const] rc libr_parsestring (DOMString vargv) ;
 
@@ -46,7 +46,6 @@ interface ascjson {
  [Const] rc libr_types_in_module (DOMString vargv) ;
 
  [Const] rc libr_extract_type (DOMString vargv) ;
-/*
  [Const] rc qlfdid (DOMString vargv) ;
 
  [Const] rc bgetproc (DOMString vargv) ;
@@ -57,37 +56,37 @@ interface ascjson {
 
  [Const] rc qassgn3 (DOMString vargv) ;
 
- [Const] rc x__brow_iname (DOMString vargv) ;
+ [BindTo="__brow_iname", Const] rc x__brow_iname (DOMString vargv) ;
 
- [Const] rc x__brow_isrelation (DOMString vargv) ;
+ [BindTo="__brow_isrelation", Const] rc x__brow_isrelation (DOMString vargv) ;
 
- [Const] rc x__brow_ismodel (DOMString vargv) ;
+ [BindTo="__brow_ismodel", Const] rc x__brow_ismodel (DOMString vargv) ;
 
  [Const] rc bgetrels (DOMString vargv) ;
 
  [Const] rc bgetrelspf (DOMString vargv) ;
 
- [Const] rc x__brow_relsforatom (DOMString vargv) ;
+ [BindTo="__brow_relsforatom", Const] rc x__brow_relsforatom (DOMString vargv) ;
 
- [Const] rc x__brow_islogrel (DOMString vargv) ;
+ [BindTo="__brow_islogrel", Const] rc x__brow_islogrel (DOMString vargv) ;
 
  [Const] rc bgetlogrels (DOMString vargv) ;
 
  [Const] rc bgetlogrelspf (DOMString vargv) ;
 
- [Const] rc x__brow_logrelsforatom (DOMString vargv) ;
+ [BindTo="__brow_logrelsforatom", Const] rc x__brow_logrelsforatom (DOMString vargv) ;
 
  [Const] rc bgetcondrels (DOMString vargv) ;
 
  [Const] rc bgetcondlogrels (DOMString vargv) ;
 
- [Const] rc x__brow_iswhen (DOMString vargv) ;
+ [BindTo="__brow_iswhen", Const] rc x__brow_iswhen (DOMString vargv) ;
 
- [Const] rc x__brow_isinstanceinwhen (DOMString vargv) ;
+ [BindTo="__brow_isinstanceinwhen", Const] rc x__brow_isinstanceinwhen (DOMString vargv) ;
 
  [Const] rc bgetwhens (DOMString vargv) ;
 
- [Const] rc x__brow_whensforinstance (DOMString vargv) ;
+ [BindTo="__brow_whensforinstance", Const] rc x__brow_whensforinstance (DOMString vargv) ;
 
  [Const] rc bwritependings (DOMString vargv) ;
 
@@ -125,16 +124,16 @@ interface ascjson {
 
  [Const] rc sim_reinstantiate (DOMString vargv) ;
 
- [Const] rc x__sims_copy (DOMString vargv) ;
+ [BindTo="__sims_copy", Const] rc x__sims_copy (DOMString vargv) ;
 
- [Const] rc x__sims_proto (DOMString vargv) ;
+ [BindTo="__sims_proto", Const] rc x__sims_proto (DOMString vargv) ;
 
- [Const] rc x__sims_saveinst (DOMString vargv) ;
+ [BindTo="__sims_saveinst", Const] rc x__sims_saveinst (DOMString vargv) ;
 
  [Const] rc sim_destroy (DOMString vargv) ;
 
  [Const] rc simlistpending (DOMString vargv) ;
-*/
+
  [Const] rc ddefine (DOMString vargv) ;
 
  [Const] rc ddiffdefine (DOMString vargv) ;
@@ -156,26 +155,26 @@ interface ascjson {
  [Const] rc dgetparts (DOMString vargv) ;
 
  [Const] rc disroot_type (DOMString vargv) ;
-/* userdata and probe bits
- [Const] rc x__probe (DOMString vargv) ;
 
- [Const] rc x__var_analyze (DOMString vargv) ;
+ [BindTo="__probe", Const] rc x__probe (DOMString vargv) ;
 
- [Const] rc x__rel_analyze (DOMString vargv) ;
+ [BindTo="__var_analyze", Const] rc x__var_analyze (DOMString vargv) ;
 
- [Const] rc x__userdata_init (DOMString vargv) ;
+ [BindTo="__rel_analyze", Const] rc x__rel_analyze (DOMString vargv) ;
 
- [Const] rc x__userdata_create (DOMString vargv) ;
+ [BindTo="__userdata_init", Const] rc x__userdata_init (DOMString vargv) ;
 
- [Const] rc x__userdata_destroy (DOMString vargv) ;
+ [BindTo="__userdata_create", Const] rc x__userdata_create (DOMString vargv) ;
 
- [Const] rc x__userdata_save (DOMString vargv) ;
+ [BindTo="__userdata_destroy", Const] rc x__userdata_destroy (DOMString vargv) ;
 
- [Const] rc x__userdata_restore (DOMString vargv) ;
+ [BindTo="__userdata_save", Const] rc x__userdata_save (DOMString vargv) ;
 
- [Const] rc x__userdata_query (DOMString vargv) ;
-*/
- [Const] rc x__userdata_print (DOMString vargv) ;
+ [BindTo="__userdata_restore", Const] rc x__userdata_restore (DOMString vargv) ;
+
+ [BindTo="__userdata_query", Const] rc x__userdata_query (DOMString vargv) ;
+
+ [BindTo="__userdata_print", Const] rc x__userdata_print (DOMString vargv) ;
 
  [Const] rc get_model_children (DOMString vargv) ;
 

@@ -102,37 +102,37 @@ public:
 
 	rcp qassgn3 (const char *vargv) ;
 
-	rcp x__brow_iname (const char *vargv) ;
+	rcp __brow_iname (const char *vargv) ;
 
-	rcp x__brow_isrelation (const char *vargv) ;
+	rcp __brow_isrelation (const char *vargv) ;
 
-	rcp x__brow_ismodel (const char *vargv) ;
+	rcp __brow_ismodel (const char *vargv) ;
 
 	rcp bgetrels (const char *vargv) ;
 
 	rcp bgetrelspf (const char *vargv) ;
 
-	rcp x__brow_relsforatom (const char *vargv) ;
+	rcp __brow_relsforatom (const char *vargv) ;
 
-	rcp x__brow_islogrel (const char *vargv) ;
+	rcp __brow_islogrel (const char *vargv) ;
 
 	rcp bgetlogrels (const char *vargv) ;
 
 	rcp bgetlogrelspf (const char *vargv) ;
 
-	rcp x__brow_logrelsforatom (const char *vargv) ;
+	rcp __brow_logrelsforatom (const char *vargv) ;
 
 	rcp bgetcondrels (const char *vargv) ;
 
 	rcp bgetcondlogrels (const char *vargv) ;
 
-	rcp x__brow_iswhen (const char *vargv) ;
+	rcp __brow_iswhen (const char *vargv) ;
 
-	rcp x__brow_isinstanceinwhen (const char *vargv) ;
+	rcp __brow_isinstanceinwhen (const char *vargv) ;
 
 	rcp bgetwhens (const char *vargv) ;
 
-	rcp x__brow_whensforinstance (const char *vargv) ;
+	rcp __brow_whensforinstance (const char *vargv) ;
 
 	rcp bwritependings (const char *vargv) ;
 
@@ -170,11 +170,11 @@ public:
 
 	rcp sim_reinstantiate (const char *vargv) ;
 
-	rcp x__sims_copy (const char *vargv) ;
+	rcp __sims_copy (const char *vargv) ;
 
-	rcp x__sims_proto (const char *vargv) ;
+	rcp __sims_proto (const char *vargv) ;
 
-	rcp x__sims_saveinst (const char *vargv) ;
+	rcp __sims_saveinst (const char *vargv) ;
 
 	rcp sim_destroy (const char *vargv) ;
 
@@ -204,23 +204,23 @@ public:
 
 	rcp Asc_ProbeCmdHC (const char *vargv) ;
 
-	rcp x__var_analyze (const char *vargv) ;
+	rcp __var_analyze (const char *vargv) ;
 
-	rcp x__rel_analyze (const char *vargv) ;
+	rcp __rel_analyze (const char *vargv) ;
 
-	rcp x__userdata_init (const char *vargv) ;
+	rcp __userdata_init (const char *vargv) ;
 
-	rcp x__userdata_create (const char *vargv) ;
+	rcp __userdata_create (const char *vargv) ;
 
-	rcp x__userdata_destroy (const char *vargv) ;
+	rcp __userdata_destroy (const char *vargv) ;
 
-	rcp x__userdata_save (const char *vargv) ;
+	rcp __userdata_save (const char *vargv) ;
 
-	rcp x__userdata_restore (const char *vargv) ;
+	rcp __userdata_restore (const char *vargv) ;
 
-	rcp x__userdata_query (const char *vargv) ;
+	rcp __userdata_query (const char *vargv) ;
 
-	rcp x__userdata_print (const char *vargv) ;
+	rcp __userdata_print (const char *vargv) ;
 
 	rcp get_model_children (const char *vargv) ;
 
@@ -404,7 +404,7 @@ public:
 	rcp integrate_able (const char *vargv) ;
 #endif
 
-	rcp x__mtx_norms (const char *vargv) ;
+	rcp __mtx_norms (const char *vargv) ;
 
 	rcp mtx_gui_plot_incidence (const char *vargv) ;
 

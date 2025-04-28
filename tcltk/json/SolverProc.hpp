@@ -31,7 +31,7 @@
 /** Marker for code to be removed */
 #define DELETEME 0
 
-void Asc_SolvMemoryCleanup(void);
+static void Asc_SolvMemoryCleanup(void);
 /**< Invoke system_free_reused_mem to clean up all memory solvers hide. */
 
 #ifdef ASC_SIGNAL_TRAPS

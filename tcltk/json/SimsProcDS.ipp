@@ -6,6 +6,7 @@
 
 #define ASC_BUILDING_INTERFACE
 
+#if 0
 #include "config.h"
 
 #include <ascend/utilities/bit.h>
@@ -35,6 +36,7 @@
 #include <ascend/system/slv_types.h>
 
 #include <ctype.h>
+#endif
 
 int ascjson::Asc_SimsQueryCmdDS(  Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
