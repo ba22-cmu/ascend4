@@ -224,6 +224,11 @@ struct StaticSolverRegistration{
 	The names here are only used to provide information in the case where
 	solver registration fails. The definitive solver names are in the slv*.c
 	files.
+
+	This is misnamed; it should be DefaultSolverRegistration. It assume
+	.so/.dll loading via package_load works (which is an invalid assumption)
+	for the static linking case that once was supported with all the ifdefs
+	that got removed.
 */
 static const struct StaticSolverRegistration slv_reg[]={
 	{"qrslv"}
@@ -316,6 +321,7 @@ int SlvRegisterStandardClients(void){
 #endif
 
 	MSG("REGISTERING STANDARD SOLVER ENGINES");
+#ifndef STATIC_SOLVERS
 	for(i=0; slv_reg[i].importname!=NULL;++i){
 		MSG("Registering '%s'",slv_reg[i].importname);
 		error = package_load(slv_reg[i].importname,NULL);
@@ -330,6 +336,9 @@ int SlvRegisterStandardClients(void){
 		}
 	}
   return nclients;
+#else
+  return static_solvers_register();
+#endif
 }
 
 /*------------------------------------------------------*/
