@@ -627,6 +627,7 @@ extern void *mtx_null_vector_f(int32 cap, int line, CONST char *file,
  ***  If insufficient memory is available, this whines and returns NULL.
  ***  Calling this with cap==0 causes the reused memory to be deallocated and
  ***  returns NULL.
+ ***  The mtx_basic function mtx_free_reused_mem calls with cap=0 all it knows.
  **/
 
 extern void mtx_null_vector_release_f(int line,
