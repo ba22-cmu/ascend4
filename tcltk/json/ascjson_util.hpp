@@ -63,7 +63,7 @@ char *file_to_string(FILE *f);
 	Asc_DStringAppend(a, "\v", 1)
 #define VAEstrip(a) Asc_DStringStrip(a,"\v")
 
-/// split str on vtab and return data in *argvP. call must free *argvP.
+/// split str on vtab and return data in *argvP. call must free freeArgv.
 int VTcl_SplitList(void *i, const char *str, int *argcP, char ***argvP);
 
 int JTcl_GetInt(void *i, const char* str, int *iptr);

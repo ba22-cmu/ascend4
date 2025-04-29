@@ -98,6 +98,8 @@ interface ascjson {
 
  [Const] rc isas (DOMString vargv) ;
 
+ [Const] rc btransfer (DOMString vargv) ;
+
  [Const] rc cliques (DOMString vargv) ;
 
  [Const] rc brow_child_list (DOMString vargv) ;

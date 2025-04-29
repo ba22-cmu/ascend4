@@ -146,6 +146,8 @@ public:
 
 	rcp cliques (const char *vargv) ;
 
+	rcp btransfer (const char *vargv) ;
+
 	rcp Asc_BrowWriteInstanceCmdHC (const char *vargv) ;
 
 	rcp bmerge (const char *vargv) ;

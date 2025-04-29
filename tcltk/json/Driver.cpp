@@ -147,7 +147,7 @@ int AscDriver(int argc, CONST char **argv)
 
 	// next line depends on ASCEND_LIBRARY env var defaulted right in ascjson.cpp
 	// or there being something in user env that overrides it.
-	const char *read_file = "librread\vvesselPlot.a4c";
+	const char *read_file = "librread\vvessel.a4c";
 	auto r2 = world->Asc_LibrReadCmdHC(read_file);
 	printf("%d\n", r2->e);
 	printf("%s\n", r2->v);
@@ -159,10 +159,43 @@ int AscDriver(int argc, CONST char **argv)
 	printf("%s\n", r3->v);
 	// should return testcmumodel cmumodel your_site_models catch_Word_model as a vtab list
 
-	const char *minfo = Asc_LibrModuleInfoCmdHN "\vbasemodel.a4l<0>\vvesselPlot.a4c<0>";
+	const char *minfo = Asc_LibrModuleInfoCmdHN "\vbasemodel.a4l<0>\vvessel.a4c<0>";
 	auto r4 = world->Asc_LibrModuleInfoCmdHC(minfo);
 	printf("%d\n", r4->e);
 	printf("%s\n", r4->v);
+
+	auto rsa = world->slv_available("slv_available");
+	int sargc=0; char **sargv = NULL;
+	VTcl_SplitList(NULL, rsa->v, &sargc, &sargv);
+	for (int k = 0; k < sargc; k++ ) {
+		printf("solver: %s\n", sargv[k]);
+	}
+	freeArgv(sargv);
+
+	world->asc_compiler_option("asc_compiler_option\v-useCopyAnon\v0");
+	world->sim_instantiate("sim_instantiate\vvp\vvessel");
+	world->qlfdid("qlfdid\vvp");
+	world->btransfer("btransfer");
+	auto mr = world->Asc_BrowInitializeCmdHC(Asc_BrowInitializeCmdHS
+		       	"\v-method\von_load\v-qlfdid\vvp");
+	printf("onload: %s\n",mr->v);
+	auto siq = world->slv_import_qlfdid("slv_import_qlfdid\vvp\vtest");
+	if (siq->e) {
+		printf("slv_import_qlfdid test failed\n");
+	} else {
+		world->slv_import_qlfdid("slv_import_qlfdid\vvp");
+		auto sn = world->slv_get_pathname("slv_get_pathname");
+		printf("slv using instance %s\n",sn->v);
+		world->slv_presolve("slv_presolve");
+		auto sp =  world->slv_get_stat_page("slv_get_stat_page");
+		printf("before stats: %s\n", sp->v);
+		world->slv_solve("slv_solve");
+		sp =  world->slv_get_stat_page("slv_get_stat_page");
+		printf("after stats: %s\n", sp->v);
+	}
+
+	world->slv_flush_solver("slv_flush_solver");
+	world->sim_destroy("sim_destroy\vvp");
 	
 	if (argc > 6) {
 		int count = world->call_all_force_link();

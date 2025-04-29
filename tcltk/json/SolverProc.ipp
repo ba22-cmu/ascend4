@@ -58,7 +58,7 @@ void slv_trap_int(int sigval)
 
   FPRINTF(stdout,"\nascend4: SIGINT caught.\n");
   Solv_C_CheckHalt_Flag = 1; /* need to set the tcl var */
-#if 0 // fixme: this needs to be replaces with JS var setting
+#if 0 // fixme: this needs to be replaced with JS var setting
   Asc_DString *hptr = g_hptr;  /*  a local ptr to the global hptr ptr */
   Tcl_SetVar2(hptr,"ascSolvStatVect","menubreak","1",TCL_GLOBAL_ONLY);
 #endif
@@ -1893,7 +1893,7 @@ int ascjson::Asc_SolvImportQlfdid(Asc_DString *hptr ,int argc, CONST84 char *arg
     /* catch root name */
     status=VTcl_SplitList(hptr, temp, &listc, &listargv);
     if (status!=HELP_OK) { /* this should never happen */
-      ascfree(listargv);
+      freeArgv(listargv);
       Asc_DStringFree(hptr);
       Asc_DStringSet(hptr, "slv_import_qlfdid: error in split list for sim");
       FPRINTF(ASCERR, "wierdness in slv_import_qlfdid splitlist.\n");
@@ -1906,7 +1906,7 @@ int ascjson::Asc_SolvImportQlfdid(Asc_DString *hptr ,int argc, CONST84 char *arg
     }
     /* catch root inst ptr */
     solvinst_root_pot = Asc_FindSimulationRoot(AddSymbol(listargv[0]));
-    ascfree(listargv);
+    freeArgv(listargv);
     if (!solvinst_root_pot) { /*an error we should never reach, knock wood */
       Asc_DStringFree(hptr);
       FPRINTF(ASCERR, "NULL simulation found by slv_import_qlfdid. %s\n",temp);
@@ -1973,12 +1973,12 @@ int ascjson::Asc_SolvImportQlfdid(Asc_DString *hptr ,int argc, CONST84 char *arg
     if (g_solvsys_cur == NULL) {
       g_compiler_counter = 1; /* initialize compiler counter */
     }
+    if (solver_engine(prevs) == NULL) {
+      prevs = slv_lookup_client("QRSlv"); // should take this from envvar
+    }
     if (g_solvinst_cur == solvinst_pot && g_compiler_counter == 0
         && g_solvinst_cur != NULL) {
       prevs = ::slv_get_selected_solver(g_solvsys_cur);
-      if (solver_engine(prevs) == NULL) {
-	      prevs = slv_lookup_client("QRSlv"); // should take this from envvar
-      }
       CONSOLE_DEBUG("...");
       ::slv_select_solver(g_solvsys_cur,prevs);
       Asc_DStringSet(hptr, "Solver instance created.");
@@ -1994,7 +1994,7 @@ int ascjson::Asc_SolvImportQlfdid(Asc_DString *hptr ,int argc, CONST84 char *arg
     if (g_solvsys_cur != NULL) {
       prevs = ::slv_get_selected_solver(g_solvsys_cur);
       if (solver_engine(prevs) == NULL) {
-	      prevs = slv_lookup_client("QRSlv"); // should take this from envvar
+	      prevs = slv_lookup_client("QRSlv"); // should take this string from envvar?
       }
       systmp=g_solvsys_cur;
       system_destroy(systmp);

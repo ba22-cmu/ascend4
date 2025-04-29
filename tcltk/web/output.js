@@ -5132,6 +5132,7 @@ var _emscripten_bind_ascjson_bnumpendings_1 = Module['_emscripten_bind_ascjson_b
 var _emscripten_bind_ascjson_count_names_1 = Module['_emscripten_bind_ascjson_count_names_1'] = createExportWrapper('emscripten_bind_ascjson_count_names_1', 2);
 var _emscripten_bind_ascjson_aliases_1 = Module['_emscripten_bind_ascjson_aliases_1'] = createExportWrapper('emscripten_bind_ascjson_aliases_1', 2);
 var _emscripten_bind_ascjson_isas_1 = Module['_emscripten_bind_ascjson_isas_1'] = createExportWrapper('emscripten_bind_ascjson_isas_1', 2);
+var _emscripten_bind_ascjson_btransfer_1 = Module['_emscripten_bind_ascjson_btransfer_1'] = createExportWrapper('emscripten_bind_ascjson_btransfer_1', 2);
 var _emscripten_bind_ascjson_cliques_1 = Module['_emscripten_bind_ascjson_cliques_1'] = createExportWrapper('emscripten_bind_ascjson_cliques_1', 2);
 var _emscripten_bind_ascjson_brow_child_list_1 = Module['_emscripten_bind_ascjson_brow_child_list_1'] = createExportWrapper('emscripten_bind_ascjson_brow_child_list_1', 2);
 var _emscripten_bind_ascjson_bmerge_1 = Module['_emscripten_bind_ascjson_bmerge_1'] = createExportWrapper('emscripten_bind_ascjson_bmerge_1', 2);
@@ -5291,7 +5292,7 @@ var _emscripten_stack_get_end = wasmExports['emscripten_stack_get_end']
 var __emscripten_stack_restore = wasmExports['_emscripten_stack_restore']
 var __emscripten_stack_alloc = wasmExports['_emscripten_stack_alloc']
 var _emscripten_stack_get_current = wasmExports['emscripten_stack_get_current']
-var ___emscripten_embedded_file_data = Module['___emscripten_embedded_file_data'] = 538924;
+var ___emscripten_embedded_file_data = Module['___emscripten_embedded_file_data'] = 539116;
 function invoke_iiii(index,a1,a2,a3) {
   var sp = stackSave();
   try {
@@ -6170,6 +6171,15 @@ ascjson.prototype['isas'] = ascjson.prototype.isas = function(vargv) {
   if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
   else vargv = ensureString(vargv);
   return wrapPointer(_emscripten_bind_ascjson_isas_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['btransfer'] = ascjson.prototype.btransfer = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_btransfer_1(self, vargv), rc);
 };
 
 /** @suppress {undefinedVars, duplicate} @this{Object} */

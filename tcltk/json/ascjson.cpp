@@ -120,6 +120,7 @@ static void cInit()
 
 static void cFinal()
 {
+  solver_destroy_engines();
   ascjson::Asc_SolvMemoryCleanup();
   Asc_CompilerDestroy();
   // Asc_DestroyEnvironment(); fixme need utilities/ascenvvar.ipp
@@ -387,6 +388,11 @@ rcp ascjson::isas (const char *vargv)
 rcp ascjson::cliques (const char *vargv) 
 {
 	unimplemented; // Asc_BrowWriteCliqueCmd
+}
+
+rcp ascjson::btransfer (const char *vargv) 
+{
+	wrap_dstring(Asc_BrowTransferCmd, SVcstr);
 }
 
 rcp ascjson::Asc_BrowWriteInstanceCmdHC (const char *vargv) 
@@ -1230,7 +1236,7 @@ rcp ascjson::Asc_HelpCmdHC (const char *vargv)
 //#include "tcltk/json/Integrators.ipp"
 #include "tcltk/json/all_call.ipp"
 
-/// utils
+/// utils; caller clear argv with freeArgv
 int VTcl_SplitList(void *i, const char *str, int *argcP, char ***argvP)
 {
 	// split of vtabs and populate argc argv

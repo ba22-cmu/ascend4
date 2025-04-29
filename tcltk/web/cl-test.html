@@ -86,6 +86,15 @@
 				console.log("slv imported instance", r.v);
 			}
   			world.uc.solver["instname"] = r.v;
+			// fixme: need to do slv_select_solver, but
+			// this defaults to QRSlv ok.
+			r = asc("slv_presolve");
+			r = asc("slv_get_stat_page");
+			console.log("slvstats", r.e, " ", r.v);
+			r = asc("slv_solve");
+			// r = asc("slv_checksys");
+			r = asc("slv_get_stat_page");
+			console.log("slvstats", r.e, " ", r.v);
 		}
 		function run_ascend() {
 			console.log("called run_ascend")
@@ -295,9 +304,28 @@ END catch_Word_model2;";
 			r = asc("sim_instantiate", "vp", "vesselPlot");
 			if (r.e != 0 ) {
 				console.log("create vp failed: ", r.v);
-			} else {
-				Solve_Import("vp");
-			}
+				return;
+			} 
+			// set search pointer
+			r = asc("qlfdid","vp");
+			// set browser pointer from search pointer
+			r = asc("btransfer");
+			// run a method regardless of in browser or not
+			r = asc("brow_runmethod", "-method", "on_load", "-qlfdid","vp");
+			Solve_Import("vp");
+
+			r = asc("slv_presolve");
+			r = asc("slv_get_stat_page");
+			console.log(r.v);
+
+			r = asc("slv_solve");
+			r = asc("slv_get_stat_page");
+			console.log(r.v);
+
+			r = asc("slv_flush_solver");
+
+			r = asc("sim_destroy","vp");
+
 // sim_BinTokenSetOptions
 // libr_hide_type $TYPE $PARTNAME (exclude PARTNAME from listing ot TYPE)
 // libr_type_is_shown
