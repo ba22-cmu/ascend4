@@ -1,0 +1,40 @@
+child graph
+{
+    "a": null,
+    "b": {
+        "c": null,
+        "d": null,
+        "e": {
+            "f": null,
+            "g": null
+        }
+    }
+}
+or
+{
+    "a": {
+        "kind": "model",
+        "visible": false,
+        "children": null
+    },
+    "b": {
+        "kind": "model",
+        "visible": true,
+        "children": {
+            "c": {
+                "kind": "model",
+                "visible": true,
+                "children": null
+            },
+            "d": null,
+            "e": {
+                "children": {
+                    "f": null,
+                    "g": null
+                },
+                "kind": "model",
+                "visible": true
+            }
+        }
+    }
+}

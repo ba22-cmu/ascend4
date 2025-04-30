@@ -46,6 +46,7 @@ interface ascjson {
  [Const] rc libr_types_in_module (DOMString vargv) ;
 
  [Const] rc libr_extract_type (DOMString vargv) ;
+
  [Const] rc qlfdid (DOMString vargv) ;
 
  [Const] rc bgetproc (DOMString vargv) ;
@@ -89,6 +90,8 @@ interface ascjson {
  [BindTo="__brow_whensforinstance", Const] rc x__brow_whensforinstance (DOMString vargv) ;
 
  [Const] rc bwritependings (DOMString vargv) ;
+
+ [Const] rc bprint (DOMString vargv) ;
 
  [Const] rc bnumpendings (DOMString vargv) ;
 

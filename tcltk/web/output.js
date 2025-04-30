@@ -5128,6 +5128,7 @@ var _emscripten_bind_ascjson_x__brow_isinstanceinwhen_1 = Module['_emscripten_bi
 var _emscripten_bind_ascjson_bgetwhens_1 = Module['_emscripten_bind_ascjson_bgetwhens_1'] = createExportWrapper('emscripten_bind_ascjson_bgetwhens_1', 2);
 var _emscripten_bind_ascjson_x__brow_whensforinstance_1 = Module['_emscripten_bind_ascjson_x__brow_whensforinstance_1'] = createExportWrapper('emscripten_bind_ascjson_x__brow_whensforinstance_1', 2);
 var _emscripten_bind_ascjson_bwritependings_1 = Module['_emscripten_bind_ascjson_bwritependings_1'] = createExportWrapper('emscripten_bind_ascjson_bwritependings_1', 2);
+var _emscripten_bind_ascjson_bprint_1 = Module['_emscripten_bind_ascjson_bprint_1'] = createExportWrapper('emscripten_bind_ascjson_bprint_1', 2);
 var _emscripten_bind_ascjson_bnumpendings_1 = Module['_emscripten_bind_ascjson_bnumpendings_1'] = createExportWrapper('emscripten_bind_ascjson_bnumpendings_1', 2);
 var _emscripten_bind_ascjson_count_names_1 = Module['_emscripten_bind_ascjson_count_names_1'] = createExportWrapper('emscripten_bind_ascjson_count_names_1', 2);
 var _emscripten_bind_ascjson_aliases_1 = Module['_emscripten_bind_ascjson_aliases_1'] = createExportWrapper('emscripten_bind_ascjson_aliases_1', 2);
@@ -5293,7 +5294,7 @@ var _emscripten_stack_get_end = wasmExports['emscripten_stack_get_end']
 var __emscripten_stack_restore = wasmExports['_emscripten_stack_restore']
 var __emscripten_stack_alloc = wasmExports['_emscripten_stack_alloc']
 var _emscripten_stack_get_current = wasmExports['emscripten_stack_get_current']
-var ___emscripten_embedded_file_data = Module['___emscripten_embedded_file_data'] = 539260;
+var ___emscripten_embedded_file_data = Module['___emscripten_embedded_file_data'] = 539708;
 function invoke_iiii(index,a1,a2,a3) {
   var sp = stackSave();
   try {
@@ -6136,6 +6137,15 @@ ascjson.prototype['bwritependings'] = ascjson.prototype.bwritependings = functio
   if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
   else vargv = ensureString(vargv);
   return wrapPointer(_emscripten_bind_ascjson_bwritependings_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['bprint'] = ascjson.prototype.bprint = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_bprint_1(self, vargv), rc);
 };
 
 /** @suppress {undefinedVars, duplicate} @this{Object} */

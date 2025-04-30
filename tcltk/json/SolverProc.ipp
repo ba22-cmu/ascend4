@@ -966,53 +966,41 @@ int ascjson::Asc_SolvGetSlvStatPage(Asc_DString *hptr, int argc, CONST84 char *a
 
   ::slv_get_status(g_solvsys_cur,&s);
 
+#define json_add_int_comma(N) \
+  sprintf(tmps,"%d",s.N); \
+  Asc_DStringAppend3(hptr,"\"" #N "\":", tmps, ",", HALL)
+
   tmps= (char *)ascmalloc((MAXIMUM_NUMERIC_LENGTH+1)*sizeof(char));
   /*system status */
-  sprintf(tmps,"%d",s.ok);
-  VTcl_AppendElement(hptr,tmps);
-  sprintf(tmps,"%d",s.over_defined);
-  VTcl_AppendElement(hptr,tmps);
-  sprintf(tmps,"%d",s.under_defined);
-  VTcl_AppendElement(hptr,tmps);
-  sprintf(tmps,"%d",s.struct_singular);
-  VTcl_AppendElement(hptr,tmps);
-  sprintf(tmps,"%d",s.ready_to_solve);
-  VTcl_AppendElement(hptr,tmps);
-  sprintf(tmps,"%d",s.converged);
-  VTcl_AppendElement(hptr,tmps);
-  sprintf(tmps,"%d",s.diverged);
-  VTcl_AppendElement(hptr,tmps);
-  sprintf(tmps,"%d",s.inconsistent);
-  VTcl_AppendElement(hptr,tmps);
-  sprintf(tmps,"%d",s.calc_ok);
-  VTcl_AppendElement(hptr,tmps);
-  sprintf(tmps,"%d",s.iteration_limit_exceeded);
-  VTcl_AppendElement(hptr,tmps);
-  sprintf(tmps,"%d",s.time_limit_exceeded);
-  VTcl_AppendElement(hptr,tmps);
-  sprintf(tmps,"%d",s.iteration);
-  VTcl_AppendElement(hptr,tmps);
+  Asc_DStringSet(hptr,"{");
+  json_add_int_comma(ok);
+  json_add_int_comma(over_defined);
+  json_add_int_comma(under_defined);
+  json_add_int_comma(struct_singular);
+  json_add_int_comma(ready_to_solve);
+  json_add_int_comma(converged);
+  json_add_int_comma(diverged);
+  json_add_int_comma(inconsistent);
+  json_add_int_comma(calc_ok);
+  json_add_int_comma(iteration_limit_exceeded);
+  json_add_int_comma(time_limit_exceeded);
+  json_add_int_comma(iteration);
   sprintf(tmps,"%.16g",s.cpu_elapsed);
-  VTcl_AppendElement(hptr,tmps);
+  Asc_DStringAppend3(hptr,"\"" "cpu_elapsed" "\":", tmps, ",",HALL);
 
   /*block status*/
-  sprintf(tmps,"%d",s.block.number_of);
-  VTcl_AppendElement(hptr,tmps);
-  sprintf(tmps,"%d",s.block.current_block);
-  VTcl_AppendElement(hptr,tmps);
-  sprintf(tmps,"%d",s.block.current_size);
-  VTcl_AppendElement(hptr,tmps);
-  sprintf(tmps,"%d",s.block.previous_total_size);
-  VTcl_AppendElement(hptr,tmps);
-  sprintf(tmps,"%d",s.block.iteration);
-  VTcl_AppendElement(hptr,tmps);
+  json_add_int_comma(block.number_of);
+  json_add_int_comma(block.current_block);
+  json_add_int_comma(block.current_size);
+  json_add_int_comma(block.previous_total_size);
+  json_add_int_comma(block.iteration);
   sprintf(tmps,"%.10g",s.block.cpu_elapsed);
-  VTcl_AppendElement(hptr,tmps);
+  Asc_DStringAppend3(hptr,"\"" "block.cpu_elapsed" "\":", tmps, ",",HALL);
   sprintf(tmps,"%.10g",s.block.residual);
-  VTcl_AppendElement(hptr,tmps);
+  Asc_DStringAppend3(hptr,"\"" "block.residual" "\":", tmps, "}",HALL);
   ascfree(tmps);
-  VAEstrip(hptr);
   return HELP_OK;
+#undef  json_add_int_comma
 }
 
 int ascjson::Asc_SolvGetSlvCostPage(Asc_DString *hptr, int argc, CONST84 char *argv[])
@@ -1033,36 +1021,46 @@ int ascjson::Asc_SolvGetSlvCostPage(Asc_DString *hptr, int argc, CONST84 char *a
 
   slv_get_status(g_solvsys_cur,&s);
 
+#define json_add_int_comma(N) \
+  sprintf(tmps,"%d",s.cost[i].N); \
+  Asc_DStringAppend3(hptr,"\"" #N "\":", tmps, ",", HALL)
+
+#define json_add_g8_comma(N) \
+  sprintf(tmps,"%.8g",s.cost[i].N); \
+  Asc_DStringAppend3(hptr,"\"" #N "\":", tmps, ",", HALL)
+
   if (s.cost)  {
     char * tmps=NULL;
     tmps= (char *)ascmalloc((MAXIMUM_NUMERIC_LENGTH+1)*sizeof(char));
     sprintf(tmps,"%s","\0");
+    Asc_DStringSet(hptr, "[");
     for (i=0;i<s.costsize;i++) {
       if (!i) {
-        sprintf(tmps,"{%d ",s.cost[i].size);
+        sprintf(tmps,"{\"size\":%d,",s.cost[i].size);
       } else {
-        sprintf(tmps," {%d ",s.cost[i].size);
+        sprintf(tmps,",{\"size\":%d,",s.cost[i].size);
       }
       Asc_DStringAppend(hptr,tmps,HALL);
-      sprintf(tmps, "%d ",s.cost[i].iterations);
+
+      json_add_int_comma(iterations);
+      json_add_int_comma(funcs);
+      json_add_int_comma(jacs);
+      json_add_g8_comma(time);
+
+      sprintf(tmps, "\"resid\":%.16g,",s.cost[i].resid);
       Asc_DStringAppend(hptr,tmps,HALL);
-      sprintf(tmps, "%d ",s.cost[i].funcs);
-      Asc_DStringAppend(hptr,tmps,HALL);
-      sprintf(tmps, "%d ",s.cost[i].jacs);
-      Asc_DStringAppend(hptr,tmps,HALL);
-      sprintf(tmps, "%.8g ",s.cost[i].time);
-      Asc_DStringAppend(hptr,tmps,HALL);
-      sprintf(tmps, "%.16g ",s.cost[i].resid);
-      Asc_DStringAppend(hptr,tmps,HALL);
-      sprintf(tmps, "%.8g ",s.cost[i].functime);
-      Asc_DStringAppend(hptr,tmps,HALL);
-      sprintf(tmps, "%.8g}",s.cost[i].jactime);
+
+      json_add_g8_comma(functime);
+
+      sprintf(tmps, "\"jactime\":%.8g}",s.cost[i].jactime);
       Asc_DStringAppend(hptr,tmps,HALL);
     }
-    VAEstrip(hptr);
+    Asc_DStringAppend(hptr, "]", 1);
     ascfree(tmps);
   }
   return HELP_OK;
+#undef  json_add_int_comma
+#undef  json_add_g8_comma
 }
 
 int ascjson::Asc_SolvGetObjectiveVal(Asc_DString *hptr, int argc, CONST84 char *argv[])

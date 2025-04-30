@@ -131,11 +131,10 @@ int ascjson::Asc_LibrReadCmdDS( Asc_DString *hptr,
   int relns_flag = 1;
   int result;
 
-  OLD_ASCUSE; /* see if first arg is -help */
+  // OLD_ASCUSE; /* see if first arg is -help */
 
   if ( argc < 2 || argc > 3 ) {
-    Asc_DStringSet(hptr,
-                  "wrong # args: Usage: " Asc_LibrReadCmdHU);
+    Asc_DStringSet(hptr, "wrong # args: Usage: " Asc_LibrReadCmdHU);
     return HELP_ERROR;
   }
 

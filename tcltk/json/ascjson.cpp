@@ -365,6 +365,11 @@ rcp ascjson::bwritependings (const char *vargv)
 	unimplemented; // Asc_BrowWritePendingsSTDOUT
 }
 
+rcp ascjson::bprint (const char *vargv) 
+{
+	wrap_dstring(Asc_BrowPrintCmd, SVcstr);
+}
+
 rcp ascjson::bnumpendings (const char *vargv) 
 {
 	unimplemented; // Asc_BrowShowPendings
@@ -433,6 +438,11 @@ rcp ascjson::free_all_vars (const char *vargv)
 rcp ascjson::Asc_SimBinTokenSetOptionsHC (const char *vargv) 
 {
 	unimplemented; // Asc_SimBinTokenSetOptions
+}
+
+rcp ascjson::slist (const char *vargv) 
+{
+	wrap_dstring(Asc_BrowSimListCmd, SVvtab);
 }
 
 rcp ascjson::sims (const char *vargv) 
@@ -644,12 +654,12 @@ rcp ascjson::slv_get_insttype (const char *vargv)
 
 rcp ascjson::slv_get_cost_page (const char *vargv) 
 {
-	wrap_dstring( Asc_SolvGetSlvCostPage , SVcstr);
+	wrap_dstring( Asc_SolvGetSlvCostPage , SVjson);
 }
 
 rcp ascjson::slv_get_stat_page (const char *vargv) 
 {
-	wrap_dstring( Asc_SolvGetSlvStatPage , SVcstr);
+	wrap_dstring( Asc_SolvGetSlvStatPage , SVjson5);
 }
 
 rcp ascjson::slv_get_objval (const char *vargv) 

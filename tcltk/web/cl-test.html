@@ -33,9 +33,9 @@
 		/// This eliminates manually building the vtab string.
 		function asc(method, ...rest) {
 			console.log("Calling ascend: ", method);
-			console.log("rest before is:", rest);
+			// console.log("rest before is:", rest);
 			rest.unshift(method);
-			console.log("rest after is:", rest);
+			// console.log("rest after is:", rest);
 			return world[method](rest.join("\v"));
 		}
 		function check_world(...rest) {
@@ -107,6 +107,7 @@
 			rt2 = asc("librread", "/models/basemodel.a4l");
 			rt22 = asc("librread", "/models/atoms.a4l");
 			rt1 = asc("libr_destroy_types");
+			// needs iterate destroy simlist, slv_flush with destroy types
 			console.log(rt1.e);
 			console.log(rt1.v);
 			if (rt1.e != 0)
@@ -173,12 +174,12 @@
 
 			rtcode = asc("ddefine");
 			if (rtcode.e == 0) {
-				console.log("output of types list is ",rtcode.v);
+				console.log("output of types list is ",rtcode.v.split("\v"));
 			} else {
 				console.log("error:" + rtcode.v);
 			}
 
-			rtcode = asc("ddefine", "cmumodel", "/codedump.txt");
+			rtcode = asc("ddefine", "cmumodel", "dostring");
 			if (rtcode.e == 0) {
 				console.log("output of model type is");
 				console.log(rtcode.v);
@@ -186,7 +187,7 @@
 				console.log("error:" + rtcode.v);
 			}
 
-			rtcode = asc("ddefine", "solver_int", "/codedump.txt");
+			rtcode = asc("ddefine", "solver_int", "dostring");
 			if (rtcode.e == 0) {
 				console.log("output of solver_int code is:");
 				console.log(rtcode.v);
@@ -194,7 +195,7 @@
 				console.log("error:" + rtcode.v);
 			}
 
-			rtcode = asc("ddiffdefine", "solver_binary", "/codedump.txt");
+			rtcode = asc("ddiffdefine", "solver_binary", "dostring");
 			if (rtcode.e == 0) {
 				console.log("output of solver_binary new code is:");
 				console.log(rtcode.v);
@@ -204,15 +205,14 @@
 
 			rtcode = asc("dgetparts", "MODEL", "vesselPlot");
 			if (rtcode.e == 0) {
-				console.log("output of vesselPlot submodels is in:","/codedump.txt");
-				// dump to string or suck it in and return it or filename
+				console.log("output of vesselPlot model parts are",rtcode.v.split("\v"));
 			} else {
 				console.log("error:" + rtcode.v);
 			}
 
 			rtcode = asc("dgetparts", "ATOM", "vesselPlot");
 			if (rtcode.e == 0) {
-				console.log("output of vesselPlot variable types is in:","/codedump.txt");
+				console.log("output of vesselPlot atom parts are",rtcode.v.split("\v"));
 			} else {
 				console.log("error:" + rtcode.v);
 			}
@@ -234,6 +234,7 @@
 			rtcode = asc("drefinement_tree", "factor");
 			// convert tree to json
 			if (rtcode.e == 0) {
+				// fixme: jsonify
 				console.log("type tree of 'factor' is:", rtcode.v);
 			} else {
 				console.log("error:" + rtcode.v);
@@ -241,21 +242,21 @@
 
 			rtcode = asc("drefines_me", "real");
 			if (rtcode.e == 0) {
-				console.log("type children of real are:", rtcode.v);
+				console.log("type children of real are:", rtcode.v.split("\v"));
 			} else {
 				console.log("error:" + rtcode.v);
 			}
 
 			rtcode = asc("drefines_meall", "real");
 			if (rtcode.e == 0) {
-				console.log("all type descendants of real as list are:", rtcode.v);
+				console.log("all type descendants of real as list are:", rtcode.v.split("\v"));
 			} else {
 				console.log("error:" + rtcode.v);
 			}
 
 			rtcode = asc("hier", "solver_binary");
 			if (rtcode.e == 0) {
-				console.log("all type ancestors of solver_binary are:", rtcode.v);
+				console.log("all type ancestors of solver_binary are:", rtcode.v.split("\v"));
 			} else {
 				console.log("error:" + rtcode.v);
 			}
@@ -319,8 +320,14 @@ END catch_Word_model2;";
 			console.log(r.v);
 
 			r = asc("slv_solve");
+
 			r = asc("slv_get_stat_page");
-			console.log(r.v);
+			jobj = JSON.parse(r.v);
+			console.log(jobj);
+
+			r = asc("slv_get_cost_page");
+			jobj = JSON.parse(r.v);
+			console.log(jobj);
 
 			r = asc("slv_flush_solver");
 

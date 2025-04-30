@@ -61,14 +61,13 @@ int ascjson::Asc_DispDefineCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]
   int closefile=0;
 
   if ( argc > 3 ) {
-    Asc_DStringSet(hptr, "ddefine [type [filename]]");
+    Asc_DStringSet(hptr, "ddefine [type [bool_getstring]]");
     return HELP_ERROR;
   }
   if ( argc > 1 ) {/* we will print the types code - Toms argc + 1*/
     desc = FindType(AddSymbol(argv[1]));
     if (desc==NULL) {
-      FPRINTF(stderr,"Internal Error : the type %s does not exist\n",
-              argv[1]);
+      FPRINTF(stderr,"Internal Error : the type %s does not exist\n", argv[1]);
       Asc_DStringSet(hptr, "Type doesn't exist");
       return HELP_ERROR;
     } else {
@@ -97,7 +96,6 @@ int ascjson::Asc_DispDefineCmd(Asc_DString *hptr, int argc, CONST84 char *argv[]
       length = gl_length(list);
       for(c=1;c<=length;c++) {
         desc = (struct TypeDescription *)gl_fetch(list,c);
-        // PRINTF("\t%s\n",SCP(GetName(desc)));
         VTcl_AppendElement(hptr,SCP(GetName(desc)));
       }
       VAEstrip(hptr);

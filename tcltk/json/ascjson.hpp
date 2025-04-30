@@ -136,6 +136,8 @@ public:
 
 	rcp bwritependings (const char *vargv) ;
 
+	rcp bprint( const char *vargv);
+
 	rcp bnumpendings (const char *vargv) ;
 
 	rcp count_names (const char *vargv) ;
@@ -163,6 +165,8 @@ public:
 	rcp free_all_vars (const char *vargv) ;
 
 	rcp Asc_SimBinTokenSetOptionsHC (const char *vargv) ;
+
+	rcp slist (const char *vargv) ;
 
 	rcp sims (const char *vargv) ;
 
