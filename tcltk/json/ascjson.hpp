@@ -102,6 +102,8 @@ public:
 
 	rcp qassgn3 (const char *vargv) ;
 
+	rcp __brow_find_type (const char *vargv) ;
+
 	rcp __brow_iname (const char *vargv) ;
 
 	rcp __brow_isrelation (const char *vargv) ;
@@ -169,6 +171,8 @@ public:
 	rcp slist (const char *vargv) ;
 
 	rcp sims (const char *vargv) ;
+
+	rcp simtype (const char *vargv) ;
 
 	rcp sim_instantiate (const char *vargv) ;
 

@@ -5111,6 +5111,7 @@ var _emscripten_bind_ascjson_bgetproc_1 = Module['_emscripten_bind_ascjson_bgetp
 var _emscripten_bind_ascjson_brow_runmethod_1 = Module['_emscripten_bind_ascjson_brow_runmethod_1'] = createExportWrapper('emscripten_bind_ascjson_brow_runmethod_1', 2);
 var _emscripten_bind_ascjson_brow_assign_1 = Module['_emscripten_bind_ascjson_brow_assign_1'] = createExportWrapper('emscripten_bind_ascjson_brow_assign_1', 2);
 var _emscripten_bind_ascjson_qassgn3_1 = Module['_emscripten_bind_ascjson_qassgn3_1'] = createExportWrapper('emscripten_bind_ascjson_qassgn3_1', 2);
+var _emscripten_bind_ascjson_x__brow_find_type_1 = Module['_emscripten_bind_ascjson_x__brow_find_type_1'] = createExportWrapper('emscripten_bind_ascjson_x__brow_find_type_1', 2);
 var _emscripten_bind_ascjson_x__brow_iname_1 = Module['_emscripten_bind_ascjson_x__brow_iname_1'] = createExportWrapper('emscripten_bind_ascjson_x__brow_iname_1', 2);
 var _emscripten_bind_ascjson_x__brow_isrelation_1 = Module['_emscripten_bind_ascjson_x__brow_isrelation_1'] = createExportWrapper('emscripten_bind_ascjson_x__brow_isrelation_1', 2);
 var _emscripten_bind_ascjson_x__brow_ismodel_1 = Module['_emscripten_bind_ascjson_x__brow_ismodel_1'] = createExportWrapper('emscripten_bind_ascjson_x__brow_ismodel_1', 2);
@@ -5145,6 +5146,7 @@ var _emscripten_bind_ascjson_free_all_vars_1 = Module['_emscripten_bind_ascjson_
 var _emscripten_bind_ascjson_Asc_SimBinTokenSetOptionsHC_1 = Module['_emscripten_bind_ascjson_Asc_SimBinTokenSetOptionsHC_1'] = createExportWrapper('emscripten_bind_ascjson_Asc_SimBinTokenSetOptionsHC_1', 2);
 var _emscripten_bind_ascjson_slist_1 = Module['_emscripten_bind_ascjson_slist_1'] = createExportWrapper('emscripten_bind_ascjson_slist_1', 2);
 var _emscripten_bind_ascjson_sims_1 = Module['_emscripten_bind_ascjson_sims_1'] = createExportWrapper('emscripten_bind_ascjson_sims_1', 2);
+var _emscripten_bind_ascjson_simtype_1 = Module['_emscripten_bind_ascjson_simtype_1'] = createExportWrapper('emscripten_bind_ascjson_simtype_1', 2);
 var _emscripten_bind_ascjson_sim_instantiate_1 = Module['_emscripten_bind_ascjson_sim_instantiate_1'] = createExportWrapper('emscripten_bind_ascjson_sim_instantiate_1', 2);
 var _emscripten_bind_ascjson_sim_unique_1 = Module['_emscripten_bind_ascjson_sim_unique_1'] = createExportWrapper('emscripten_bind_ascjson_sim_unique_1', 2);
 var _emscripten_bind_ascjson_sim_reinstantiate_1 = Module['_emscripten_bind_ascjson_sim_reinstantiate_1'] = createExportWrapper('emscripten_bind_ascjson_sim_reinstantiate_1', 2);
@@ -5294,7 +5296,7 @@ var _emscripten_stack_get_end = wasmExports['emscripten_stack_get_end']
 var __emscripten_stack_restore = wasmExports['_emscripten_stack_restore']
 var __emscripten_stack_alloc = wasmExports['_emscripten_stack_alloc']
 var _emscripten_stack_get_current = wasmExports['emscripten_stack_get_current']
-var ___emscripten_embedded_file_data = Module['___emscripten_embedded_file_data'] = 539708;
+var ___emscripten_embedded_file_data = Module['___emscripten_embedded_file_data'] = 541628;
 function invoke_iiii(index,a1,a2,a3) {
   var sp = stackSave();
   try {
@@ -5987,6 +5989,15 @@ ascjson.prototype['qassgn3'] = ascjson.prototype.qassgn3 = function(vargv) {
 };
 
 /** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['x__brow_find_type'] = ascjson.prototype.x__brow_find_type = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_x__brow_find_type_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
 ascjson.prototype['x__brow_iname'] = ascjson.prototype.x__brow_iname = function(vargv) {
   var self = this.ptr;
   ensureCache.prepare();
@@ -6290,6 +6301,15 @@ ascjson.prototype['sims'] = ascjson.prototype.sims = function(vargv) {
   if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
   else vargv = ensureString(vargv);
   return wrapPointer(_emscripten_bind_ascjson_sims_1(self, vargv), rc);
+};
+
+/** @suppress {undefinedVars, duplicate} @this{Object} */
+ascjson.prototype['simtype'] = ascjson.prototype.simtype = function(vargv) {
+  var self = this.ptr;
+  ensureCache.prepare();
+  if (vargv && typeof vargv === 'object') vargv = vargv.ptr;
+  else vargv = ensureString(vargv);
+  return wrapPointer(_emscripten_bind_ascjson_simtype_1(self, vargv), rc);
 };
 
 /** @suppress {undefinedVars, duplicate} @this{Object} */

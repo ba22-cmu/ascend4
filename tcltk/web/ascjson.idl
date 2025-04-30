@@ -57,6 +57,8 @@ interface ascjson {
 
  [Const] rc qassgn3 (DOMString vargv) ;
 
+ [BindTo="__brow_find_type", Const] rc x__brow_find_type (DOMString vargv) ;
+
  [BindTo="__brow_iname", Const] rc x__brow_iname (DOMString vargv) ;
 
  [BindTo="__brow_isrelation", Const] rc x__brow_isrelation (DOMString vargv) ;
@@ -124,6 +126,8 @@ interface ascjson {
  [Const] rc slist (DOMString vargv) ;
 
  [Const] rc sims (DOMString vargv) ;
+
+ [Const] rc simtype (DOMString vargv) ;
 
  [Const] rc sim_instantiate (DOMString vargv) ;
 

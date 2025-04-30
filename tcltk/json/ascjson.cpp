@@ -280,19 +280,24 @@ rcp ascjson::qassgn3 (const char *vargv)
 //	wrap_dstring( 
 // 			, SVcstr);
 
+rcp ascjson::__brow_find_type (const char *vargv) 
+{
+	wrap_dstring( Asc_BrowFindTypeCmd , SVcstr);
+}
+
 rcp ascjson::__brow_iname (const char *vargv) 
 {
-	unimplemented; // Asc_BrowWriteInstanceNameCmd
+	wrap_dstring( Asc_BrowWriteInstanceNameCmd, SVcstr);
 }
 
 rcp ascjson::__brow_isrelation (const char *vargv) 
 {
-	unimplemented; // Asc_BrowIsRelationCmd
+	wrap_dstring( Asc_BrowIsRelationCmd , SVcstr);
 }
 
 rcp ascjson::__brow_ismodel (const char *vargv) 
 {
-	unimplemented; // Asc_BrowIsModelCmd
+	wrap_dstring( Asc_BrowIsModelCmd , SVcstr);
 }
 
 rcp ascjson::bgetrels (const char *vargv) 
@@ -312,12 +317,13 @@ rcp ascjson::__brow_relsforatom (const char *vargv)
 
 rcp ascjson::__brow_islogrel (const char *vargv) 
 {
-	unimplemented; // Asc_BrowIsLogRelCmd
+	wrap_dstring( Asc_BrowIsLogRelCmd, SVcstr);
 }
 
 rcp ascjson::bgetlogrels (const char *vargv) 
 {
-	unimplemented; // Asc_BrowWriteLogRelListCmd
+	// wrap_dstring( Asc_BrowWriteLogRelListCmd, SVcstr);
+	unimplemented; //  need to port .c to .ipp
 }
 
 rcp ascjson::bgetlogrelspf (const char *vargv) 
@@ -372,7 +378,8 @@ rcp ascjson::bprint (const char *vargv)
 
 rcp ascjson::bnumpendings (const char *vargv) 
 {
-	unimplemented; // Asc_BrowShowPendings
+	// unimplemented; // Asc_BrowShowPendings
+	wrap_dstring(Asc_BrowShowPendingsDS, SVcstr);
 }
 
 rcp ascjson::count_names (const char *vargv) 
@@ -382,17 +389,20 @@ rcp ascjson::count_names (const char *vargv)
 
 rcp ascjson::aliases (const char *vargv) 
 {
-	unimplemented; // Asc_BrowWriteAliasesCmd
+	// unimplemented; // Asc_BrowWriteAliasesCmd
+	wrap_dstring(Asc_BrowWriteAliasesCmd, SVcstr);
 }
 
 rcp ascjson::isas (const char *vargv) 
 {
-	unimplemented; // Asc_BrowWriteISAsCmd
+	//unimplemented; // Asc_BrowWriteISAsCmd
+	wrap_dstring(Asc_BrowWriteISAsCmd, SVcstr);
 }
 
 rcp ascjson::cliques (const char *vargv) 
 {
-	unimplemented; // Asc_BrowWriteCliqueCmd
+	//unimplemented; // Asc_BrowWriteCliqueCmd
+	wrap_dstring(Asc_BrowWriteCliqueCmd, SVcstr);
 }
 
 rcp ascjson::btransfer (const char *vargv) 
@@ -402,7 +412,7 @@ rcp ascjson::btransfer (const char *vargv)
 
 rcp ascjson::Asc_BrowWriteInstanceCmdHC (const char *vargv) 
 {
-	unimplemented; // Asc_BrowWriteInstanceCmd
+	wrap_dstring( Asc_BrowWriteInstanceCmd , SVcstr);
 }
 
 rcp ascjson::bmerge (const char *vargv) 
@@ -432,7 +442,8 @@ rcp ascjson::b_prepplotfile (const char *vargv)
 
 rcp ascjson::free_all_vars (const char *vargv) 
 {
-	unimplemented; // Asc_BrowClearVarsCmd
+	// unimplemented; // Asc_BrowClearVarsCmd
+	wrap_dstring(Asc_BrowClearVarsCmd, SVvtab);
 }
 
 rcp ascjson::Asc_SimBinTokenSetOptionsHC (const char *vargv) 
@@ -448,6 +459,11 @@ rcp ascjson::slist (const char *vargv)
 rcp ascjson::sims (const char *vargv) 
 {
 	wrap_dstring(Asc_SimsQueryCmdDS, SVcstr);
+}
+
+rcp ascjson::simtype (const char *vargv) 
+{
+	wrap_dstring(Asc_BrowSimTypeCmd, SVcstr);
 }
 
 rcp ascjson::sim_instantiate (const char *vargv) 
@@ -512,7 +528,8 @@ rcp ascjson::hier (const char *vargv)
 
 rcp ascjson::file_by_type (const char *vargv) 
 {
-	unimplemented; // Asc_DispFileByTypeCmd
+	//unimplemented; // Asc_DispFileByTypeCmd
+	wrap_dstring(Asc_DispFileByTypeCmd, SVvtab);
 }
 
 rcp ascjson::dchild (const char *vargv) 
