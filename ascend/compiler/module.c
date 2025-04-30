@@ -452,9 +452,13 @@ struct module_t *FindModuleFile(CONST char *name,
   result = ModuleSearchPath( name, filename, new_module, &error );
 
   /*
-	Check for a memory error in ModuleSearchPath.
+	Check for a memory error or type error in ModuleSearchPath.
   */
-  if( result == -3 ) {
+  if( result == -3 || result == -2) {
+    if( result == -2 ) {
+      MSG("ModuleSearchPath returned -2, name=%s is not a text file",name);
+      printf("ModuleSearchPath returned -2, name=%s is not a text file",name);
+    }
     DeleteModule( new_module );
     *status = -4;
     return NULL;
@@ -503,8 +507,8 @@ struct module_t *FindModuleFile(CONST char *name,
 
 
     if( StoreModule( new_module ) != 0 ) {
+      ERROR_REPORTER_HERE(ASC_PROG_ERROR,"COULDN'T STORE MODULE %s",new_module->filename);
       DeleteModule( new_module );
-	  ERROR_REPORTER_HERE(ASC_PROG_ERROR,"COULDN'T STORE MODULE %s",new_module->filename);
       *status = -3;
       return NULL;
     }
@@ -972,6 +976,7 @@ int module_searchpath_test(struct FilePath *path,void *searchdata){
 	@return
 		-4  Invalid partial path in parameter 'filename'.
 	    -3  Memory error occurred when trying to get ASC_ENV_LIBRARY
+	    -2  File is not plain text or symlink (which might be link to bad type yet).
 	    -1  Error encountered in ModuleStatFile, check `error' argument
 	     0  Success
 	     1  Could not find a file named "name"
@@ -1055,6 +1060,21 @@ int ModuleSearchPath(CONST char *name,
 		ospath_free_str(tmp);
 	}
 
+	int rc = 0;
+        switch (sd.buf.st_mode & S_IFMT) {
+        case S_IFLNK:
+     	  break;
+        case S_IFREG:
+     	  break;
+        default:
+//#ifdef SEARCH_DEBUG
+#if 1
+          CONSOLE_DEBUG("Found input file %s that is not text.", name);
+#endif
+	  fclose(sd.f);
+	  sd.f = NULL;
+	  rc = -2;
+        }
 	m->f = sd.f;
 	m->time_last_modified = sd.mtime;
 	m->linenum = 1;
@@ -1063,7 +1083,7 @@ int ModuleSearchPath(CONST char *name,
 		ospath_free(fp1);
 	}
 	ospath_free(sd.fp_found);
-	return 0; /* success */
+	return rc; /* success , or wrong file type*/
 }
 
 
