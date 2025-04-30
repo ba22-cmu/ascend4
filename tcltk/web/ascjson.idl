@@ -118,6 +118,8 @@ interface ascjson {
 
  [Const] rc Asc_SimBinTokenSetOptionsHC (DOMString vargv) ;
 
+ [Const] rc slist (DOMString vargv) ;
+
  [Const] rc sims (DOMString vargv) ;
 
  [Const] rc sim_instantiate (DOMString vargv) ;
