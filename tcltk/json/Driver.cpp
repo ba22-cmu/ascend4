@@ -176,6 +176,10 @@ int AscDriver(int argc, CONST char **argv)
 	world->sim_instantiate("sim_instantiate\vvp\vvessel");
 	world->qlfdid("qlfdid\vvp");
 	world->btransfer("btransfer");
+	world->qlfdid("qlfdid\vvp");
+	auto bgr = world->bgetrels("bgetrels\vsearch");
+	printf("bgr err: %d\n", bgr->e);
+	printf("bgr str: %s\n", bgr->v);
 	auto mr = world->Asc_BrowInitializeCmdHC(Asc_BrowInitializeCmdHS
 		       	"\v-method\von_load\v-qlfdid\vvp");
 	printf("onload: %s\n",mr->v);

@@ -5296,7 +5296,7 @@ var _emscripten_stack_get_end = wasmExports['emscripten_stack_get_end']
 var __emscripten_stack_restore = wasmExports['_emscripten_stack_restore']
 var __emscripten_stack_alloc = wasmExports['_emscripten_stack_alloc']
 var _emscripten_stack_get_current = wasmExports['emscripten_stack_get_current']
-var ___emscripten_embedded_file_data = Module['___emscripten_embedded_file_data'] = 541628;
+var ___emscripten_embedded_file_data = Module['___emscripten_embedded_file_data'] = 541612;
 function invoke_iiii(index,a1,a2,a3) {
   var sp = stackSave();
   try {

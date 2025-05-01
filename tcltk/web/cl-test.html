@@ -112,7 +112,7 @@
 			console.log(rt1.v);
 			if (rt1.e != 0)
 				return;
-			rt2 = asc("librread", "/models/vesselPlot.a4c");
+			rt2 = asc("librread", "/models/vessel.a4c");
 			console.log(rt2.e);
 			console.log(rt2.v);
 			if (rt1.e != 0)
@@ -203,16 +203,16 @@
 				console.log("error:" + rtcode.v);
 			}
 
-			rtcode = asc("dgetparts", "MODEL", "vesselPlot");
+			rtcode = asc("dgetparts", "MODEL", "vessel");
 			if (rtcode.e == 0) {
-				console.log("output of vesselPlot model parts are",rtcode.v.split("\v"));
+				console.log("output of vessel model parts are",rtcode.v.split("\v"));
 			} else {
 				console.log("error:" + rtcode.v);
 			}
 
-			rtcode = asc("dgetparts", "ATOM", "vesselPlot");
+			rtcode = asc("dgetparts", "ATOM", "vessel");
 			if (rtcode.e == 0) {
-				console.log("output of vesselPlot atom parts are",rtcode.v.split("\v"));
+				console.log("output of vessel atom parts are",rtcode.v.split("\v"));
 			} else {
 				console.log("error:" + rtcode.v);
 			}
@@ -302,7 +302,7 @@ END catch_Word_model2;";
 				console.log("failed: asc_compiler_option", "-useCopyAnon", "0", rc.v);
 				return;
 			}
-			r = asc("sim_instantiate", "vp", "vesselPlot");
+			r = asc("sim_instantiate", "vp", "vessel");
 			if (r.e != 0 ) {
 				console.log("create vp failed: ", r.v);
 				return;
@@ -313,6 +313,34 @@ END catch_Word_model2;";
 			r = asc("btransfer");
 			// run a method regardless of in browser or not
 			r = asc("brow_runmethod", "-method", "on_load", "-qlfdid","vp");
+
+			r = asc("qlfdid","vp");
+			// get equations in search model in  conventional format
+			r = asc("bgetrels","search");
+			if (r.e) {
+				console.log("getrels returned", r.e, r.v);
+			} else {
+				console.log("relations:");
+				for (const e of r.v.split("\v")) {
+					console.log(e);
+				}
+			}
+
+			// get equations in current model (from btransfer) in  postfix stack format
+			r = asc("bgetrelspf","search");
+			if (r.e) {
+				console.log("getrelspf returned", r.e, r.v);
+			} else {
+				console.log("postfix relations:", r.v);
+				for (const e of r.v.split("\v")) {
+					console.log(e);
+				}
+			}
+			r = asc("brow_child_list","search","all","VALUE","ATOMS");
+			//  <current,search> <all,N> ["TYPE","VALUE"] ["ATOMS"] ["PASSED"]
+			console.log(r.v);
+
+			// export name to solver, whether in browser or not.
 			Solve_Import("vp");
 
 			r = asc("slv_presolve");

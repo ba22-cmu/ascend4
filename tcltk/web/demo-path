@@ -1,0 +1,11 @@
+library
+load vessel.a4c
+select vessel model
+create instance of vessel tank
+export sim tank to browser
+browser -> display -> relations
+browser -> runmethod -> on_load
+browser -> export -> solver
+solver -> execute -> solve
+pop-up the solver result
+browse the equations and values solved

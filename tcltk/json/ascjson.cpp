@@ -302,7 +302,7 @@ rcp ascjson::__brow_ismodel (const char *vargv)
 
 rcp ascjson::bgetrels (const char *vargv) 
 {
-	wrap_dstring( Asc_BrowWriteRelListCmd, SVcstr);
+	wrap_dstring( Asc_BrowWriteRelListCmd, SVvtab);
 }
 
 rcp ascjson::bgetrelspf (const char *vargv) 

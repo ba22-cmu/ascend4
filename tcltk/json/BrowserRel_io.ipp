@@ -91,7 +91,7 @@ void BrowGetRelations(struct Instance *i)
   }
 }
 
-/* This functions sends to the hptrreter  the list of  relations
+/* This functions sends to the hptr  the list of  relations
  * and then the list of conditional relations if required
  */
 int ascjson::Asc_BrowWriteRelListCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
@@ -135,30 +135,28 @@ int ascjson::Asc_BrowWriteRelListCmd(Asc_DString *hptr, int argc, CONST84 char *
 
   /* relations */
   len = gl_length(g_brow_rellist);
-  for (c=1;c<=len;c++) { /* the "{ }" is for making proper list elems */
+  fprintf(stderr,"got %lu relations\n", len);
+  for (c=1;c<=len;c++) { 
     char *tmp;
     rel_inst = (struct Instance *)gl_fetch(g_brow_rellist,c);
-    Asc_DStringAppend(hptr,"{",1);
     tmp = WriteRelationString(rel_inst,NULL,NULL,NULL,relio_ascend,NULL);
-    Asc_DStringAppend(hptr,tmp,HALL);
+    VTcl_AppendElement(hptr,tmp);
     ascfree(tmp);
-    Asc_DStringAppend(hptr,"} ",2);
   }
 
   /* conditional relations. Only if required */
   len = gl_length(g_brow_condrellist);
   if (len) {
-    Asc_DStringAppend(hptr,"{The following Relations are Conditional: } ", HALL);
-    for (c=1;c<=len;c++) { /* the "{ }" is for making proper list elems */
+    VTcl_AppendElement(hptr,"{CONDITIONAL}");
+    for (c=1;c<=len;c++) {
       char *tmp;
       rel_inst = (struct Instance *)gl_fetch(g_brow_condrellist,c);
-      Asc_DStringAppend(hptr,"{",1);
       tmp = WriteRelationString(rel_inst,NULL,NULL,NULL,relio_ascend,NULL);
-      Asc_DStringAppend(hptr,tmp,HALL);
+      VTcl_AppendElement(hptr,tmp);
       ascfree(tmp);
-      Asc_DStringAppend(hptr,"} ",2);
     }
   }
+  VAEstrip(hptr);
   if (!save) {
     gl_destroy(g_brow_rellist);
     g_brow_rellist=NULL;
