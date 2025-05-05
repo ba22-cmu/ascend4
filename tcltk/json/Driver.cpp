@@ -140,6 +140,7 @@ int AscDriver(int argc, CONST char **argv)
    */
 	ascjson	*world = new ascjson();
 	world->config("foo");
+	world->u_setSIdef("u_setSIdef");
 
 	const char *libdestroy = "a\v" Asc_LibrDestroyTypesCmdHN;
 	auto r1 = world->Asc_LibrDestroyTypesCmdHC(libdestroy);
@@ -180,9 +181,27 @@ int AscDriver(int argc, CONST char **argv)
 	auto bgr = world->bgetrels("bgetrels\vsearch");
 	printf("bgr err: %d\n", bgr->e);
 	printf("bgr str: %s\n", bgr->v);
+
+	auto lxt = world->libr_extract_type("libr_extract_type\vcmumodel\v../../models/basemodel.a4l\v-s");
+	if (lxt->e == 0) {
+		printf("code for cmumodel is\n");
+		printf("%s\n",lxt->v);
+	} else {
+		printf("(err %d): %s\n",lxt->e, lxt->v);
+		printf("%s\n",lxt->v);
+	}
 	auto mr = world->Asc_BrowInitializeCmdHC(Asc_BrowInitializeCmdHS
 		       	"\v-method\von_load\v-qlfdid\vvp");
 	printf("onload: %s\n",mr->v);
+
+	auto bcl = world->brow_child_list("brow_child_list\vsearch\vall\vVALUE\vATOMS");
+		//  <current,search> <all,N> ["TYPE","VALUE"] ["ATOMS"] ["PASSED"]
+	if (bcl->e == 0) {
+		printf("brow_child_list\n%s\n",bcl->v);
+	} else {
+		printf("brow_child_list failed\n");
+	}
+	
 	auto siq = world->slv_import_qlfdid("slv_import_qlfdid\vvp\vtest");
 	if (siq->e) {
 		printf("slv_import_qlfdid test failed\n");
@@ -206,6 +225,7 @@ int AscDriver(int argc, CONST char **argv)
 		printf("force count was: %d", count);
 	}
 	
+	world->u_destroy_units("u_destroy_units");
 	delete world;
 
 	return 0;

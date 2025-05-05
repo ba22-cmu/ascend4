@@ -26,40 +26,6 @@
  */
 
 #define ASC_BUILDING_INTERFACE
-#if 0
-#include <tcl.h>
-#include "config.h"
-#include <ascend/general/ascMalloc.h>
-#include <ascend/general/list.h>
-#include <ascend/general/dstring.h>
-
-#include <ascend/compiler/instance_enum.h>
-#include <ascend/compiler/expr_types.h>
-#include <ascend/compiler/relation_io.h>
-#include <ascend/compiler/symtab.h>
-#include <ascend/compiler/instance_io.h>
-#include <ascend/compiler/instquery.h>
-#include <ascend/compiler/visitinst.h>
-#include <ascend/compiler/mathinst.h>
-#include <ascend/compiler/find.h>
-#include <ascend/compiler/functype.h>
-#include <ascend/compiler/safe.h>
-#include <ascend/compiler/rel_blackbox.h>
-#include <ascend/compiler/vlist.h>
-#include <ascend/compiler/relation.h>
-#include <ascend/compiler/relation_util.h>
-#include <ascend/compiler/func.h>
-#include <ascend/compiler/extcall.h>
-#include <ascend/compiler/instance_name.h>
-#include <ascend/compiler/qlfdid.h>
-#include <ascend/system/slv_types.h>
-#include "HelpProc.h"
-#include "BrowserProc.h"
-#include "BrowserRel_io.h"
-#include "Qlfdid.h"
-#include "BrowserProc.h"
-#include "BrowserQuery.h"
-#endif
 
 /**************************************************************************/
 static struct gl_list_t *g_brow_rellist = NULL;
@@ -213,11 +179,9 @@ int ascjson::Asc_BrowWriteCondRelListCmd(Asc_DString *hptr, int argc, CONST84 ch
     for (c=1;c<=len;c++) {
       char *tmp;
       rel_inst = (struct Instance *)gl_fetch(g_brow_condrellist,c);
-      Asc_DStringAppend(hptr,"{",1);
       tmp = WriteRelationString(rel_inst,NULL,NULL,NULL,relio_ascend,NULL);
-      Asc_DStringAppend(hptr,tmp,HALL);
+      VTcl_AppendElement(hptr,tmp);
       ascfree(tmp);
-      Asc_DStringAppend(hptr,"} ",2);
     }
   }
   if (!save) {
@@ -274,7 +238,7 @@ int ascjson::Asc_BrowWriteRelListPostfixCmd(Asc_DString *hptr,
   VisitInstanceTree(i,BrowGetRelations,0,0);
 
   len = gl_length(g_brow_rellist);
-  for (c=1;c<=len;c++) { /* the "{ }" is for making proper list elems */
+  for (c=1;c<=len;c++) {
     char *tmp;
     rel_inst = (struct Instance *)gl_fetch(g_brow_rellist,c);
     type = GetInstanceRelationType(rel_inst);
@@ -282,12 +246,11 @@ int ascjson::Asc_BrowWriteRelListPostfixCmd(Asc_DString *hptr,
       FPRINTF(stderr,"relation type not yet supported\n");
       continue;
     }
-    Asc_DStringAppend(hptr,"{",1);
     tmp = WriteRelationPostfixString(rel_inst,NULL);
-    Asc_DStringAppend(hptr,tmp,HALL);
+    VTcl_AppendElement(hptr,tmp);
     ascfree(tmp);
-    Asc_DStringAppend(hptr,"} ",2);
   }
+  VAEstrip(hptr);
   if (!save) {
     gl_destroy(g_brow_rellist);
     g_brow_rellist=NULL;
@@ -333,14 +296,13 @@ int ascjson::Asc_BrowWriteRelsForAtomCmd(Asc_DString *hptr, int argc, CONST84 ch
     char *tmp;
     rel_inst = RelationsForAtom(i,c);
     rel = GetInstanceRelationOnly(rel_inst);
-    Asc_DStringAppend(hptr,"{",1);
     tmp = WriteRelationString(rel_inst,NULL,NULL,NULL,relio_ascend,NULL);
-    Asc_DStringAppend(hptr,tmp,HALL);
     ascfree(tmp);
     if (RelationIsCond(rel)) {
       Asc_DStringAppend(hptr,"    Conditional Relation",HALL);
     }
-    Asc_DStringAppend(hptr,"} ", 2);
+    VTcl_AppendElement(hptr,tmp);
   }
+  VAEstrip(hptr);
   return HELP_OK;
 }

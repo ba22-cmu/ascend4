@@ -103,6 +103,7 @@
 				world = new instance.ascjson();
 				console.log("joy to the world")
 			}
+			asc("u_setSIdef"); // if not done, cannot print units on values
 			// rt2 = asc("librread", "/models/system.a4l");
 			rt2 = asc("librread", "/models/basemodel.a4l");
 			rt22 = asc("librread", "/models/atoms.a4l");
@@ -151,7 +152,9 @@
 					rti = asc("libr_moduleinfo", m);
 					if (rti.e != 0)
 						break;
-					console.log("info: " + rti.v);
+					jobj = JSON.parse(rti.v);
+					console.log("info:");
+					console.log(jobj);
 				}
 			}
 
@@ -322,7 +325,7 @@ END catch_Word_model2;";
 			} else {
 				console.log("relations:");
 				for (const e of r.v.split("\v")) {
-					console.log(e);
+					console.log("INFIX: ",e);
 				}
 			}
 
@@ -331,14 +334,15 @@ END catch_Word_model2;";
 			if (r.e) {
 				console.log("getrelspf returned", r.e, r.v);
 			} else {
-				console.log("postfix relations:", r.v);
 				for (const e of r.v.split("\v")) {
-					console.log(e);
+					console.log("POSTFIX: ", e);
 				}
 			}
 			r = asc("brow_child_list","search","all","VALUE","ATOMS");
 			//  <current,search> <all,N> ["TYPE","VALUE"] ["ATOMS"] ["PASSED"]
-			console.log(r.v);
+			for (const i of r.v.split("\v")) {
+				console.log("CHILD: ",i);
+			}
 
 			// export name to solver, whether in browser or not.
 			Solve_Import("vp");

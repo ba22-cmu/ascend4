@@ -848,22 +848,22 @@ int ascjson::Asc_BrowWriteAtomChildren(Asc_DString *hptr, CONST struct Instance 
           sprintf(&op[0]," : ");
         }
         if (ustr!=NULL) {
-          Asc_DStringAppend6(hptr,"{",fname,&op[0],ustr,"}"," ",HALL);
+          Asc_DStringAppend4(hptr,fname,&op[0],ustr,"\v",HALL);
         } else {
-          Asc_DStringAppend6(hptr, "{",fname,&op[0],"????","}"," ",HALL);
+          Asc_DStringAppend3(hptr, fname,&op[0],"????\v",HALL);
         }
       } else {
         if (kind==LREL_INST) {
           char op[5] = "";
           sprintf(&op[0]," : ");
-          Asc_DStringAppend6(hptr,"{",fname,&op[0],ftorv,"}"," ",HALL);
+          Asc_DStringAppend4(hptr,fname,&op[0],ftorv,"\v",HALL);
         } else {
-          Asc_DStringAppend6(hptr,"{",fname," = ",ftorv,"}"," ",HALL);
+          Asc_DStringAppend4(hptr,fname," = ",ftorv,"\v",HALL);
         }
       }
     } else {
       sprintf(ftorv,"%s ",SCP(InstanceType(child)));
-      Asc_DStringAppend6(hptr,"{",fname," IS_A ",ftorv,"}"," ",HALL);
+      Asc_DStringAppend4(hptr,fname," IS_A ",ftorv,"\v",HALL);
     }
     Asc_ReInitString(fname); Asc_ReInitString(ftorv); Asc_ReInitString(fdims);
   }
@@ -1022,17 +1022,17 @@ int ascjson::BrowWriteArrayChildren(Asc_DString *hptr, CONST struct Instance *i)
         sprintf(&op[0]," : ");
       }
       if (ustr!=NULL) {
-        Asc_DStringAppend6(hptr,"{",fname,&op[0],ustr,"}"," ",HALL);
+        Asc_DStringAppend4(hptr,fname,&op[0],ustr,"\v",HALL);
       } else {
-        Asc_DStringAppend6(hptr,"{",fname,&op[0],"????","}"," ",HALL);
+        Asc_DStringAppend3(hptr,fname,&op[0],"????\v",HALL);
       }
     } else {
         if (g_do_values && (childkind==LREL_INST)) {
           char op[5] = "";
           sprintf(&op[0]," : ");
-          Asc_DStringAppend6(hptr,"{",fname,&op[0],ftorv,"}"," ",HALL);
+          Asc_DStringAppend4(hptr,fname,&op[0],ftorv,"\v",HALL);
         } else {
-          Asc_DStringAppend5(hptr,"{",fname,ftorv,"}"," ",HALL);
+          Asc_DStringAppend3(hptr,fname,ftorv,"\v",HALL);
         }
       }
     Asc_ReInitString(fname);
@@ -1200,18 +1200,17 @@ void ascjson::BrowListModelChildren(Asc_DString *hptr, struct Instance *i, int a
           sprintf(&op[0]," : ");
         }
         if (ustr!=NULL) {
-          Asc_DStringAppend6(hptr,"{",fname,&op[0],ustr,"}"," ",HALL);
+          Asc_DStringAppend4(hptr,fname,&op[0],ustr,"\v",HALL);
         } else {
-          Asc_DStringAppend6(hptr,
-                           "{",fname,&op[0],"????","}"," ",HALL);
+          Asc_DStringAppend3(hptr, fname,&op[0],"????\v",HALL);
         }
       } else {
         if (g_do_values && (childkind==LREL_INST)) {
           char op[5] = "\0";
           sprintf(&op[0]," : ");
-          Asc_DStringAppend6(hptr,"{",fname,&op[0],ftorv,"}"," ",HALL);
+          Asc_DStringAppend4(hptr,fname,&op[0],ftorv,"\v",HALL);
         } else {
-            Asc_DStringAppend5(hptr,"{",fname,ftorv,"}"," ",HALL);
+            Asc_DStringAppend3(hptr,fname,ftorv,"\v",HALL);
         }
       }
 
@@ -1293,6 +1292,7 @@ int ascjson::BrowWriteInstance(Asc_DString *hptr, struct Instance *i,
     Asc_DStringSet(hptr,"Unrecognized type in BrowWriteInstance");
     break;
   }
+  VAEstrip(hptr);
   return HELP_OK;
 }
 
@@ -1306,8 +1306,7 @@ int ascjson::Asc_BrowWriteInstanceCmd(Asc_DString *hptr, int argc, CONST84 char 
   int show_passed_parts=0;
 
   if (( argc < 3 ) || ( argc > 6 )) {
-    Asc_DStringAppend(hptr, "Usage : "
-                     Asc_BrowWriteInstanceCmdHU,HALL);
+    Asc_DStringAppend(hptr, "Usage : " Asc_BrowWriteInstanceCmdHU,HALL);
     return HELP_ERROR;
   }
   if (strncmp(argv[1],"current",3)==0) {
@@ -1316,8 +1315,7 @@ int ascjson::Asc_BrowWriteInstanceCmd(Asc_DString *hptr, int argc, CONST84 char 
   } else if (strncmp(argv[1],"search",3)==0) {
     i = g_search_inst;
   } else {
-    Asc_DStringSet(hptr,
-                  "Invalid args : should be \"current\" or \"search\" ");
+    Asc_DStringSet(hptr, "Invalid args : should be \"current\" or \"search\" ");
     return HELP_ERROR;
   }
   if (i==NULL) {

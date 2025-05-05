@@ -200,6 +200,7 @@ char *ascjson::Unit_MakeString(const dim_type *dimp, struct Units * units[NUM_DI
     int i;
     for( i = 0; i<NUM_DIMENS; i++ ) {
        frac = GetDimFraction(*dimp,i);
+       // unit = units[i]
        Unit_WriteNumer(&str1,frac,SCP(UnitsDescription(units[i])),&printed);
     }
     if (!printed) {
@@ -1063,8 +1064,7 @@ int ascjson::Asc_UnitGetBaseUnitsDS(Asc_DString *hptr,
   return HELP_OK;
 }
 
-int ascjson::Asc_UnitDumpDS(Asc_DString *hptr,
-              int argc, CONST84 char *argv[])
+int ascjson::Asc_UnitDumpDS(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
   int dev,status = HELP_OK, tmpi;
   FILE * fp;
