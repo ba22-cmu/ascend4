@@ -412,7 +412,7 @@ rcp ascjson::btransfer (const char *vargv)
 
 rcp ascjson::Asc_BrowWriteInstanceCmdHC (const char *vargv) 
 {
-	wrap_dstring( Asc_BrowWriteInstanceCmd , SVcstr);
+	wrap_dstring( Asc_BrowWriteInstanceCmd , SVvtab);
 }
 
 rcp ascjson::bmerge (const char *vargv) 
