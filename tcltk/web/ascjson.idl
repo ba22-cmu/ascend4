@@ -1,11 +1,11 @@
-/*
+
 enum vtype {
         "vtype::SVjson",
         "vtype::SVjson5",
         "vtype::SVcstr",
         "vtype::SVvtab"
 };
-*/
+
 interface rc {
 	void rc();
 	// error code

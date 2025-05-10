@@ -204,25 +204,53 @@ static void WriteOpDS(Asc_DString *dsPtr, enum Expr_enum t,
     Asc_DStringAppend(dsPtr,"=",1);
     break;
   case e_notequal:
-    Asc_DStringAppend(dsPtr,"<>",2);
+    if (lang == relio_tex) {
+      Asc_DStringAppend(dsPtr,"\\neq",4);
+    } else {
+      Asc_DStringAppend(dsPtr,"<>",2);
+    }
     break;
   case e_less:
-    Asc_DStringAppend(dsPtr,"<",1);
+    if (lang == relio_tex) {
+      Asc_DStringAppend(dsPtr,"\\lt", 3);
+    } else {
+      Asc_DStringAppend(dsPtr,"<",1);
+    }
     break;
   case e_greater:
-    Asc_DStringAppend(dsPtr,">",1);
+    if (lang == relio_tex) {
+      Asc_DStringAppend(dsPtr,"\\gt", 3);
+    } else {
+      Asc_DStringAppend(dsPtr,">",1);
+    }
     break;
   case e_lesseq:
-    Asc_DStringAppend(dsPtr,"<=",2);
+    if (lang == relio_tex) {
+      Asc_DStringAppend(dsPtr,"\\leq", 4);
+    } else {
+      Asc_DStringAppend(dsPtr,"<=",2);
+    }
     break;
   case e_greatereq:
-    Asc_DStringAppend(dsPtr,">=",2);
+    if (lang == relio_tex) {
+      Asc_DStringAppend(dsPtr,"\\geq", 4);
+    } else {
+      Asc_DStringAppend(dsPtr,">=",2);
+    }
     break;
   case e_maximize:
-    Asc_DStringAppend(dsPtr,"MAXIMIZE",8);
+    if (lang == relio_tex) {
+      Asc_DStringAppend(dsPtr,"\\max", 4);
+    } else {
+      Asc_DStringAppend(dsPtr,"MAXIMIZE",8);
+    }
     break;
   case e_minimize:
-    Asc_DStringAppend(dsPtr,"MINIMIZE",8);
+    if (lang == relio_tex) {
+      Asc_DStringAppend(dsPtr,"\\min", 4);
+    } else {
+      Asc_DStringAppend(dsPtr,"MINIMIZE",8);
+    }
     break;
   default:
     FPRINTF(ASCERR,"Unknown term in WriteOpDS.\n");
@@ -313,6 +341,7 @@ void WriteTermDS(Asc_DString *dsPtr,
     break;
   case e_func:
     Asc_DStringAppend(dsPtr,FuncName(TermFunc(term)),-1);
+    Asc_DStringAppend(dsPtr,FuncName(TermFunc(term)),-1);
     break;
   case e_int:
     sprintf(SB255,"%ld",TermInteger(term));
@@ -322,7 +351,7 @@ void WriteTermDS(Asc_DString *dsPtr,
     Asc_DStringAppend(dsPtr,"0.0",3);
     break;
   case e_real:
-    sprintf(SB255,"(double) %.18g",TermReal(term));
+    sprintf(SB255,"%.18g",TermReal(term));
     Asc_DStringAppend(dsPtr,SB255,-1);
     break;
   case e_plus:
@@ -818,14 +847,23 @@ void WriteSideDS(Asc_DString *dsPtr, CONST struct relation *r, int side,
       break;
     case e_func:
       if(first) {
-        if (lang == relio_C) {
+        switch (lang) {
+        case relio_C:
           sprintf(SB255,"%s(",FuncCName(TermFunc(term)));
-        } else if (lang == relio_ascend) {
+	  break;
+	case relio_ascend:
           sprintf(SB255,"%s(",FuncName(TermFunc(term)));
-        }
-		else{
-		  sprintf(SB255,"%s(",FuncYName(TermFunc(term)));
-		}
+	  break;
+	case relio_tex:
+	  /* may need switch over func enum here where tex sym is not same as asc. */
+          sprintf(SB255,"\%s(",FuncName(TermFunc(term)));
+	  break;
+	case relio_yacas:
+	  sprintf(SB255,"%s(",FuncYName(TermFunc(term)));
+	  break;
+	case relio_LAST:
+	  break;
+	}
         Asc_DStringAppend(dsPtr,SB255,-1);
         PushRelation(pos,0,NOLHS);
         PushRelation(pos-1,1,NOLHS);
@@ -1032,6 +1070,7 @@ static void WriteTokenRelationDS(Asc_DString *dsPtr,
     WriteSideDS(dsPtr,r,1,ref,func,userdata,lang);
     switch (lang) {
     case relio_ascend:
+    case relio_tex:
       Asc_DStringAppend(dsPtr," ",1);
       WriteOpDS(dsPtr,RelationRelop(r),lang);
       Asc_DStringAppend(dsPtr," ",1);
@@ -1054,12 +1093,13 @@ static void WriteTokenRelationDS(Asc_DString *dsPtr,
     /* max/min are lhs-only expression, so no operator in C case. */
     switch (lang) {
     case relio_ascend:
+    case relio_tex:
       WriteOpDS(dsPtr,RelationRelop(r),lang);
       Asc_DStringAppend(dsPtr," ",1);
       WriteSideDS(dsPtr,r,1,ref,func,userdata,lang);
       break;
     case relio_C:
-	case relio_yacas:
+    case relio_yacas:
       Asc_DStringAppend(dsPtr,"( ",2);
       WriteSideDS(dsPtr,r,1,ref,func,userdata,lang);
       Asc_DStringAppend(dsPtr," )",2);
@@ -1186,9 +1226,6 @@ void Infix_WriteRelation(FILE *f,
  * greater than 0, as gl_fetch(list,0) is not a pretty sight. Overall
  * we save len-1 ifs!! yaaaa!
  *
- * BAA
- * yah, that's it, optimize code way way way off the critical path
- * instead of doing things right. idiot.
  */
 static
 void WriteGlassBoxRelation(FILE *f,
@@ -1849,4 +1886,48 @@ void WriteNamesInList2D(FILE *f, struct gl_list_t *l, CONST char *sep, CONST cha
 		fprintf(f,"%s --list %d--",sep2,(int)i);
 	}
 	fprintf(f,"%s",sep2);
+}
+
+struct relio_map { enum rel_lang_format f; const char *s; };
+struct relio_map r2s[] = {
+  {relio_ascend, "relio_ascend"},
+  {relio_C, "relio_C"},
+  {relio_yacas, "relio_yacas"},
+  {relio_tex, "relio_tex" },
+  {relio_LAST, "relio_LAST" }
+#define r2sSize 4 /* exclude last */
+};
+
+enum rel_lang_format StringToRelLangFormat(const char *s)
+{
+  int i = 0;
+  if (!s) return r2s[0].f;
+  for (i = 0; i < r2sSize; i++) {
+    if (strcmp(s, r2s[i].s) == 0) {
+      return r2s[i].f;
+    }
+  }
+  return r2s[0].f;
+}
+
+const char *RelLangFormatToString(enum rel_lang_format f)
+{
+  int i = 0;
+  for (i = 0; i < r2sSize; i++) {
+    if (r2s[i].f == f) {
+      return r2s[i].s;
+    }
+  }
+  return r2s[0].s;
+}
+
+enum rel_lang_format RelLangFormatNext(enum rel_lang_format f)
+{
+  int i = 0;
+  for (i = 0; i < r2sSize; i++) {
+    if (r2s[i].f == f && i < r2sSize) {
+      return r2s[i+1].f;
+    }
+  }
+  return r2s[0].f;
 }

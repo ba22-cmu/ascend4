@@ -176,9 +176,13 @@ int AscDriver(int argc, CONST char **argv)
 	world->asc_compiler_option("asc_compiler_option\v-useCopyAnon\v0");
 	world->sim_instantiate("sim_instantiate\vvp\vvessel");
 	world->qlfdid("qlfdid\vvp");
-	world->btransfer("btransfer");
+	world->btransfer("btransfer\vvp");
 	world->qlfdid("qlfdid\vvp");
 	auto bgr = world->bgetrels("bgetrels\vsearch");
+	printf("bgr err: %d\n", bgr->e);
+	printf("bgr str: %s\n", bgr->v);
+
+	bgr = world->bgetrels("bgetrels\vsearch\vrelio_tex");
 	printf("bgr err: %d\n", bgr->e);
 	printf("bgr str: %s\n", bgr->v);
 

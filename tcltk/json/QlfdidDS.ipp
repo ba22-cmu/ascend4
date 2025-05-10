@@ -47,8 +47,7 @@ int ascjson::Asc_BrowQlfdidSearchCmdDS(Asc_DString *hptr, int argc, CONST84 char
   search_list = Asc_BrowQlfdidSearch(QUIET(argv[1]),temp);
   g_relative_inst = g_search_inst;
   if ((g_search_inst==NULL) || (search_list==NULL)) {
-    Asc_DStringAppend(hptr,"Orphaned ", HALL);
-    Asc_DStringAppend(hptr, temp, HALL);
+    Asc_DStringAppend2(hptr,"Orphaned ", temp, HALL);
     return HELP_ERROR;
   } else {
     len = gl_length(search_list);

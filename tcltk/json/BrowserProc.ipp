@@ -272,28 +272,28 @@ int ascjson::BrowTransfer(struct gl_list_t *search_list)
   return 0;
 }
 
-int ascjson::Asc_BrowTransferCmd(Asc_DString *hptr,
-                    int argc, CONST84 char *argv[])
+int ascjson::Asc_BrowTransferCmd(Asc_DString *hptr, int argc, CONST84 char *argv[])
 {
-  /* Format : \"transfer name\" */
+  /* Format : \"btransfer name\" */
   char temp[MAXIMUM_ID_LENGTH];
   struct gl_list_t *search_list;
   int nok;
 
   if ( argc != 2 ) {
-    Asc_DStringSet(hptr, "wrong # args : Usage is \"transfer name\"");
+    Asc_DStringSet(hptr, "wrong # args : Usage is \"btransfer name\"");
     return HELP_ERROR;
   }
   search_list = Asc_BrowQlfdidSearch(QUIET(argv[1]),temp);
   if ((g_search_inst==NULL) || (search_list==NULL)) {
-    Asc_DStringAppend2(hptr,"Search instance not found\n",temp, HALL);
+    Asc_DStringAppend2(hptr,"Search instance not found: ",temp, HALL);
     return HELP_ERROR;
   }
   nok = BrowTransfer(search_list);
-  if (nok) {
-    Asc_DStringSet(hptr, "Major Error in BrowTransfer - contact abbott@globe");
-  }
   Asc_SearchListDestroy(search_list);
+  if (nok) {
+    Asc_DStringSet(hptr, "Unexpected Error in btransfer");
+    return HELP_ERROR;
+  }
   return HELP_OK;
 }
 

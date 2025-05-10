@@ -55,8 +55,26 @@
 enum rel_lang_format {
   relio_ascend,
   relio_C,
-  relio_yacas
+  relio_yacas,
+  relio_tex,
+  relio_LAST,
+  relio_FIRST = relio_ascend
 };
+
+ASC_DLLSPEC enum rel_lang_format RelLangFormatNext(enum rel_lang_format f);
+/**<
+ * get the format next.
+ */
+
+ASC_DLLSPEC enum rel_lang_format StringToRelLangFormat(const char *s);
+/**<
+ * get the format from a string. bad string value get relio_ascend back.
+ */
+
+ASC_DLLSPEC const char *RelLangFormatToString(enum rel_lang_format f);
+/**<
+ * get the string from a format. bad enum value get relio_ascend back.
+ */
 
 typedef char * (*WRSNameFunc)(CONST struct relation *,unsigned long,void *);
 /**<

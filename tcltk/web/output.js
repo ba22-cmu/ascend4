@@ -5287,6 +5287,10 @@ var _emscripten_bind_ascjson_smerge_1 = Module['_emscripten_bind_ascjson_smerge_
 var _emscripten_bind_ascjson_gnutext_1 = Module['_emscripten_bind_ascjson_gnutext_1'] = createExportWrapper('emscripten_bind_ascjson_gnutext_1', 2);
 var _emscripten_bind_ascjson_help_1 = Module['_emscripten_bind_ascjson_help_1'] = createExportWrapper('emscripten_bind_ascjson_help_1', 2);
 var _emscripten_bind_ascjson___destroy___0 = Module['_emscripten_bind_ascjson___destroy___0'] = createExportWrapper('emscripten_bind_ascjson___destroy___0', 1);
+var _emscripten_enum_vtype_SVjson = Module['_emscripten_enum_vtype_SVjson'] = createExportWrapper('emscripten_enum_vtype_SVjson', 0);
+var _emscripten_enum_vtype_SVjson5 = Module['_emscripten_enum_vtype_SVjson5'] = createExportWrapper('emscripten_enum_vtype_SVjson5', 0);
+var _emscripten_enum_vtype_SVcstr = Module['_emscripten_enum_vtype_SVcstr'] = createExportWrapper('emscripten_enum_vtype_SVcstr', 0);
+var _emscripten_enum_vtype_SVvtab = Module['_emscripten_enum_vtype_SVvtab'] = createExportWrapper('emscripten_enum_vtype_SVvtab', 0);
 var _strerror = createExportWrapper('strerror', 1);
 var _setThrew = createExportWrapper('setThrew', 2);
 var _emscripten_stack_init = wasmExports['emscripten_stack_init']
@@ -5296,7 +5300,7 @@ var _emscripten_stack_get_end = wasmExports['emscripten_stack_get_end']
 var __emscripten_stack_restore = wasmExports['_emscripten_stack_restore']
 var __emscripten_stack_alloc = wasmExports['_emscripten_stack_alloc']
 var _emscripten_stack_get_current = wasmExports['emscripten_stack_get_current']
-var ___emscripten_embedded_file_data = Module['___emscripten_embedded_file_data'] = 541628;
+var ___emscripten_embedded_file_data = Module['___emscripten_embedded_file_data'] = 541724;
 function invoke_iiii(index,a1,a2,a3) {
   var sp = stackSave();
   try {
@@ -7569,6 +7573,24 @@ ascjson.prototype['__destroy__'] = ascjson.prototype.__destroy__ = function() {
   var self = this.ptr;
   _emscripten_bind_ascjson___destroy___0(self);
 };
+
+(function() {
+  function setupEnums() {
+    
+// $vtype
+
+    Module['SVjson'] = _emscripten_enum_vtype_SVjson();
+
+    Module['SVjson5'] = _emscripten_enum_vtype_SVjson5();
+
+    Module['SVcstr'] = _emscripten_enum_vtype_SVcstr();
+
+    Module['SVvtab'] = _emscripten_enum_vtype_SVvtab();
+
+  }
+  if (runtimeInitialized) setupEnums();
+  else addOnInit(setupEnums);
+})();
 // end include: web_glue.js
 
 // include: postamble_modularize.js

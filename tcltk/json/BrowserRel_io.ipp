@@ -68,7 +68,7 @@ int ascjson::Asc_BrowWriteRelListCmd(Asc_DString *hptr, int argc, CONST84 char *
 
   if (( argc < 2 ) || ( argc > 3 )) {
     Asc_DStringAppend(hptr,"wrong # args : "
-	     "Usage \"bgetrels\" ?cur?search? save",HALL);
+	     "Usage \"bgetrels\" ?cur?search? ?save? ?rel_lang_format?",HALL);
     return HELP_ERROR;
   }
 
@@ -81,9 +81,25 @@ int ascjson::Asc_BrowWriteRelListCmd(Asc_DString *hptr, int argc, CONST84 char *
     return HELP_ERROR;
   }
 
+  enum rel_lang_format fmt = relio_ascend;
   if (argc==3) {
     if (strncmp(argv[2],"save",4)==0) {
       save = 1;
+    } else {
+      if (getRelIOFormat(argv[2], &fmt ) != 0) {
+        Asc_DStringAppend2(hptr, "invalid format arg to \"bgetrels\" ", argv[2], HALL);
+        return HELP_ERROR;
+      }
+    }
+  }
+  if (argc==4) {
+    if (strncmp(argv[3],"save",4)==0) {
+      save = 1;
+    } else {
+      if (getRelIOFormat(argv[3], &fmt ) != 0) {
+        Asc_DStringAppend2(hptr, "invalid format arg to \"bgetrels\" ", argv[3], HALL);
+        return HELP_ERROR;
+      }
     }
   }
 
@@ -105,7 +121,7 @@ int ascjson::Asc_BrowWriteRelListCmd(Asc_DString *hptr, int argc, CONST84 char *
   for (c=1;c<=len;c++) { 
     char *tmp;
     rel_inst = (struct Instance *)gl_fetch(g_brow_rellist,c);
-    tmp = WriteRelationString(rel_inst,NULL,NULL,NULL,relio_ascend,NULL);
+    tmp = WriteRelationString(rel_inst,NULL,NULL,NULL,fmt,NULL);
     VTcl_AppendElement(hptr,tmp);
     ascfree(tmp);
   }
@@ -117,7 +133,7 @@ int ascjson::Asc_BrowWriteRelListCmd(Asc_DString *hptr, int argc, CONST84 char *
     for (c=1;c<=len;c++) {
       char *tmp;
       rel_inst = (struct Instance *)gl_fetch(g_brow_condrellist,c);
-      tmp = WriteRelationString(rel_inst,NULL,NULL,NULL,relio_ascend,NULL);
+      tmp = WriteRelationString(rel_inst,NULL,NULL,NULL,fmt,NULL);
       VTcl_AppendElement(hptr,tmp);
       ascfree(tmp);
     }
@@ -292,16 +308,16 @@ int ascjson::Asc_BrowWriteRelsForAtomCmd(Asc_DString *hptr, int argc, CONST84 ch
     return HELP_ERROR;
   }
   nrels = RelationsCount(i);
-  for (c=1;c<=nrels;c++) { /* the "{ }" is for making proper list elems */
+  for (c=1;c<=nrels;c++) { 
     char *tmp;
     rel_inst = RelationsForAtom(i,c);
     rel = GetInstanceRelationOnly(rel_inst);
     tmp = WriteRelationString(rel_inst,NULL,NULL,NULL,relio_ascend,NULL);
-    ascfree(tmp);
     if (RelationIsCond(rel)) {
       Asc_DStringAppend(hptr,"    Conditional Relation",HALL);
     }
     VTcl_AppendElement(hptr,tmp);
+    ascfree(tmp);
   }
   VAEstrip(hptr);
   return HELP_OK;

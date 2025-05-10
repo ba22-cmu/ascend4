@@ -1352,3 +1352,19 @@ void Asc_DStringStrip(Asc_DString *ds, const char * stripchars)
 		ds->length -= 1;
 	}
 }
+
+int getRelIOFormat(const char *s, enum rel_lang_format *fmt )
+{
+	if (!s || !fmt) return EINVAL;
+	enum rel_lang_format fval = relio_FIRST, old;
+	old = *fmt;
+	for (; fval != relio_LAST; fval = RelLangFormatNext(fval))
+	{
+		if (!strcmp(s, RelLangFormatToString(fval))) {
+				*fmt = fval;
+				return 0;
+		}
+	}
+	*fmt = old;
+	return ENOENT;
+}

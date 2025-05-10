@@ -277,4 +277,7 @@ extern "C" {
 /// remove all characters in stripchars from end of dstring.
 void Asc_DStringStrip(Asc_DString *ds, const char * stripchars);
 
+/// convert s to fmt
+int getRelIOFormat(const char *s, enum rel_lang_format *fmt );
+
 #endif // ascjson_util_h
